@@ -44,6 +44,9 @@ Game::Game(const char* title, int width, int height) {
 	if (renderer == nullptr){
 		throw std::runtime_error(SDL_GetError());
 	}
+
+//	Initializes state
+	state = nullptr;
 }
 
 Game::~Game() {
@@ -63,7 +66,10 @@ SDL_Renderer* Game::GetRenderer() {
 }
 
 void Game::Run(){
-	while(true){
-		;
+	while(!state->QuitRequested()){
+		state->Update(SDL_QuitRequested());
+		state->Render();
+		SDL_RenderPresent(renderer);
+		SDL_Delay(33);
 	}
 }
