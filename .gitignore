@@ -1,3 +1,11 @@
+
+bin/
+dep/
+Eduardo_130108405*
+*.cproject
+*.project
+*.settings
+
 # Prerequisites
 *.d
 
@@ -30,3 +38,4 @@
 *.exe
 *.out
 *.app
+>>>>>>> master
