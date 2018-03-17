@@ -1,4 +1,6 @@
+#pragma once
 #include "Sprite.h"
+#include "Music.h"
 
 class State {
 	public:
@@ -9,6 +11,6 @@ class State {
 		void Render ();
 	private:
 		Sprite bg;
-//		Music music;
+		Music music;
 		bool quitRequested;
 };

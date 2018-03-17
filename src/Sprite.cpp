@@ -1,13 +1,16 @@
 #define INCLUDE_SDL_IMAGE
 #include "SDL_include.h"
+#include "Sprite.h"
 #include "Game.h"
 #include <stdexcept>
+
+using std::string;
 
 Sprite::Sprite () {
 	texture = nullptr;
 }
 
-Sprite::Sprite (const char* file) {
+Sprite::Sprite (string file) {
 	texture = nullptr;
 	Sprite::Open(file);
 }
@@ -18,11 +21,11 @@ Sprite::~Sprite () {
 	}
 }
 
-void Sprite::Open (const char* file) {
+void Sprite::Open (string file) {
 	if (texture != nullptr) {
 		SDL_DestroyTexture(texture);
 	}
-	texture = IMG_LoadTexture(Game::GetInstance().GetRenderer(), file);
+	texture = IMG_LoadTexture(Game::GetInstance().GetRenderer(), file.c_str());
 	if (texture == nullptr) {
 		throw std::runtime_error(SDL_GetError());
 	}
@@ -43,7 +46,8 @@ void Sprite::Render (int x, int y) {
 	dstRect.y = y;
 	dstRect.w = clipRect.w;
 	dstRect.h = clipRect.h;
-	SDL_RenderCopy(Game::GetInstance().GetRenderer(), texture, &clipRect, &dstRect);
+	SDL_RenderCopy(Game::GetInstance().GetRenderer(), texture, &clipRect,
+			&dstRect);
 }
 
 int Sprite::GetHeight () {
