@@ -5,7 +5,7 @@ Music::Music () {
 	music = nullptr;
 }
 
-Music::Music (const char* file) {
+Music::Music (std::string file) {
 	music = nullptr;
 	
 	Open(file);
@@ -19,8 +19,8 @@ void Music::Stop (int msToStop) {
 	Mix_FadeOutMusic(msToStop);
 }
 
-void Music::Open (const char * file) {
-	music = Mix_LoadMUS(file);
+void Music::Open (std::string file) {
+	music = Mix_LoadMUS(file.c_str());
 	if (music == nullptr) {
 		throw std::runtime_error(SDL_GetError());
 	}

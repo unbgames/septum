@@ -7,8 +7,8 @@ State::State () {
 }
 
 void State::LoadAssets () {
-	bg.Open("img/ocean.jpg");
-	music.Open("audio/stageState.ogg");
+	bg.Open("assets/img/ocean.jpg");
+	music.Open("assets/audio/stageState.ogg");
 }
 
 void State::Update (float dt) {

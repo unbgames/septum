@@ -1,12 +1,13 @@
 #define INCLUDE_SDL
 #include "SDL_include.h"
+#include <string>
 
 class Sprite {
 	public:
 		Sprite ();
-		Sprite (const char* file);
+		Sprite (std::string file);
 		~Sprite ();
-		void Open (const char* file);
+		void Open (std::string file);
 		void SetClip (int x, int y, int w, int h);
 		void Render (int x, int y);
 		int GetWidth ();

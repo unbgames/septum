@@ -13,7 +13,7 @@ Game& Game::GetInstance () {
 	}
 	return *instance;
 }
-Game::Game (const char* title, int width, int height) {
+Game::Game (std::string title, int width, int height) {
 	if (instance != nullptr) {
 		throw std::runtime_error("Game already instantiated");
 	}
@@ -42,7 +42,7 @@ Game::Game (const char* title, int width, int height) {
 	Mix_AllocateChannels(32);
 	
 	// Initializes window
-	window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED,
+	window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED,
 	SDL_WINDOWPOS_CENTERED, width, height, 0);
 	if (window == nullptr) {
 		throw std::runtime_error(SDL_GetError());
@@ -59,6 +59,8 @@ Game::Game (const char* title, int width, int height) {
 }
 
 Game::~Game () {
+	delete(state);
+
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	

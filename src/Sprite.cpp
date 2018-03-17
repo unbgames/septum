@@ -7,7 +7,7 @@ Sprite::Sprite () {
 	texture = nullptr;
 }
 
-Sprite::Sprite (const char* file) {
+Sprite::Sprite (std::string file) {
 	texture = nullptr;
 	Sprite::Open(file);
 }
@@ -18,11 +18,11 @@ Sprite::~Sprite () {
 	}
 }
 
-void Sprite::Open (const char* file) {
+void Sprite::Open (std::string file) {
 	if (texture != nullptr) {
 		SDL_DestroyTexture(texture);
 	}
-	texture = IMG_LoadTexture(Game::GetInstance().GetRenderer(), file);
+	texture = IMG_LoadTexture(Game::GetInstance().GetRenderer(), file.c_str());
 	if (texture == nullptr) {
 		throw std::runtime_error(SDL_GetError());
 	}
