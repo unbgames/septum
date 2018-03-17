@@ -3,10 +3,12 @@
 State::State () {
 	quitRequested = false;
 	LoadAssets();
+	music.Play();
 }
 
 void State::LoadAssets () {
 	bg.Open("img/ocean.jpg");
+	music.Open("audio/stageState.ogg");
 }
 
 void State::Update (float dt) {

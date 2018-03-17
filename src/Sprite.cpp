@@ -43,7 +43,8 @@ void Sprite::Render (int x, int y) {
 	dstRect.y = y;
 	dstRect.w = clipRect.w;
 	dstRect.h = clipRect.h;
-	SDL_RenderCopy(Game::GetInstance().GetRenderer(), texture, &clipRect, &dstRect);
+	SDL_RenderCopy(Game::GetInstance().GetRenderer(), texture, &clipRect,
+			&dstRect);
 }
 
 int Sprite::GetHeight () {
