@@ -7,13 +7,18 @@
 Game* Game::instance = nullptr;
 
 Game& Game::GetInstance(){
-	// Follows Singleton design patter
+	// Follows Singleton design pattern
 	if (instance == nullptr) {
-		instance = new Game("Eduardo Sousa - 13/0108405", 1024, 600);
+		new Game("Eduardo Sousa - 13/0108405", 1024, 600);
 	}
 	return *instance;
 }
 Game::Game(const char* title, int width, int height) {
+	if (instance != nullptr) {
+		throw std::runtime_error("Game already instantiated");
+	} else {
+		instance = this;
+	}
 	// Initializes SDL
 	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER) != 0){
 		throw std::runtime_error(SDL_GetError());
@@ -46,7 +51,7 @@ Game::Game(const char* title, int width, int height) {
 	}
 
 //	Initializes state
-	state = nullptr;
+	state = new State();
 }
 
 Game::~Game() {
