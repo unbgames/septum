@@ -1,7 +1,10 @@
+#pragma once
 #define INCLUDE_SDL
 #include "SDL_include.h"
 #include "State.h"
 #include <string>
+
+using std::string;
 
 class Game {
 	public:
@@ -12,7 +15,7 @@ class Game {
 		static Game& GetInstance ();
 
 	private:
-		Game (std::string title, int width, int height);
+		Game (string title, int width, int height);
 
 		static Game* instance;
 		SDL_Window* window;

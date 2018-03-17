@@ -1,13 +1,16 @@
 #define INCLUDE_SDL_IMAGE
 #include "SDL_include.h"
+#include "Sprite.h"
 #include "Game.h"
 #include <stdexcept>
+
+using std::string;
 
 Sprite::Sprite () {
 	texture = nullptr;
 }
 
-Sprite::Sprite (std::string file) {
+Sprite::Sprite (string file) {
 	texture = nullptr;
 	Sprite::Open(file);
 }
@@ -18,7 +21,7 @@ Sprite::~Sprite () {
 	}
 }
 
-void Sprite::Open (std::string file) {
+void Sprite::Open (string file) {
 	if (texture != nullptr) {
 		SDL_DestroyTexture(texture);
 	}

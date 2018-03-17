@@ -4,6 +4,8 @@
 #include <stdexcept>
 #include "Game.h"
 
+using std::string;
+
 Game* Game::instance = nullptr;
 
 Game& Game::GetInstance () {
@@ -13,7 +15,7 @@ Game& Game::GetInstance () {
 	}
 	return *instance;
 }
-Game::Game (std::string title, int width, int height) {
+Game::Game (string title, int width, int height) {
 	if (instance != nullptr) {
 		throw std::runtime_error("Game already instantiated");
 	}
