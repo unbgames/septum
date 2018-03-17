@@ -1,5 +1,5 @@
 #include "Game.h"
 int main (int argc, char** argv) {
-	Game game = game.GetInstance();
+	Game game = Game::GetInstance().Run();
 	game.Run();
 }
