@@ -50,14 +50,14 @@ void Sprite::Render (int x, int y) {
 			&dstRect);
 }
 
-int Sprite::GetHeight () {
+int Sprite::GetHeight () const{
 	return height;
 }
 
-int Sprite::GetWidth () {
+int Sprite::GetWidth () const{
 	return width;
 }
 
-bool Sprite::IsOpen () {
+bool Sprite::IsOpen () const{
 	return (texture != nullptr);
 }

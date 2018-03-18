@@ -1,3 +1,5 @@
+#define INCLUDE_SDL
+#include "SDL_include.h"
 #include "State.h"
 
 State::State () {
@@ -12,14 +14,13 @@ void State::LoadAssets () {
 }
 
 void State::Update (float dt) {
-	quitRequested = dt;
+	quitRequested = SDL_QuitRequested();
 }
 
 void State::Render () {
 	bg.Render(0, 0);
 }
 
-bool State::QuitRequested () {
+bool State::QuitRequested () const{
 	return quitRequested;
 }
-
