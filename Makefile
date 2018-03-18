@@ -2,6 +2,8 @@ CC = g++
 RMDIR = rm -rf
 RM = rm -f
 
+RUN = ./
+
 DEP_FLAGS = -MT $@ -MMD -MP -MF $(DEP_PATH)/$*.d
 
 DIRECTIVES = -std=c++11 -Wall -Wextra -c -I $(HEADER_PATH)
@@ -23,6 +25,8 @@ ifeq ($(OS),Windows_NT)
 
 RMDIR = rd /s /q
 RM = del
+
+RUN = 
 
 SDL_PATH = C:\SDL2-2.0.5\x86_64-w64-mingw32
 
@@ -63,6 +67,9 @@ debug: all
 
 release: DIRECTIVES += -Ofast -mtune=native
 release: all
+
+run: 
+	$(RUN)$(EXEC)
 
 clean:
 	$(RMDIR) $(BIN_PATH) $(DEP_PATH)
