@@ -1,5 +1,5 @@
 #pragma once
-#include "Sprite.h"
+#include "GameObject.h"
 #include "Music.h"
 
 /**
@@ -27,7 +27,7 @@ class State {
 		 */
 		void Render ();
 	private:
-		Sprite bg;
+		GameObject bg;
 		Music music;
 		bool quitRequested;
 };

@@ -2,21 +2,23 @@
 #define INCLUDE_SDL
 #include "SDL_include.h"
 #include <string>
+#include "Component.h"
 
 using std::string;
 
 /**
  * Class for game image
  */
-class Sprite {
+class Sprite : public Component{
 	public:
-		Sprite ();
+		Sprite (GameObject& associated);
 
 		/**
 		 * Sprite constructor
+		 * @param associated GameObjected that encapsulates the sprite
 		 * @param file image file
 		 */
-		Sprite (string file);
+		Sprite (GameObject& associated, string file);
 		~Sprite ();
 
 		/**
@@ -36,10 +38,8 @@ class Sprite {
 
 		/**
 		 * Renders the Sprite on the window
-		 * @param x x-axis screen position
-		 * @param y y-axis screen position
 		 */
-		void Render (int x, int y);
+		void Render ();
 
 		int GetWidth () const;
 		int GetHeight () const;
@@ -50,6 +50,20 @@ class Sprite {
 		 * @retval false there is no file
 		 */
 		bool IsOpen () const;
+
+		/**
+		 * Checks if the Component is from the passed type
+		 * @param type type to be checked
+		 * @retval true the passed type is Sprite
+		 * @retval false the passed type is not Sprite
+		 */
+		bool Is (string type) const;
+
+		/**
+		 * Updates component state
+		 * @param dt
+		 */
+		void Update (float dt);
 
 	private:
 		SDL_Texture* texture;

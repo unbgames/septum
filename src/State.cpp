@@ -1,6 +1,7 @@
 #define INCLUDE_SDL
 #include "SDL_include.h"
 #include "State.h"
+#include "Sprite.h"
 
 State::State () {
 	quitRequested = false;
@@ -9,7 +10,8 @@ State::State () {
 }
 
 void State::LoadAssets () {
-	bg.Open("assets/img/ocean.jpg");
+	Sprite* sprite = new Sprite(bg, "assets/img/ocean.jpg");
+	bg.AddComponent(sprite);
 	music.Open("assets/audio/stageState.ogg");
 }
 
@@ -18,7 +20,7 @@ void State::Update (float dt) {
 }
 
 void State::Render () {
-	bg.Render(0, 0);
+	bg.Render();
 }
 
 bool State::QuitRequested () const{
