@@ -2,17 +2,20 @@
 #include "SDL_include.h"
 #include "Sprite.h"
 #include "Game.h"
+#include "Component.h"
 #include <stdexcept>
 
 using std::string;
 
-Sprite::Sprite () {
+Sprite::Sprite (GameObject& associated) :
+		Component(associated) {
 	texture = nullptr;
 }
 
-Sprite::Sprite (string file) {
+Sprite::Sprite (GameObject& associated, string file) :
+		Component(associated) {
 	texture = nullptr;
-	Sprite::Open(file);
+	Open(file);
 }
 
 Sprite::~Sprite () {
@@ -40,10 +43,10 @@ void Sprite::SetClip (int x, int y, int w, int h) {
 	clipRect.h = h;
 }
 
-void Sprite::Render (int x, int y) {
+void Sprite::Render () {
 	SDL_Rect dstRect;
-	dstRect.x = x;
-	dstRect.y = y;
+	dstRect.x = associated.box.x;
+	dstRect.y = associated.box.y;
 	dstRect.w = clipRect.w;
 	dstRect.h = clipRect.h;
 	SDL_RenderCopy(Game::GetInstance().GetRenderer(), texture, &clipRect,
@@ -60,4 +63,12 @@ int Sprite::GetWidth () const{
 
 bool Sprite::IsOpen () const{
 	return (texture != nullptr);
+}
+
+void Sprite::Update (float dt) {
+
+}
+
+bool Sprite::Is (string type) const {
+	return type == "Sprite";
 }

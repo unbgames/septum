@@ -1,3 +1,5 @@
+#pragma once
+
 /**
  * Rect is a rectangle in a 2D-space
  */
