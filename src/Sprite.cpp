@@ -13,8 +13,7 @@ Sprite::Sprite (GameObject& associated) :
 }
 
 Sprite::Sprite (GameObject& associated, string file) :
-		Component(associated) {
-	texture = nullptr;
+		Sprite(associated) {
 	Open(file);
 }
 
