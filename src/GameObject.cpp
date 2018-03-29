@@ -30,7 +30,7 @@ void GameObject::Render () {
 	}
 }
 
-bool GameObject::IsDead () const {
+bool GameObject::IsDead () {
 	return isDead;
 }
 
@@ -47,7 +47,7 @@ void GameObject::RemoveComponent (Component* cpt) {
 			components.end());
 }
 
-Component* GameObject::GetComponent (string type) const {
+Component* GameObject::GetComponent (string type) {
 	auto it = std::find_if(components.begin(), components.end(),
 			[&type](Component* const& cpt) {return cpt->Is(type);});
 

@@ -12,7 +12,7 @@ class State {
 		 * Returns whether there was a close command to the game
 		 * @return if the close command was issued by the game
 		 */
-		bool QuitRequested () const;
+		bool QuitRequested ();
 		/**
 		 * Loads game assets
 		 */

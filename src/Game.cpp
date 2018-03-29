@@ -73,7 +73,7 @@ Game::~Game () {
 	SDL_Quit();
 }
 
-SDL_Renderer* Game::GetRenderer () const{
+SDL_Renderer* Game::GetRenderer () {
 	return renderer;
 }
 

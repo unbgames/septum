@@ -41,15 +41,15 @@ class Sprite : public Component{
 		 */
 		void Render ();
 
-		int GetWidth () const;
-		int GetHeight () const;
+		int GetWidth ();
+		int GetHeight ();
 
 		/**
 		 * Returns if the file is open
 		 * @retval true there is an open file
 		 * @retval false there is no file
 		 */
-		bool IsOpen () const;
+		bool IsOpen ();
 
 		/**
 		 * Checks if the Component is from the passed type
@@ -57,7 +57,7 @@ class Sprite : public Component{
 		 * @retval true the passed type is Sprite
 		 * @retval false the passed type is not Sprite
 		 */
-		bool Is (string type) const;
+		bool Is (string type);
 
 		/**
 		 * Updates component state
