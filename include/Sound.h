@@ -1,7 +1,6 @@
 #pragma once
 #define INCLUDE_SDL_MIXER
 #include "SDL_include.h"
-#include "GameObject.h"
 #include <string>
 #include "Component.h"
 
@@ -36,7 +35,7 @@ class Sound: Component {
 		 * @retval true there is an open file
 		 * @retval false there is no file
 		 */
-		bool IsOpen () const;
+		bool IsOpen ();
 
 		/**
 		 * Checks if the Component is from the passed type
@@ -44,7 +43,7 @@ class Sound: Component {
 		 * @retval true the passed type is Sound
 		 * @retval false the passed type is not Sound
 		 */
-		bool Is (string type) const;
+		bool Is (string type);
 
 		/**
 		 * Updates component state

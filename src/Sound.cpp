@@ -49,6 +49,6 @@ void Sound::Render () {
 
 }
 
-bool Sound::Is (string type) const {
+bool Sound::Is (string type) {
 	return type == "Sound";
 }

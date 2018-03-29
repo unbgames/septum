@@ -23,6 +23,6 @@ void State::Render () {
 	bg.Render();
 }
 
-bool State::QuitRequested () const{
+bool State::QuitRequested () {
 	return quitRequested;
 }
