@@ -42,14 +42,18 @@ void Sprite::SetClip (int x, int y, int w, int h) {
 	clipRect.h = h;
 }
 
-void Sprite::Render () {
+void Sprite::Render (float x, float y) {
 	SDL_Rect dstRect;
-	dstRect.x = associated.box.x;
-	dstRect.y = associated.box.y;
+	dstRect.x = x;
+	dstRect.y = y;
 	dstRect.w = clipRect.w;
 	dstRect.h = clipRect.h;
 	SDL_RenderCopy(Game::GetInstance().GetRenderer(), texture, &clipRect,
 			&dstRect);
+}
+
+void Sprite::Render () {
+	Sprite::Render(associated.box.x, associated.box.y);
 }
 
 int Sprite::GetHeight () const {

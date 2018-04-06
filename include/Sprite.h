@@ -41,6 +41,13 @@ class Sprite : public Component{
 		 */
 		void Render ();
 
+		/**
+		 * Renders the Sprite based on a position
+		 * @param x x-axis coordinate
+		 * @param y y-axis coordinate
+		 */
+		void Render (float x, float y);
+
 		int GetWidth () const;
 		int GetHeight () const;
 
