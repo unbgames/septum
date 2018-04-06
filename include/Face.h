@@ -18,7 +18,7 @@ class Face: public Component {
 		 * @retval true the passed type is Face
 		 * @retval false the passed type is not Face
 		 */
-		bool Is (string type);
+		bool Is (string type) const;
 
 		/**
 		 * Updates component state

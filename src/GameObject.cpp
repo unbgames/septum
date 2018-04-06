@@ -26,7 +26,7 @@ void GameObject::Render () {
 	}
 }
 
-bool GameObject::IsDead () {
+bool GameObject::IsDead () const {
 	return isDead;
 }
 
@@ -49,7 +49,7 @@ void GameObject::RemoveComponent (Component* cpt) {
 	}
 }
 
-Component* GameObject::GetComponent (string type) {
+Component* GameObject::GetComponent (string type) const {
 	auto it = std::find_if(components.begin(), components.end(),
 			[&type](unique_ptr<Component> const& cpt) {return cpt->Is(type);});
 

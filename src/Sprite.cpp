@@ -52,15 +52,15 @@ void Sprite::Render () {
 			&dstRect);
 }
 
-int Sprite::GetHeight () {
+int Sprite::GetHeight () const {
 	return height;
 }
 
-int Sprite::GetWidth () {
+int Sprite::GetWidth () const {
 	return width;
 }
 
-bool Sprite::IsOpen () {
+bool Sprite::IsOpen () const {
 	return (texture != nullptr);
 }
 
@@ -68,6 +68,6 @@ void Sprite::Update (float dt) {
 
 }
 
-bool Sprite::Is (string type) {
+bool Sprite::Is (string type) const {
 	return type == "Sprite";
 }

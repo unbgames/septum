@@ -35,7 +35,7 @@ class Sound: public Component {
 		 * @retval true there is an open file
 		 * @retval false there is no file
 		 */
-		bool IsOpen ();
+		bool IsOpen () const;
 
 		/**
 		 * Checks if the Component is from the passed type
@@ -43,7 +43,7 @@ class Sound: public Component {
 		 * @retval true the passed type is Sound
 		 * @retval false the passed type is not Sound
 		 */
-		bool Is (string type);
+		bool Is (string type) const;
 
 		/**
 		 * Updates component state

@@ -37,7 +37,7 @@ void Sound::Stop () {
 	}
 }
 
-bool Sound::IsOpen () {
+bool Sound::IsOpen () const {
 	return (chunk != nullptr);
 }
 
@@ -49,6 +49,6 @@ void Sound::Render () {
 
 }
 
-bool Sound::Is (string type) {
+bool Sound::Is (string type) const {
 	return type == "Sound";
 }

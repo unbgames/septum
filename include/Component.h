@@ -28,7 +28,7 @@ class Component {
 		 * @param type type to be checked
 		 * @return whether the type matches or not
 		 */
-		bool virtual Is (string type) = 0;
+		bool virtual Is (string type) const = 0;
 
 	protected:
 		GameObject& associated;

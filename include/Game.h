@@ -23,13 +23,13 @@ class Game {
 		 * Returns active SDL Renderer
 		 * @return SDL Renderer
 		 */
-		SDL_Renderer* GetRenderer ();
+		SDL_Renderer* GetRenderer () const;
 
 		/**
 		 * Returns game state
 		 * @return game state
 		 */
-		State& GetState ();
+		State& GetState () const;
 
 		/**
 		 * Returns Singleton instance of Game

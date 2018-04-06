@@ -85,7 +85,7 @@ void State::Render () {
 	}
 }
 
-bool State::QuitRequested () {
+bool State::QuitRequested () const {
 	return quitRequested;
 }
 

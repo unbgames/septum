@@ -76,8 +76,12 @@ Game::~Game () {
 	SDL_Quit();
 }
 
-SDL_Renderer* Game::GetRenderer () {
+SDL_Renderer* Game::GetRenderer () const {
 	return renderer;
+}
+
+State& Game::GetState () const {
+	return *state;
 }
 
 void Game::Run () {

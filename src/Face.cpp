@@ -22,6 +22,6 @@ void Face::Render () {
 
 }
 
-bool Face::Is (string type) {
+bool Face::Is (string type) const {
 	return type == "Face";
 }

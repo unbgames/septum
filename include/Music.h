@@ -41,7 +41,7 @@ class Music {
 		 * @retval true there is an open file
 		 * @retval false there is no file
 		 */
-		bool isOpen ();
+		bool isOpen () const;
 
 	private:
 		Mix_Music* music;

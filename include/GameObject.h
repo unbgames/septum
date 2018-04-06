@@ -33,7 +33,7 @@ class GameObject {
 		 * @retval true GameObject is deleted
 		 * @retval false GameObject is not deleted
 		 */
-		bool IsDead ();
+		bool IsDead () const;
 
 		/**
 		 * Deletes GameObject
@@ -57,7 +57,7 @@ class GameObject {
 		 * @param type component type
 		 * @return requested component
 		 */
-		Component* GetComponent (string type);
+		Component* GetComponent (string type) const;
 
 		/**
 		 * GameObject position and dimension on window
