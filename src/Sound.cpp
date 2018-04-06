@@ -52,3 +52,7 @@ void Sound::Render () {
 bool Sound::Is (string type) const {
 	return type == "Sound";
 }
+
+int Sound::GetChannel () const {
+	return channel;
+}

@@ -56,6 +56,8 @@ class Sound: public Component {
 		 */
 		void Render ();
 
+		int GetChannel () const;
+
 	private:
 		Mix_Chunk* chunk;
 		int channel = -1;

@@ -8,14 +8,16 @@ Face::Face (GameObject& associated) :
 void Face::Damage (int damage) {
 	hitpoints -= damage;
 	if (hitpoints <= 0) {
-		Sound* sound = (Sound*) associated.GetComponent("Sound");
-		sound->Play();
-		associated.RequestDelete();
+		((Sound*) associated.GetComponent("Sound"))->Play();
 	}
 }
 
 void Face::Update (float dt) {
-
+	int playing = Mix_Playing(
+			((Sound*) associated.GetComponent("Sound"))->GetChannel());
+	if (hitpoints <= 0 && !playing) {
+		associated.RequestDelete();
+	}
 }
 
 void Face::Render () {
