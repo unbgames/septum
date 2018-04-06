@@ -4,6 +4,8 @@
 #include "Sprite.h"
 #include "Face.h"
 #include "Vec2.h"
+#include "Sound.h"
+#include <math.h>
 
 State::State () {
 	quitRequested = false;
@@ -43,15 +45,15 @@ void State::Input () {
 				// Esse código, assim como a classe Face, é provisório. Futuramente, para
 				// chamar funções de GameObjects, use objectArray[i]->função() direto.
 
-//				if (go->box.Contains( { (float) mouseX, (float) mouseY })) {
-//					Face* face = (Face*) go->GetComponent("Face");
-//					if (nullptr != face) {
-//						// Aplica dano
-//						face->Damage(std::rand() % 10 + 10);
-//						// Sai do loop (só queremos acertar um)
-//						break;
-//					}
-//				}
+				if (go->box.Contains( { (float) mouseX, (float) mouseY })) {
+					Face* face = (Face*) go->GetComponent("Face");
+					if (nullptr != face) {
+						// Aplica dano
+						face->Damage(std::rand() % 10 + 10);
+						// Sai do loop (só queremos acertar um)
+						break;
+					}
+				}
 			}
 		}
 		if (event.type == SDL_KEYDOWN) {
@@ -61,10 +63,10 @@ void State::Input () {
 			}
 			// Se não, crie um objeto
 			else {
-//				Vec2 objPos = Vec2(200, 0).GetRotated(
-//						-PI + PI * (rand() % 1001) / 500.0)
-//						+ Vec2(mouseX, mouseY);
-//				AddObject((int) objPos.x, (int) objPos.y);
+				Vec2 objPos = Vec2(200, 0).GetRotated(
+						-M_PI + M_PI * (rand() % 1001) / 500.0)
+						+ Vec2(mouseX, mouseY);
+				AddObject((int) objPos.x, (int) objPos.y);
 			}
 		}
 	}
@@ -98,4 +100,19 @@ void State::Render () {
 
 bool State::QuitRequested () {
 	return quitRequested;
+}
+
+void State::AddObject (int mouseX, int mouseY) {
+	GameObject go = new GameObject();
+	Sprite spr = new Sprite(go, 'img/penguinface.png');
+	go.AddComponent(&spr);
+	go.box.x = mouseX;
+	go.box.y = mouseY;
+	go.box.h = spr.GetHeight();
+	go.box.w = spr.GetWidth();
+
+	go.AddComponent(new Sound(go, 'audio/boom.wav'));
+	go.AddComponent(new Face(go));
+
+	objectArray.emplace_back(go);
 }

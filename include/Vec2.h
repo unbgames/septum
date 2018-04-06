@@ -6,4 +6,5 @@
 class Vec2 {
 	public:
 		float x, y;
+		Vec2 GetRotated (float angle);
 };

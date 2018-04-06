@@ -12,7 +12,7 @@ GameObject::GameObject () {
 
 GameObject::~GameObject () {
 	vector<Component*>::iterator it = components.begin();
-	for (int var = components.size(); var > 0; --var) {
+	for (int var = components.size() - 1; var >= 0; --var) {
 		delete *(it + var);
 	}
 	components.clear();
