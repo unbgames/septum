@@ -21,6 +21,9 @@ Game::Game (string title, int width, int height) {
 	else {
 		instance = this;
 	}
+
+	srand(time(NULL));
+
 	// Initializes SDL
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER) != 0) {
 		throw std::runtime_error(SDL_GetError());

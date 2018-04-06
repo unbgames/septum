@@ -1,10 +1,12 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <memory>
 #include "Component.h"
 #include "Rect.h"
 
 using std::vector;
+using std::unique_ptr;
 using std::string;
 
 /**
@@ -63,6 +65,6 @@ class GameObject {
 		Rect box;
 
 	private:
-		vector<Component*> components;
+		vector<unique_ptr<Component>> components;
 		bool isDead;
 };

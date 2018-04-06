@@ -32,20 +32,20 @@ Vec2& Vec2::operator-= (const Vec2 other) {
 Vec2 Vec2::operator* (const int number) const {
 	return Vec2(x * number, y * number);
 }
-Vec2& Vec2::operator*= (const int number) const {
+Vec2& Vec2::operator*= (const int number) {
 	x *= number;
 	y *= number;
 	return *this;
 }
 float Vec2::GetDistance (const Vec2 other) const {
-	Vec2 diff = this - other;
+	Vec2 diff = *this - other;
 	return diff.GetLength();
 }
 float Vec2::GetAngle () const {
 	return atan2(y, x);
 }
 float Vec2::GetAngle (const Vec2 other) const {
-	Vec2 diff = this - other;
+	Vec2 diff = *this - other;
 	return diff.GetAngle();
 }
 Vec2 Vec2::GetRotated (float angle) const {

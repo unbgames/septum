@@ -6,7 +6,7 @@
 
 using std::string;
 
-class Sound: Component {
+class Sound: public Component {
 	public:
 		Sound (GameObject& associated);
 		/**
