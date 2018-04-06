@@ -32,10 +32,18 @@ class State {
 		 * Renders state on window
 		 */
 		void Render ();
+		/**
+		 * Deals with user input
+		 */
 		void Input ();
+
+		/**
+		 * Adds a Penguin Object in position
+		 * @param mouseX x-coordinate of penguin
+		 * @param mouseY y-coordinate of penguin
+		 */
 		void AddObject (int mouseX, int mouseY);
 	private:
-		GameObject bg;
 		Music music;
 		bool quitRequested;
 		vector<unique_ptr<GameObject>> objectArray;

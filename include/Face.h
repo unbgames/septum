@@ -2,7 +2,7 @@
 #include "Component.h"
 #include "GameObject.h"
 
-class Face: Component {
+class Face: public Component {
 	public:
 		Face (GameObject& associated);
 
@@ -30,7 +30,6 @@ class Face: Component {
 		 *
 		 */
 		void Render ();
-
 	private:
 		int hitpoints;
 };

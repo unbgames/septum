@@ -1,6 +1,5 @@
 #include "Face.h"
 #include "Sound.h"
-
 Face::Face (GameObject& associated) :
 		Component(associated) {
 	hitpoints = 30;
@@ -9,8 +8,9 @@ Face::Face (GameObject& associated) :
 void Face::Damage (int damage) {
 	hitpoints -= damage;
 	if (hitpoints <= 0) {
+		Sound* sound = (Sound*) associated.GetComponent("Sound");
+		sound->Play();
 		associated.RequestDelete();
-		((Sound*) associated.GetComponent("Sound"))->Play();
 	}
 }
 

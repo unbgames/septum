@@ -30,7 +30,7 @@ class Vec2 {
 		Vec2 operator- (const Vec2 other) const;
 		Vec2& operator-= (const Vec2 other);
 		Vec2 operator* (const int number) const;
-		Vec2& operator*= (const int number) const;
+		Vec2& operator*= (const int number);
 
 		/**
 		 * Returns the distance between two points
@@ -57,5 +57,4 @@ class Vec2 {
 		Vec2 GetRotated (float angle) const;
 
 		float x, y;
-		Vec2 GetRotated (float angle);
 };

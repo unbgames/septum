@@ -11,21 +11,17 @@ GameObject::GameObject () {
 }
 
 GameObject::~GameObject () {
-	vector<Component*>::iterator it = components.begin();
-	for (int var = components.size() - 1; var >= 0; --var) {
-		delete *(it + var);
-	}
 	components.clear();
 }
 
 void GameObject::Update (float dt) {
-	for (Component*& c : components) {
+	for (auto& c : components) {
 		c->Update(dt);
 	}
 }
 
 void GameObject::Render () {
-	for (Component*& c : components) {
+	for (auto& c : components) {
 		c->Render();
 	}
 }
@@ -39,20 +35,26 @@ void GameObject::RequestDelete () {
 }
 
 void GameObject::AddComponent (Component* cpt) {
-	components.push_back(cpt);
+	components.emplace_back(cpt);
 }
 
 void GameObject::RemoveComponent (Component* cpt) {
-	components.erase(std::remove(components.begin(), components.end(), cpt),
-			components.end());
+	auto it = std::find_if(components.begin(), components.end(),
+			[&](unique_ptr<Component>& p) {
+				return p.get() == cpt;
+			});
+
+	if (it != components.end()) {
+		components.erase(it);
+	}
 }
 
 Component* GameObject::GetComponent (string type) {
 	auto it = std::find_if(components.begin(), components.end(),
-			[&type](Component* const& cpt) {return cpt->Is(type);});
+			[&type](unique_ptr<Component> const& cpt) {return cpt->Is(type);});
 
 	if (it != components.end()) {
-		return *it;
+		return it->get();
 	}
 	else {
 		return nullptr;
