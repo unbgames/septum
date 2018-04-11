@@ -1,3 +1,4 @@
+#pragma once
 #include "TileSet.h"
 
 TileSet::TileSet (int tileWidth, int tileHeight, string file,
