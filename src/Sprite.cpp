@@ -4,6 +4,7 @@
 #include "Game.h"
 #include "Component.h"
 #include <stdexcept>
+#include "Resources.h"
 
 using std::string;
 
@@ -18,19 +19,11 @@ Sprite::Sprite (GameObject& associated, string file) :
 }
 
 Sprite::~Sprite () {
-	if (texture != nullptr) {
-		SDL_DestroyTexture(texture);
-	}
+
 }
 
 void Sprite::Open (string file) {
-	if (texture != nullptr) {
-		SDL_DestroyTexture(texture);
-	}
-	texture = IMG_LoadTexture(Game::GetInstance().GetRenderer(), file.c_str());
-	if (texture == nullptr) {
-		throw std::runtime_error(SDL_GetError());
-	}
+	texture = Resources::GetImage(file);
 	SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
 	SetClip(0, 0, width, height);
 }

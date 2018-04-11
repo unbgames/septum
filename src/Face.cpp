@@ -6,9 +6,12 @@ Face::Face (GameObject& associated) :
 }
 
 void Face::Damage (int damage) {
-	hitpoints -= damage;
-	if (hitpoints <= 0) {
-		((Sound*) associated.GetComponent("Sound"))->Play();
+	// So it can`t keep damaging after death
+	if (hitpoints > 0) {
+		hitpoints -= damage;
+		if (hitpoints <= 0) {
+			((Sound*) associated.GetComponent("Sound"))->Play();
+		}
 	}
 }
 

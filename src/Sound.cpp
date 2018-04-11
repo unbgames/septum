@@ -1,5 +1,6 @@
 #include "Sound.h"
 #include <stdexcept>
+#include "Resources.h"
 
 using std::string;
 
@@ -14,17 +15,11 @@ Sound::Sound (GameObject& associated, string file) :
 }
 
 Sound::~Sound () {
-	if (chunk != nullptr) {
-		Stop();
-		Mix_FreeChunk(chunk);
-	}
+	Stop();
 }
 
 void Sound::Open (string file) {
-	chunk = Mix_LoadWAV(file.c_str());
-	if (chunk == nullptr) {
-		throw std::runtime_error(SDL_GetError());
-	}
+	chunk = Resources::GetSound(file);
 }
 
 void Sound::Play (int times) {
