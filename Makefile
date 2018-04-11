@@ -63,7 +63,8 @@ endif
 print-% : ; @echo $* = $($*)
 
 debug: DIRECTIVES += -ggdb -O0
-debug: all
+debug: RUN := gdb $(RUN)
+debug: all run
 
 release: DIRECTIVES += -Ofast -mtune=native
 release: all

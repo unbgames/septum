@@ -25,9 +25,12 @@ void TileMap::Load (string file) {
 		mapDepth = std::stoi(aux);
 
 		string tile;
-		while (std::getline(tileFile, tile, ',')) {
+		int count = 0;
+		while (std::getline(tileFile, tile, ',')
+				&& count < (mapWidth * mapHeight * mapDepth)) {
 			// Subtracts one for convenience
 			tileMatrix.push_back(std::stoi(tile) - 1);
+			count++;
 		}
 	}
 	else {
@@ -48,8 +51,11 @@ int& TileMap::At (int x, int y, int z) {
 void TileMap::RenderLayer (int layer, int cameraX, int cameraY) {
 	for (int y = 0; y < mapHeight; ++y) {
 		for (int x = 0; x < mapWidth; ++x) {
-			tileSet->RenderTile(At(x, y, layer), tileSet->GetTileWidth() * x,
-					tileSet->GetTileHeight() * y);
+			int index = At(x, y, layer);
+			if (index >= 0) {
+				tileSet->RenderTile(index, tileSet->GetTileWidth() * x,
+						tileSet->GetTileHeight() * y);
+			}
 		}
 	}
 }

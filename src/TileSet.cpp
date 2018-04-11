@@ -1,5 +1,5 @@
-#pragma once
 #include "TileSet.h"
+#include "Sprite.h"
 
 TileSet::TileSet (int tileWidth, int tileHeight, string file,
 		GameObject& associated) :
@@ -10,6 +10,8 @@ TileSet::TileSet (int tileWidth, int tileHeight, string file,
 
 void TileSet::RenderTile (unsigned int index, float x, float y) {
 	if (index < (rows * columns) - 1) {
+		tileSet.SetClip((index % columns) * tileWidth,
+				(index / columns) * tileHeight, tileWidth, tileHeight);
 		tileSet.Render(x, y);
 	}
 }

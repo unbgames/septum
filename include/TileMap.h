@@ -8,13 +8,13 @@
 using std::string;
 using std::vector;
 
-class TileMap: Component {
+class TileMap: public Component {
 	public:
 		TileMap (GameObject& associated, string file, TileSet* tileSet);
 		void Load (string file);
 		void SetTileSet (TileSet* tileSet);
 		int& At (int x, int y, int z = 0);
-		void RenderLayer (int layer, int cameraX = 0, int cameraY = 1);
+		void RenderLayer (int layer, int cameraX = 0, int cameraY = 0);
 
 		int GetWidth () const;
 		int GetHeight () const;

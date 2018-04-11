@@ -1,6 +1,8 @@
 #define INCLUDE_SDL
 #include "SDL_include.h"
 #include "State.h"
+#include "TileMap.h"
+#include "TileSet.h"
 #include "Sprite.h"
 #include "Face.h"
 #include "Vec2.h"
@@ -60,8 +62,14 @@ void State::Input () {
 
 void State::LoadAssets () {
 	GameObject *bg = new GameObject();
-	bg->AddComponent(new Sprite(*bg, "assets/img/ocean.jpg"));
+	bg->AddComponent(
+			new Sprite(*bg, "assets/img/ocean.jpg"));
+	GameObject *map = new GameObject();
+	map->AddComponent(
+			new TileMap(*map, "assets/map/tileMap.txt",
+					new TileSet(64, 64, "assets/img/tileset.png", *map)));
 	objectArray.emplace_back(bg);
+	objectArray.emplace_back(map);
 	music.Open("assets/audio/stageState.ogg");
 }
 
