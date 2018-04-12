@@ -27,7 +27,7 @@ class Face: public Component {
 		void Update (float dt);
 
 		/**
-		 *
+		 * Renders the face
 		 */
 		void Render ();
 	private:
