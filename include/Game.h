@@ -36,6 +36,11 @@ class Game {
 		 * @return game instance
 		 */
 		static Game& GetInstance ();
+
+		/**
+		 * Returns frame time interval in seconds
+		 * @return delta time
+		 */
 		float GetDeltaTime () const;
 
 	private:
@@ -53,5 +58,8 @@ class Game {
 		State* state;
 		int frameStart;
 		float dt;
+		/**
+		 * Calculates frame time interval
+		 */
 		void CalculateDeltaTime ();
 };
