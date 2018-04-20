@@ -7,6 +7,7 @@
 #include "Face.h"
 #include "Vec2.h"
 #include "Sound.h"
+#include "InputManager.h"
 #include <math.h>
 
 State::State () {
@@ -20,43 +21,18 @@ State::~State () {
 }
 
 void State::Input () {
-	SDL_Event event;
-	int mouseX, mouseY;
+	InputManager& inputManager = InputManager::GetInstance();
 
-	// Obtenha as coordenadas do mouse
-	SDL_GetMouseState(&mouseX, &mouseY);
+	quitRequested = inputManager.QuitRequested();
 
-	// SDL_PollEvent retorna 1 se encontrar eventos, zero caso contrário
-	while (SDL_PollEvent(&event)) {
-
-		if (event.type == SDL_QUIT) {
-			quitRequested = true;
-		}
-
-		if (event.type == SDL_MOUSEBUTTONDOWN) {
-			for (int i = objectArray.size() - 1; i >= 0; --i) {
-				GameObject* go = (GameObject*) objectArray[i].get();
-
-				if (go->box.Contains(Vec2((float) mouseX, (float) mouseY))) {
-					Face* face = (Face*) go->GetComponent("Face");
-					if (nullptr != face) {
-						face->Damage(std::rand() % 10 + 10);
-						break;
-					}
-				}
-			}
-		}
-		if (event.type == SDL_KEYDOWN) {
-			if (event.key.keysym.sym == SDLK_ESCAPE) {
-				quitRequested = true;
-			}
-			else {
-				Vec2 objPos = Vec2(200, 0).GetRotated(
-						-M_PI + M_PI * (rand() % 1001) / 500.0)
-						+ Vec2(mouseX, mouseY);
-				AddObject((int) objPos.x, (int) objPos.y);
-			}
-		}
+	if (inputManager.KeyPress(ESCAPE_KEY)) {
+		quitRequested = true;
+	}
+	if (inputManager.KeyPress(' ')) {
+		Vec2 objPos = Vec2(200, 0).GetRotated(
+				-M_PI + M_PI * (rand() % 1001) / 500.0)
+				+ Vec2(inputManager.GetMouseX(), inputManager.GetMouseY());
+		AddObject((int) objPos.x, (int) objPos.y);
 	}
 }
 

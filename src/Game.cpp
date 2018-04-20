@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include "Game.h"
 #include "Resources.h"
+#include "InputManager.h"
 
 using std::string;
 
@@ -89,6 +90,7 @@ void Game::Run () {
 	// Waits for quit signal
 	while (!state->QuitRequested()) {
 		//Renders current State
+		InputManager::GetInstance().Update();
 		state->Update(0);
 		state->Render();
 		SDL_RenderPresent(renderer);
