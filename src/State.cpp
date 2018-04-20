@@ -9,6 +9,7 @@
 #include "Sound.h"
 #include "InputManager.h"
 #include "Camera.h"
+#include "CameraFollower.h"
 #include <math.h>
 
 State::State () {
@@ -28,6 +29,7 @@ void State::LoadAssets () {
 	GameObject *bg = new GameObject();
 	bg->AddComponent(
 			new Sprite(*bg, "assets/img/ocean.jpg"));
+	bg->AddComponent(new CameraFollower(*bg));
 	GameObject *map = new GameObject();
 	map->AddComponent(
 			new TileMap(*map, "assets/map/tileMap.txt",
