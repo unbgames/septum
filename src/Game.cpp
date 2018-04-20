@@ -31,6 +31,10 @@ Game::Game (string title, int width, int height) {
 		throw std::runtime_error(SDL_GetError());
 	}
 
+	dt = 0;
+
+	frameStart = 0;
+
 	// Initializes SDL_image
 	if (IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF)
 			!= (IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF)) {
@@ -86,12 +90,23 @@ State& Game::GetState () const {
 	return *state;
 }
 
+void Game::CalculateDeltaTime () {
+	int newFrame = SDL_GetTicks();
+	dt = (newFrame - frameStart) / 1000.0;
+
+	frameStart = newFrame;
+}
+
+float Game::GetDeltaTime () const {
+	return dt;
+}
+
 void Game::Run () {
 	// Waits for quit signal
 	while (!state->QuitRequested()) {
-		//Renders current State
+		CalculateDeltaTime();
 		InputManager::GetInstance().Update();
-		state->Update(0);
+		state->Update(dt);
 		state->Render();
 		SDL_RenderPresent(renderer);
 		SDL_Delay(33);
