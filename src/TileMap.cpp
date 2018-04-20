@@ -4,6 +4,8 @@
 #include <stdexcept>
 #include <string>
 
+#define PARALLAX_FACTOR 0.7
+
 using std::ifstream;
 using std::string;
 
@@ -55,8 +57,10 @@ void TileMap::RenderLayer (int layer, int cameraX, int cameraY) {
 			int index = At(x, y, layer);
 			if (index >= 0) {
 				tileSet->RenderTile(index,
-						(tileSet->GetTileWidth() * x) - cameraX,
-						(tileSet->GetTileHeight() * y) - cameraY);
+						(tileSet->GetTileWidth() * x) - cameraX
+								- cameraX * layer * PARALLAX_FACTOR,
+						(tileSet->GetTileHeight() * y) - cameraY
+								- cameraY * layer * PARALLAX_FACTOR);
 			}
 		}
 	}
