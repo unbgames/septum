@@ -3,6 +3,7 @@
 #include "Sprite.h"
 #include "Game.h"
 #include "Component.h"
+#include "Camera.h"
 #include <stdexcept>
 #include "Resources.h"
 
@@ -46,7 +47,8 @@ void Sprite::Render (float x, float y) {
 }
 
 void Sprite::Render () {
-	Sprite::Render(associated.box.x, associated.box.y);
+	Sprite::Render(associated.box.x - Camera::pos.x,
+			associated.box.y - Camera::pos.y);
 }
 
 int Sprite::GetHeight () const {

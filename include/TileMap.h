@@ -31,6 +31,8 @@ class TileMap: public Component {
 		 */
 		void Render ();
 
+		void Render (int cameraX, int cameraY);
+
 		/**
 		 * Checks if the Component is from the type TileMap
 		 * @param type type to be checked

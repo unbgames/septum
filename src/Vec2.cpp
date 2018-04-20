@@ -37,6 +37,14 @@ Vec2& Vec2::operator*= (const int number) {
 	y *= number;
 	return *this;
 }
+Vec2 Vec2::operator* (const float number) const {
+	return Vec2(x * number, y * number);
+}
+Vec2& Vec2::operator*= (const float number) {
+	x *= number;
+	y *= number;
+	return *this;
+}
 float Vec2::GetDistance (const Vec2 other) const {
 	Vec2 diff = *this - other;
 	return diff.GetLength();

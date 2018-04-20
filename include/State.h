@@ -41,6 +41,7 @@ class State {
 		void AddObject (int mouseX, int mouseY);
 	private:
 		Music music;
+		GameObject map;
 		bool quitRequested;
 		vector<unique_ptr<GameObject>> objectArray;
 };

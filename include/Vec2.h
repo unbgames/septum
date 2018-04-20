@@ -31,6 +31,8 @@ class Vec2 {
 		Vec2& operator-= (const Vec2 other);
 		Vec2 operator* (const int number) const;
 		Vec2& operator*= (const int number);
+		Vec2 operator* (const float number) const;
+		Vec2& operator*= (const float number);
 
 		/**
 		 * Returns the distance between two points

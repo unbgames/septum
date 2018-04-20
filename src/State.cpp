@@ -8,12 +8,16 @@
 #include "Vec2.h"
 #include "Sound.h"
 #include "InputManager.h"
+#include "Camera.h"
 #include <math.h>
 
 State::State () {
 	quitRequested = false;
 	LoadAssets();
 	music.Play();
+	map.AddComponent(
+			new TileMap(map, "assets/map/tileMap.txt",
+					new TileSet(64, 64, "assets/img/tileset.png", map)));
 }
 
 State::~State () {
@@ -38,15 +42,19 @@ void State::Update (float dt) {
 
 	quitRequested = inputManager.QuitRequested();
 
+	Camera::Update(dt);
+
 	if (inputManager.KeyPress(ESCAPE_KEY)) {
 		quitRequested = true;
 	}
 	if (inputManager.KeyPress(' ')) {
 		Vec2 objPos = Vec2(200, 0).GetRotated(
 				-M_PI + M_PI * (rand() % 1001) / 500.0)
-				+ Vec2(inputManager.GetMouseX(), inputManager.GetMouseY());
+				+ (Vec2(inputManager.GetMouseX(), inputManager.GetMouseY())
+						+ Camera::pos);
 		AddObject((int) objPos.x, (int) objPos.y);
 	}
+	map.Update(dt);
 	for (int i = 0; i < objectArray.size(); ++i) {
 		objectArray[i]->Update(dt);
 	}
@@ -60,6 +68,7 @@ void State::Update (float dt) {
 }
 
 void State::Render () {
+	map.Render();
 	for (auto& go : objectArray) {
 		go->Render();
 	}

@@ -1,6 +1,7 @@
 #include "Face.h"
 #include "Sound.h"
 #include "InputManager.h"
+#include "Camera.h"
 Face::Face (GameObject& associated) :
 		Component(associated) {
 	hitpoints = 30;
@@ -21,7 +22,7 @@ void Face::Update (float dt) {
 	if (inputManager.MousePress(LEFT_MOUSE_BUTTON)) {
 		if (associated.box.Contains(
 				Vec2((float) inputManager.GetMouseX(),
-						(float) inputManager.GetMouseY()))) {
+						(float) inputManager.GetMouseY()) + Camera::pos)) {
 			Damage(std::rand() % 10 + 10);
 		}
 	}
