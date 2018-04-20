@@ -32,10 +32,6 @@ class State {
 		 * Renders state on window
 		 */
 		void Render ();
-		/**
-		 * Deals with user input
-		 */
-		void Input ();
 
 		/**
 		 * Adds a Penguin Object in position

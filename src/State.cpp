@@ -20,22 +20,6 @@ State::~State () {
 	objectArray.clear();
 }
 
-void State::Input () {
-	InputManager& inputManager = InputManager::GetInstance();
-
-	quitRequested = inputManager.QuitRequested();
-
-	if (inputManager.KeyPress(ESCAPE_KEY)) {
-		quitRequested = true;
-	}
-	if (inputManager.KeyPress(' ')) {
-		Vec2 objPos = Vec2(200, 0).GetRotated(
-				-M_PI + M_PI * (rand() % 1001) / 500.0)
-				+ Vec2(inputManager.GetMouseX(), inputManager.GetMouseY());
-		AddObject((int) objPos.x, (int) objPos.y);
-	}
-}
-
 void State::LoadAssets () {
 	GameObject *bg = new GameObject();
 	bg->AddComponent(
@@ -50,7 +34,19 @@ void State::LoadAssets () {
 }
 
 void State::Update (float dt) {
-	Input();
+	InputManager& inputManager = InputManager::GetInstance();
+
+	quitRequested = inputManager.QuitRequested();
+
+	if (inputManager.KeyPress(ESCAPE_KEY)) {
+		quitRequested = true;
+	}
+	if (inputManager.KeyPress(' ')) {
+		Vec2 objPos = Vec2(200, 0).GetRotated(
+				-M_PI + M_PI * (rand() % 1001) / 500.0)
+				+ Vec2(inputManager.GetMouseX(), inputManager.GetMouseY());
+		AddObject((int) objPos.x, (int) objPos.y);
+	}
 	for (int i = 0; i < objectArray.size(); ++i) {
 		objectArray[i]->Update(dt);
 	}

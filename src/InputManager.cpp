@@ -25,7 +25,7 @@ void InputManager::Update () {
 	SDL_GetMouseState(&mouseX, &mouseY);
 
 	quitRequested = false;
-
+	updateCounter++;
 	// SDL_PollEvent retorna 1 se encontrar eventos, zero caso contrário
 	while (SDL_PollEvent(&event)) {
 
@@ -52,6 +52,7 @@ void InputManager::Update () {
 			keyUpdate[event.key.keysym.sym] = updateCounter;
 		}
 	}
+
 }
 
 bool InputManager::KeyPress (int key) {
