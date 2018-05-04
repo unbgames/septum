@@ -70,9 +70,18 @@ void Alien::Update (float dt) {
 			}
 		}
 		else if (task.type == Action::SHOOT) {
-			int attacker = rand() % nMinions;
+			shared_ptr<GameObject> attacker;
+			float minDistance = HUGE_VALF;
+			for (auto& it : minionArray) {
+				float distance = it.lock()->box.GetCenter().GetDistance(
+						task.pos);
+				if (distance < minDistance) {
+					minDistance = distance;
+					attacker = it.lock();
+				}
+			}
 			Minion* minion =
-					(Minion*) (minionArray[attacker].lock()->GetComponent(
+					(Minion*) (attacker->GetComponent(
 							"Minion"));
 			minion->Shoot(task.pos);
 			taskQueue.pop();
