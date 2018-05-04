@@ -4,18 +4,17 @@
 #include "TileMap.h"
 #include "TileSet.h"
 #include "Sprite.h"
-#include "Face.h"
 #include "Vec2.h"
 #include "Sound.h"
 #include "InputManager.h"
 #include "Camera.h"
 #include "CameraFollower.h"
 #include <math.h>
+#include <algorithm>
 
 State::State () {
+	started = false;
 	quitRequested = false;
-	LoadAssets();
-	music.Play();
 	map.AddComponent(
 			new TileMap(map, "assets/map/tileMap.txt",
 					new TileSet(64, 64, "assets/img/tileset.png", map)));
@@ -23,6 +22,15 @@ State::State () {
 
 State::~State () {
 	objectArray.clear();
+}
+
+void State::Start () {
+	LoadAssets();
+	for (auto& go : objectArray) {
+		go->Start();
+	}
+	music.Play();
+	started = true;
 }
 
 void State::LoadAssets () {
@@ -49,19 +57,12 @@ void State::Update (float dt) {
 	if (inputManager.KeyPress(ESCAPE_KEY)) {
 		quitRequested = true;
 	}
-	if (inputManager.KeyPress(' ')) {
-		Vec2 objPos = Vec2(200, 0).GetRotated(
-				-M_PI + M_PI * (rand() % 1001) / 500.0)
-				+ (Vec2(inputManager.GetMouseX(), inputManager.GetMouseY())
-						+ Camera::pos);
-		AddObject((int) objPos.x, (int) objPos.y);
-	}
 	map.Update(dt);
 	for (int i = 0; i < objectArray.size(); ++i) {
 		objectArray[i]->Update(dt);
 	}
 
-	vector<unique_ptr<GameObject>>::iterator it = objectArray.begin();
+	vector<shared_ptr<GameObject>>::iterator it = objectArray.begin();
 	for (int i = objectArray.size() - 1; i >= 0; --i) {
 		if (objectArray[i]->IsDead()) {
 			objectArray.erase(it + i);
@@ -80,17 +81,21 @@ bool State::QuitRequested () const {
 	return quitRequested;
 }
 
-void State::AddObject (int mouseX, int mouseY) {
-	GameObject* go = new GameObject();
-	Sprite* spr = new Sprite(*go, "assets/img/penguinface.png");
-	go->AddComponent(spr);
-	go->box.x = mouseX - (spr->GetWidth() / 2);
-	go->box.y = mouseY - (spr->GetHeight() / 2);
-	go->box.h = spr->GetHeight();
-	go->box.w = spr->GetWidth();
+weak_ptr<GameObject> State::AddObject (GameObject* go) {
+	shared_ptr<GameObject> ptr(go);
+	objectArray.push_back(ptr);
+	if (started) {
+		go->Start();
+	}
+	return weak_ptr<GameObject>(ptr);
+}
 
-	go->AddComponent(new Sound(*go, "assets/audio/boom.wav"));
-	go->AddComponent(new Face(*go));
+weak_ptr<GameObject> State::GetObjectPtr (GameObject* go) {
+	for (auto& it : objectArray) {
+		if (it.get() == go) {
+			return std::weak_ptr<GameObject>(it);
+		}
+	}
 
-	objectArray.emplace_back(go);
+	return std::weak_ptr<GameObject>();
 }

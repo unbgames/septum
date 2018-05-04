@@ -17,6 +17,8 @@ class GameObject {
 		GameObject();
 		~GameObject();
 
+		void Start ();
+
 		/**
 		 * Update all GameObject components
 		 * @param dt
@@ -67,4 +69,5 @@ class GameObject {
 	private:
 		vector<unique_ptr<Component>> components;
 		bool isDead;
+		bool started;
 };

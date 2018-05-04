@@ -8,6 +8,7 @@ using std::string;
 
 GameObject::GameObject () {
 	isDead = false;
+	started = false;
 }
 
 GameObject::~GameObject () {
@@ -35,6 +36,9 @@ void GameObject::RequestDelete () {
 }
 
 void GameObject::AddComponent (Component* cpt) {
+	if (started) {
+		cpt->Start();
+	}
 	components.emplace_back(cpt);
 }
 
@@ -47,6 +51,13 @@ void GameObject::RemoveComponent (Component* cpt) {
 	if (it != components.end()) {
 		components.erase(it);
 	}
+}
+
+void GameObject::Start () {
+	for (auto& cpt : components) {
+		cpt->Start();
+	}
+	started = true;
 }
 
 Component* GameObject::GetComponent (string type) const {

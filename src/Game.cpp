@@ -102,7 +102,7 @@ float Game::GetDeltaTime () const {
 }
 
 void Game::Run () {
-	// Waits for quit signal
+	state->Start();
 	while (!state->QuitRequested()) {
 		CalculateDeltaTime();
 		InputManager::GetInstance().Update();

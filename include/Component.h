@@ -30,6 +30,8 @@ class Component {
 		 */
 		bool virtual Is (string type) const = 0;
 
+		void virtual Start ();
+
 	protected:
 		GameObject& associated;
 };

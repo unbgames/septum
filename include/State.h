@@ -5,7 +5,8 @@
 #include <memory>
 
 using std::vector;
-using std::unique_ptr;
+using std::shared_ptr;
+using std::weak_ptr;
 
 /**
  * Class of game current state
@@ -33,15 +34,22 @@ class State {
 		 */
 		void Render ();
 
-		/**
-		 * Adds a Penguin Object in position
-		 * @param mouseX x-coordinate of penguin
-		 * @param mouseY y-coordinate of penguin
-		 */
-		void AddObject (int mouseX, int mouseY);
+//		/**
+//		 * Adds a Penguin Object in position
+//		 * @param mouseX x-coordinate of penguin
+//		 * @param mouseY y-coordinate of penguin
+//		 */
+//		void AddObject (int mouseX, int mouseY);
+
+		void Start ();
+
+		weak_ptr<GameObject> AddObject (GameObject* go);
+
+		weak_ptr<GameObject> GetObjectPtr (GameObject* go);
 	private:
 		Music music;
 		GameObject map;
 		bool quitRequested;
-		vector<unique_ptr<GameObject>> objectArray;
+		bool started;
+		vector<shared_ptr<GameObject>> objectArray;
 };
