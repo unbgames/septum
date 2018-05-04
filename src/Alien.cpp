@@ -8,7 +8,7 @@
 #define ALIEN_ROTATION -0.6
 
 Alien::Alien (GameObject& associated, int nMinions) :
-		Component(associated), hp(30), speed(100, 100), nMinions(nMinions) {
+		Component(associated), speed(100, 100), hp(30), nMinions(nMinions) {
 	Sprite* spr = new Sprite(associated, "assets/img/alien.png");
 	associated.AddComponent(spr);
 	associated.box.h = spr->GetHeight();

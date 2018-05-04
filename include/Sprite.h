@@ -73,8 +73,17 @@ class Sprite : public Component{
 		 */
 		void Update (float dt);
 
+		/**
+		 * Sets the scale of the Sprite
+		 * @param scaleX horizontal scale
+		 * @param scaleY vertical scale
+		 */
 		void SetScale (float scaleX, float scaleY);
 
+		/**
+		 * Gets the current scale of the Sprite
+		 * @return Sprite scale
+		 */
 		Vec2 GetScale () const;
 
 	private:

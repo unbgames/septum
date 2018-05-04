@@ -17,6 +17,9 @@ class GameObject {
 		GameObject();
 		~GameObject();
 
+		/**
+		 * Starts all components of the GameObject
+		 */
 		void Start ();
 
 		/**

@@ -4,8 +4,8 @@
 
 Bullet::Bullet (GameObject& associated, float angle, float speed, int damage,
 		float maxDistance, string sprite) :
-		Component(associated), damage(damage), distanceLeft(maxDistance), speed(
-				speed, 0) {
+		Component(associated), speed(speed, 0), distanceLeft(maxDistance), damage(
+				damage) {
 	Sprite* spr = new Sprite(associated, sprite);
 	associated.AddComponent(spr);
 	associated.box.h = spr->GetHeight();
@@ -37,7 +37,7 @@ void Bullet::Render () {
 bool Bullet::Is (string type) const {
 	return type == "Bullet";
 }
-int Bullet::GetDamage () {
+int Bullet::GetDamage () const {
 	return damage;
 }
 

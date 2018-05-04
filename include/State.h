@@ -34,17 +34,23 @@ class State {
 		 */
 		void Render ();
 
-//		/**
-//		 * Adds a Penguin Object in position
-//		 * @param mouseX x-coordinate of penguin
-//		 * @param mouseY y-coordinate of penguin
-//		 */
-//		void AddObject (int mouseX, int mouseY);
-
+		/**
+		 * Starts all objects of the State
+		 */
 		void Start ();
 
+		/**
+		 * Adds an object to the State
+		 * @param go object to be added
+		 * @return weak pointer reference to the game object
+		 */
 		weak_ptr<GameObject> AddObject (GameObject* go);
 
+		/**
+		 * Returns a weak pointer to the passed GameObject
+		 * @param go GameObject
+		 * @return weak pointer
+		 */
 		weak_ptr<GameObject> GetObjectPtr (GameObject* go);
 	private:
 		Music music;
