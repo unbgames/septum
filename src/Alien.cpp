@@ -5,6 +5,8 @@
 #include "Minion.h"
 #include "Game.h"
 
+#define ALIEN_ROTATION -0.6
+
 Alien::Alien (GameObject& associated, int nMinions) :
 		Component(associated), hp(30), speed(100, 100), nMinions(nMinions) {
 	Sprite* spr = new Sprite(associated, "assets/img/alien.png");
@@ -36,6 +38,7 @@ Alien::Action::Action (ActionType type, float x, float y) :
 }
 
 void Alien::Update (float dt) {
+	associated.angleDeg += ALIEN_ROTATION;
 	InputManager& inputManager = InputManager::GetInstance();
 	if (inputManager.MousePress(LEFT_MOUSE_BUTTON)) {
 		taskQueue.emplace(Action::SHOOT,

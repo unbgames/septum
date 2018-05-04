@@ -66,6 +66,8 @@ class GameObject {
 		 */
 		Rect box;
 
+		double angleDeg = 0;
+
 	private:
 		vector<unique_ptr<Component>> components;
 		bool isDead;

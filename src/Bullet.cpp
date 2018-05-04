@@ -1,5 +1,6 @@
 #include "Bullet.h"
 #include "Sprite.h"
+#include <math.h>
 
 Bullet::Bullet (GameObject& associated, float angle, float speed, int damage,
 		float maxDistance, string sprite) :
@@ -9,6 +10,7 @@ Bullet::Bullet (GameObject& associated, float angle, float speed, int damage,
 	associated.AddComponent(spr);
 	associated.box.h = spr->GetHeight();
 	associated.box.w = spr->GetWidth();
+	associated.angleDeg = (180 / M_PI) * angle;
 	this->speed = this->speed.GetRotated(angle);
 
 }
