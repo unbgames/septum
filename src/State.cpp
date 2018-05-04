@@ -9,7 +9,6 @@
 #include "InputManager.h"
 #include "Camera.h"
 #include "CameraFollower.h"
-#include <math.h>
 #include <algorithm>
 #include "Alien.h"
 
@@ -52,7 +51,7 @@ void State::LoadAssets () {
 	GameObject *alien = new GameObject();
 	alien->box.x = 512;
 	alien->box.y = 300;
-	alien->AddComponent(new Alien(*alien, 0));
+	alien->AddComponent(new Alien(*alien, 7));
 	objectArray.emplace_back(alien);
 }
 

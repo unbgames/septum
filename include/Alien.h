@@ -31,6 +31,7 @@ class Alien: public Component {
 		
 		Vec2 speed;
 		int hp;
+		int nMinions;
 		queue<Action> taskQueue;
 		vector<weak_ptr<GameObject>> minionArray;
 

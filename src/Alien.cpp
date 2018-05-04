@@ -2,9 +2,11 @@
 #include "Sprite.h"
 #include "InputManager.h"
 #include "Camera.h"
+#include "Minion.h"
+#include "Game.h"
 
 Alien::Alien (GameObject& associated, int nMinions) :
-		Component(associated), hp(30), speed(50, 50) {
+		Component(associated), hp(30), speed(50, 50), nMinions(nMinions) {
 	Sprite* spr = new Sprite(associated, "assets/img/alien.png");
 	associated.AddComponent(spr);
 	associated.box.h = spr->GetHeight();
@@ -12,11 +14,20 @@ Alien::Alien (GameObject& associated, int nMinions) :
 }
 
 void Alien::Start () {
-
+	for (int m = 0; m < nMinions; ++m) {
+		float offset = 2 * M_PI * m / nMinions;
+		GameObject* go = new GameObject();
+		go->AddComponent(
+				new Minion(*go,
+						Game::GetInstance().GetState().GetObjectPtr(
+								&associated), offset));
+		minionArray.emplace_back(
+				Game::GetInstance().GetState().AddObject(go));
+	}
 }
 
 Alien::~Alien () {
-
+	minionArray.clear();
 }
 
 Alien::Action::Action (ActionType type, float x, float y) :
