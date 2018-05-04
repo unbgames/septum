@@ -20,7 +20,7 @@ class Vec2 {
 		/**
 		 * Return the unit vector of a vector
 		 *
-		 * An unit vector is a vector which has the same angle as nother vector but magnitude of 1
+		 * An unit vector is a vector which has the same angle as another vector but magnitude of 1
 		 * @return unit vector
 		 */
 		Vec2 GetUnit () const;

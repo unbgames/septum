@@ -11,6 +11,7 @@
 #include "CameraFollower.h"
 #include <math.h>
 #include <algorithm>
+#include "Alien.h"
 
 State::State () {
 	started = false;
@@ -38,13 +39,21 @@ void State::LoadAssets () {
 	bg->AddComponent(
 			new Sprite(*bg, "assets/img/ocean.jpg"));
 	bg->AddComponent(new CameraFollower(*bg));
+	objectArray.emplace_back(bg);
+
 	GameObject *map = new GameObject();
 	map->AddComponent(
 			new TileMap(*map, "assets/map/tileMap.txt",
 					new TileSet(64, 64, "assets/img/tileset.png", *map)));
-	objectArray.emplace_back(bg);
 	objectArray.emplace_back(map);
+
 	music.Open("assets/audio/stageState.ogg");
+
+	GameObject *alien = new GameObject();
+	alien->box.x = 512;
+	alien->box.y = 300;
+	alien->AddComponent(new Alien(*alien, 0));
+	objectArray.emplace_back(alien);
 }
 
 void State::Update (float dt) {
