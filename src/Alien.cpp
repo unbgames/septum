@@ -6,7 +6,7 @@
 #include "Game.h"
 
 Alien::Alien (GameObject& associated, int nMinions) :
-		Component(associated), hp(30), speed(50, 50), nMinions(nMinions) {
+		Component(associated), hp(30), speed(100, 100), nMinions(nMinions) {
 	Sprite* spr = new Sprite(associated, "assets/img/alien.png");
 	associated.AddComponent(spr);
 	associated.box.h = spr->GetHeight();
@@ -53,9 +53,9 @@ void Alien::Update (float dt) {
 			if (task.pos.GetDistance(associated.box.GetCenter())
 					> speed.GetLength() * dt) {
 				Vec2 dir = (task.pos - associated.box.GetCenter()).GetUnit();
-
-				dir.x *= speed.x;
-				dir.y *= speed.y;
+				Vec2 dirUnit = dir.GetUnit();
+				dir.x *= speed.x * abs(dirUnit.x);
+				dir.y *= speed.y * abs(dirUnit.y);
 
 				associated.box.x += (dir.x * dt);
 				associated.box.y += (dir.y * dt);
@@ -67,6 +67,11 @@ void Alien::Update (float dt) {
 			}
 		}
 		else if (task.type == Action::SHOOT) {
+			int attacker = rand() % nMinions;
+			Minion* minion =
+					(Minion*) (minionArray[attacker].lock()->GetComponent(
+							"Minion"));
+			minion->Shoot(task.pos);
 			taskQueue.pop();
 		}
 	}
