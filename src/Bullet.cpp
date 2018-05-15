@@ -3,10 +3,10 @@
 #include <math.h>
 
 Bullet::Bullet (GameObject& associated, float angle, float speed, int damage,
-		float maxDistance, string sprite) :
+		float maxDistance, string sprite, int frameCount, float frameTime) :
 		Component(associated), speed(speed, 0), distanceLeft(maxDistance), damage(
 				damage) {
-	Sprite* spr = new Sprite(associated, sprite);
+	Sprite* spr = new Sprite(associated, sprite, frameCount, frameTime);
 	associated.AddComponent(spr);
 	associated.box.h = spr->GetHeight();
 	associated.box.w = spr->GetWidth();

@@ -13,7 +13,8 @@ class Bullet: public Component {
 		 * @param sprite file path to the projectile sprite
 		 */
 		Bullet (GameObject& associated, float angle, float speed, int damage,
-				float maxDistance, string sprite);
+				float maxDistance, string sprite, int frameCount = 1,
+				float frameTime = 1);
 		/**
 		 * Updates component state
 		 * @param dt

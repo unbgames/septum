@@ -14,8 +14,11 @@ Sprite::Sprite (GameObject& associated) :
 	texture = nullptr;
 }
 
-Sprite::Sprite (GameObject& associated, string file) :
+Sprite::Sprite (GameObject& associated, string file, int frameCount,
+		float frameTime) :
 		Sprite(associated) {
+	this->frameCount = frameCount;
+	this->frameTime = frameTime;
 	Open(file);
 }
 
@@ -26,7 +29,7 @@ Sprite::~Sprite () {
 void Sprite::Open (string file) {
 	texture = Resources::GetImage(file);
 	SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
-	SetClip(0, 0, width, height);
+	SetClip(0, 0, width / frameCount, height);
 }
 
 void Sprite::SetClip (int x, int y, int w, int h) {
@@ -56,7 +59,7 @@ int Sprite::GetHeight () const {
 }
 
 int Sprite::GetWidth () const {
-	return width * scale.x;
+	return (width * scale.x) / frameCount;
 }
 
 bool Sprite::IsOpen () const {
@@ -64,6 +67,17 @@ bool Sprite::IsOpen () const {
 }
 
 void Sprite::Update (float dt) {
+
+	timeElapsed += dt;
+
+	if (timeElapsed > frameTime) {
+		if (currentFrame < frameCount - 1) {
+			SetFrame(currentFrame + 1);
+		}
+		else {
+			SetFrame(0);
+		}
+	}
 
 }
 
@@ -77,7 +91,7 @@ void Sprite::SetScale (float scaleX, float scaleY) {
 
 	Vec2 currentCenter = associated.box.GetCenter();
 
-	associated.box.w = width * scale.x;
+	associated.box.w = (width / frameCount) * scale.x;
 	associated.box.h = height * scale.y;
 	associated.box.x = currentCenter.x - associated.box.w / 2;
 	associated.box.y = currentCenter.y - associated.box.h / 2;
@@ -85,5 +99,30 @@ void Sprite::SetScale (float scaleX, float scaleY) {
 
 Vec2 Sprite::GetScale () const {
 	return scale;
+}
+
+void Sprite::SetFrame (int frame) {
+
+	if (frame < 0 || frame >= frameCount) {
+		frame = 0;
+	}
+
+	currentFrame = frame;
+
+	SetClip(currentFrame * width / frameCount, clipRect.y, width / frameCount,
+			height);
+
+	timeElapsed = 0;
+
+}
+void Sprite::SetFrameCount (int frameCount) {
+
+	this->frameCount = frameCount;
+	SetScale(scale.x, scale.y);
+	SetFrame(0);
+
+}
+void Sprite::SetFrameTime (float frameTime) {
+	this->frameTime = frameTime;
 }
 

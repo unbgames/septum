@@ -19,7 +19,8 @@ class Sprite : public Component{
 		 * @param associated GameObjected that encapsulates the sprite
 		 * @param file image file
 		 */
-		Sprite (GameObject& associated, string file);
+		Sprite (GameObject& associated, string file, int frameCount = 1,
+				float frameTime = 1);
 		~Sprite ();
 
 		/**
@@ -86,10 +87,18 @@ class Sprite : public Component{
 		 */
 		Vec2 GetScale () const;
 
+		void SetFrame (int frame);
+		void SetFrameCount (int frameCount);
+		void SetFrameTime (float frameTime);
+
 	private:
 		SDL_Texture* texture;
 		int width = 0;
 		int height = 0;
 		SDL_Rect clipRect;
 		Vec2 scale;
+		int frameCount = 1;
+		int currentFrame = 0;
+		float timeElapsed = 0;
+		float frameTime = 1;
 };
