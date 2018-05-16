@@ -9,6 +9,7 @@
 #include "Collider.h"
 #include "Bullet.h"
 #include "Camera.h"
+#include "Sound.h"
 
 #define PENGUIN_ACCELERATION 6
 #define PENGUIN_SPEED_LIMIT 300
@@ -19,7 +20,7 @@ using std::weak_ptr;
 PenguinBody* PenguinBody::player = nullptr;
 
 PenguinBody::PenguinBody (GameObject& associated) :
-		Component(associated), hp(70), angle(0), linearSpeed(0) {
+		Component(associated), hp(50), angle(0), linearSpeed(0) {
 	player = this;
 	Sprite* spr = new Sprite(associated, "assets/img/penguin.png");
 	associated.AddComponent(spr);
@@ -79,6 +80,19 @@ void PenguinBody::Update (float dt) {
 		pcannon.lock()->box.y += (dir.y * dt);
 	}
 	if (hp <= 0) {
+
+		GameObject* go = new GameObject();
+		go->box.x = associated.box.x;
+		go->box.y = associated.box.y;
+		Game::GetInstance().GetState().AddObject(go);
+		go->AddComponent(
+				new Sprite(*go, "assets/img/penguindeath.png", 5, 0.3, 1.5));
+		
+		Sound* sound = new Sound(*go, "assets/audio/boom.wav");
+		go->AddComponent(sound);
+
+		sound->Play();
+
 		Camera::Unfollow();
 		associated.RequestDelete();
 		pcannon.lock()->RequestDelete();

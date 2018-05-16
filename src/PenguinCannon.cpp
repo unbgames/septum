@@ -70,7 +70,7 @@ void PenguinCannon::Shoot () {
 	
 	GameObject* go = new GameObject();
 	go->AddComponent(
-			new Bullet(*go, angle, 300, 5, 600, "assets/img/penguinbullet.png",
+			new Bullet(*go, angle, 300, 20, 600, "assets/img/penguinbullet.png",
 					false, 4, 0.5));
 	Vec2 cannonCenter = associated.box.GetCenter()
 			+ Vec2(CANNON_DISTANCE, 0).GetRotated(angle);

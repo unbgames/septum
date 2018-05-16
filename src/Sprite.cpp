@@ -15,10 +15,11 @@ Sprite::Sprite (GameObject& associated) :
 }
 
 Sprite::Sprite (GameObject& associated, string file, int frameCount,
-		float frameTime) :
+		float frameTime, float secondsToSelfDestruct) :
 		Sprite(associated) {
 	this->frameCount = frameCount;
 	this->frameTime = frameTime;
+	this->secondsToSelfDestruct = secondsToSelfDestruct;
 	Open(file);
 }
 
@@ -67,6 +68,13 @@ bool Sprite::IsOpen () const {
 }
 
 void Sprite::Update (float dt) {
+
+	if (secondsToSelfDestruct > 0) {
+		selfDestructCount.Update(dt);
+		if (selfDestructCount.Get() >= secondsToSelfDestruct) {
+			associated.RequestDelete();
+		}
+	}
 
 	timeElapsed += dt;
 

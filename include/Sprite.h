@@ -3,6 +3,7 @@
 #include "SDL_include.h"
 #include <string>
 #include "Vec2.h"
+#include "Timer.h"
 #include "Component.h"
 
 using std::string;
@@ -20,7 +21,7 @@ class Sprite : public Component{
 		 * @param file image file
 		 */
 		Sprite (GameObject& associated, string file, int frameCount = 1,
-				float frameTime = 1);
+				float frameTime = 1, float secondsToSelfDestruct = 0);
 		~Sprite ();
 
 		/**
@@ -101,4 +102,6 @@ class Sprite : public Component{
 		int currentFrame = 0;
 		float timeElapsed = 0;
 		float frameTime = 1;
+		Timer selfDestructCount;
+		float secondsToSelfDestruct = 0;
 };

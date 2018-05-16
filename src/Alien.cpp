@@ -6,11 +6,12 @@
 #include "Game.h"
 #include "Collider.h"
 #include "Bullet.h"
+#include "Sound.h"
 
 #define ALIEN_ROTATION -0.6
 
 Alien::Alien (GameObject& associated, int nMinions) :
-		Component(associated), speed(100, 100), hp(30), nMinions(nMinions) {
+		Component(associated), speed(100, 100), hp(60), nMinions(nMinions) {
 	Sprite* spr = new Sprite(associated, "assets/img/alien.png");
 	associated.AddComponent(spr);
 	associated.box.h = spr->GetHeight();
@@ -93,6 +94,17 @@ void Alien::Update (float dt) {
 		}
 	}
 	if (hp <= 0) {
+		GameObject* go = new GameObject();
+		go->box.x = associated.box.x;
+		go->box.y = associated.box.y;
+		Game::GetInstance().GetState().AddObject(go);
+		go->AddComponent(
+				new Sprite(*go, "assets/img/aliendeath.png", 4, 0.3, 1.2));
+		Sound* sound = new Sound(*go, "assets/audio/boom.wav");
+		go->AddComponent(sound);
+
+		sound->Play();
+
 		associated.RequestDelete();
 	}
 }
