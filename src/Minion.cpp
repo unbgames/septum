@@ -5,7 +5,7 @@
 #include "Bullet.h"
 
 #define MINION_ANGULAR_SPEED M_PI / 4
-
+#define MINION_DISTANCE 150
 Minion::Minion (GameObject& associated, weak_ptr<GameObject> alienCenter,
 		float arcOffsetDeg) :
 		Component(associated), alienCenter(alienCenter), arc(arcOffsetDeg) {
@@ -16,7 +16,7 @@ Minion::Minion (GameObject& associated, weak_ptr<GameObject> alienCenter,
 	associated.box.h = spr->GetHeight();
 	associated.box.w = spr->GetWidth();
 
-	Vec2 pos(200, 0);
+	Vec2 pos(MINION_DISTANCE, 0);
 	pos = pos.GetRotated(arc);
 
 	auto go = alienCenter.lock();
@@ -29,7 +29,7 @@ Minion::Minion (GameObject& associated, weak_ptr<GameObject> alienCenter,
 
 void Minion::Update (float dt) {
 
-	Vec2 pos(200, 0);
+	Vec2 pos(MINION_DISTANCE, 0);
 	arc += MINION_ANGULAR_SPEED * dt;
 	pos = pos.GetRotated(arc);
 	auto go = alienCenter.lock();

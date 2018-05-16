@@ -55,6 +55,7 @@ class State {
 	private:
 		Music music;
 		GameObject map;
+		GameObject bg;
 		bool quitRequested;
 		bool started;
 		vector<shared_ptr<GameObject>> objectArray;
