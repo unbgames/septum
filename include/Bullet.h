@@ -13,7 +13,8 @@ class Bullet: public Component {
 		 * @param sprite file path to the projectile sprite
 		 */
 		Bullet (GameObject& associated, float angle, float speed, int damage,
-				float maxDistance, string sprite, int frameCount = 1,
+				float maxDistance, string sprite, bool targetsPlayer,
+				int frameCount = 1,
 				float frameTime = 1);
 		/**
 		 * Updates component state
@@ -37,6 +38,10 @@ class Bullet: public Component {
 		 * @return projectile damage
 		 */
 		int GetDamage () const;
+
+		void NotifyCollision (GameObject& other);
+
+		bool targetsPlayer;
 
 	private:
 		Vec2 speed;

@@ -3,6 +3,7 @@
 #include <math.h>
 #include "Game.h"
 #include "Bullet.h"
+#include "Collider.h"
 
 #define MINION_ANGULAR_SPEED M_PI / 4
 #define MINION_DISTANCE 150
@@ -24,6 +25,9 @@ Minion::Minion (GameObject& associated, weak_ptr<GameObject> alienCenter,
 	pos += go->box.GetCenter();
 	associated.box.x = pos.x - associated.box.w / 2;
 	associated.box.y = pos.y - associated.box.h / 2;
+
+	Collider* col = new Collider(associated);
+	associated.AddComponent(col);
 
 }
 
@@ -60,7 +64,7 @@ void Minion::Shoot (Vec2 target) {
 	go->AddComponent(
 			new Bullet(*go, angle, 300, 5, 600,
 					"assets/img/minionbullet2.png",
-					3, 0.2));
+					true, 3, 0.2));
 	go->box.x = associated.box.GetCenter().x - go->box.w / 2;
 	go->box.y = associated.box.GetCenter().y - go->box.h / 2;
 	Game::GetInstance().GetState().AddObject(go);

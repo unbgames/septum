@@ -12,6 +12,8 @@
 #include <algorithm>
 #include "Alien.h"
 #include "PenguinBody.h"
+#include "Collision.h"
+#include "Collider.h"
 
 State::State () {
 	started = false;
@@ -53,6 +55,8 @@ void State::LoadAssets () {
 	alien->AddComponent(new Alien(*alien, 7));
 	objectArray.emplace_back(penguin);
 	objectArray.emplace_back(alien);
+
+	Camera::Follow(penguin);
 }
 
 void State::Update (float dt) {
@@ -69,6 +73,24 @@ void State::Update (float dt) {
 	map.Update(dt);
 	for (int i = 0; i < objectArray.size(); ++i) {
 		objectArray[i]->Update(dt);
+	}
+
+	for (int i = 0; i < objectArray.size(); ++i) {
+		Component* cptA = objectArray[i]->GetComponent("Collider");
+		if (cptA != nullptr) {
+			for (int j = i + 1; j < objectArray.size(); ++j) {
+				Component* cptB = objectArray[j]->GetComponent("Collider");
+				if (cptB != nullptr) {
+					if (Collision::IsColliding(((Collider*) cptA)->box,
+							((Collider*) cptB)->box,
+							objectArray[i]->angleDeg * M_PI / 180,
+							objectArray[j]->angleDeg * M_PI / 180)) {
+						objectArray[i]->NotifyCollision(*objectArray[j].get());
+						objectArray[j]->NotifyCollision(*objectArray[i].get());
+					}
+				}
+			}
+		}
 	}
 
 	vector<shared_ptr<GameObject>>::iterator it = objectArray.begin();

@@ -34,6 +34,8 @@ class Component {
 		 */
 		void virtual Start ();
 
+		void virtual NotifyCollision (GameObject& other);
+
 	protected:
 		GameObject& associated;
 };

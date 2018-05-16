@@ -39,6 +39,8 @@ class Alien: public Component {
 		 * @retval false the passed type is not Alien
 		 */
 		bool Is (string type) const;
+
+		void NotifyCollision (GameObject& other);
 	private:
 		class Action {
 			public:

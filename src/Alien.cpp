@@ -4,6 +4,8 @@
 #include "Camera.h"
 #include "Minion.h"
 #include "Game.h"
+#include "Collider.h"
+#include "Bullet.h"
 
 #define ALIEN_ROTATION -0.6
 
@@ -13,6 +15,9 @@ Alien::Alien (GameObject& associated, int nMinions) :
 	associated.AddComponent(spr);
 	associated.box.h = spr->GetHeight();
 	associated.box.w = spr->GetWidth();
+
+	Collider* col = new Collider(associated);
+	associated.AddComponent(col);
 }
 
 void Alien::Start () {
@@ -98,4 +103,13 @@ void Alien::Render () {
 
 bool Alien::Is (string type) const {
 	return type == "Alien";
+}
+
+void Alien::NotifyCollision (GameObject& other) {
+	Component* bullet = other.GetComponent("Bullet");
+	if (bullet != nullptr) {
+		if (!((Bullet*) bullet)->targetsPlayer) {
+			hp -= ((Bullet*) bullet)->GetDamage();
+		}
+	}
 }

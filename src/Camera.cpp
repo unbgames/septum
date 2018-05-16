@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include "InputManager.h"
+#include "Game.h"
 
 Vec2 Camera::pos(0, 0);
 Vec2 Camera::speed(100, 100);
@@ -15,7 +16,10 @@ void Camera::Unfollow () {
 
 void Camera::Update (float dt) {
 	if (focus != nullptr) {
-		pos = focus->box.GetCenter();
+		pos.x = float(
+				focus->box.GetCenter().x - Game::GetInstance().GetWidth() / 2);
+		pos.y = float(
+				focus->box.GetCenter().y - Game::GetInstance().GetHeight() / 2);
 	}
 	else {
 		InputManager& inputManager = InputManager::GetInstance();

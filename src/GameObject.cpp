@@ -71,3 +71,9 @@ Component* GameObject::GetComponent (string type) const {
 		return nullptr;
 	}
 }
+
+void GameObject::NotifyCollision (GameObject& other) {
+	for (auto& cpt : components) {
+		cpt->NotifyCollision(other);
+	}
+}

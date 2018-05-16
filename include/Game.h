@@ -43,6 +43,9 @@ class Game {
 		 */
 		float GetDeltaTime () const;
 
+		int GetWidth () const;
+
+		int GetHeight () const;
 	private:
 		/**
 		 * Game private constructor
@@ -58,6 +61,8 @@ class Game {
 		State* state;
 		int frameStart;
 		float dt;
+		int width;
+		int height;
 		/**
 		 * Calculates frame time interval
 		 */

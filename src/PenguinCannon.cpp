@@ -6,6 +6,7 @@
 #include "Bullet.h"
 #include "Game.h"
 #include <math.h>
+#include "Collider.h"
 
 using std::weak_ptr;
 
@@ -24,6 +25,9 @@ PenguinCannon::PenguinCannon (GameObject& associated,
 	Vec2 pos = go->box.GetCenter();
 	associated.box.x = pos.x - associated.box.w / 2;
 	associated.box.y = pos.y - associated.box.h / 2;
+
+	Collider* col = new Collider(associated);
+	associated.AddComponent(col);
 }
 
 void PenguinCannon::Update (float dt) {
@@ -62,7 +66,7 @@ void PenguinCannon::Shoot () {
 	GameObject* go = new GameObject();
 	go->AddComponent(
 			new Bullet(*go, angle, 300, 5, 600, "assets/img/penguinbullet.png",
-					4, 0.5));
+					false, 4, 0.5));
 	Vec2 cannonCenter = associated.box.GetCenter()
 			+ Vec2(CANNON_DISTANCE, 0).GetRotated(angle);
 	go->box.x = cannonCenter.x - go->box.w / 2;

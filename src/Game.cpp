@@ -16,14 +16,15 @@ Game& Game::GetInstance () {
 	}
 	return *instance;
 }
-Game::Game (string title, int width, int height) {
+Game::Game (string title, int width, int height) :
+		width(width), height(height) {
 	if (instance != nullptr) {
 		throw std::runtime_error("Game already instantiated");
 	}
 	else {
 		instance = this;
 	}
-
+	
 	srand(time(NULL));
 
 	// Initializes SDL
@@ -115,4 +116,12 @@ void Game::Run () {
 	Resources::ClearImages();
 	Resources::ClearMusics();
 	Resources::ClearSounds();
+}
+
+int Game::GetHeight () const {
+	return height;
+}
+
+int Game::GetWidth () const {
+	return width;
 }

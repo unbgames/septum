@@ -30,6 +30,8 @@ class PenguinBody: public Component {
 		 */
 		bool Is (string type) const;
 		
+		void NotifyCollision (GameObject& other);
+
 
 		static PenguinBody* player;
 

@@ -6,6 +6,9 @@
 #include "InputManager.h"
 #include <iostream>
 #include <math.h>
+#include "Collider.h"
+#include "Bullet.h"
+#include "Camera.h"
 
 #define PENGUIN_ACCELERATION 6
 #define PENGUIN_SPEED_LIMIT 300
@@ -22,7 +25,8 @@ PenguinBody::PenguinBody (GameObject& associated) :
 	associated.AddComponent(spr);
 	associated.box.h = spr->GetHeight();
 	associated.box.w = spr->GetWidth();
-
+	Collider* col = new Collider(associated);
+	associated.AddComponent(col);
 }
 PenguinBody::~PenguinBody () {
 	player = nullptr;
@@ -75,6 +79,7 @@ void PenguinBody::Update (float dt) {
 		pcannon.lock()->box.y += (dir.y * dt);
 	}
 	if (hp <= 0) {
+		Camera::Unfollow();
 		associated.RequestDelete();
 		pcannon.lock()->RequestDelete();
 	}
@@ -86,4 +91,13 @@ void PenguinBody::Render () {
 
 bool PenguinBody::Is (string type) const {
 	return type == "PenguinBody";
+}
+
+void PenguinBody::NotifyCollision (GameObject& other) {
+	Component* bullet = other.GetComponent("Bullet");
+	if (bullet != nullptr) {
+		if (((Bullet*) bullet)->targetsPlayer) {
+			hp -= ((Bullet*) bullet)->GetDamage();
+		}
+	}
 }

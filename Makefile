@@ -62,7 +62,7 @@ endif
 
 print-% : ; @echo $* = $($*)
 
-debug: DIRECTIVES += -ggdb -O0
+debug: DIRECTIVES += -ggdb -O0 -DDEBUG
 debug: RUN := gdb $(RUN)
 debug: all run
 

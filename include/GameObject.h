@@ -64,6 +64,8 @@ class GameObject {
 		 */
 		Component* GetComponent (string type) const;
 
+		void NotifyCollision (GameObject& other);
+
 		/**
 		 * GameObject position and dimension on window
 		 */
