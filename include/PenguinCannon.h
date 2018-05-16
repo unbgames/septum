@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.h"
 #include <memory>
+#include "Timer.h"
 
 using std::weak_ptr;
 
@@ -34,4 +35,5 @@ class PenguinCannon: public Component {
 
 		weak_ptr<GameObject> pbody;
 		float angle;
+		Timer timer;
 };

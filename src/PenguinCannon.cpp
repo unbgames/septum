@@ -7,14 +7,16 @@
 #include "Game.h"
 #include <math.h>
 #include "Collider.h"
+#include "Timer.h"
 
 using std::weak_ptr;
 
 #define CANNON_DISTANCE 50
+#define CANNON_COOLDOWN 3
 
 PenguinCannon::PenguinCannon (GameObject& associated,
 		weak_ptr<GameObject> pbody) :
-		Component(associated), angle(0), pbody(pbody) {
+		Component(associated), angle(0), pbody(pbody), timer(CANNON_COOLDOWN) {
 	Sprite* spr = new Sprite(associated, "assets/img/cubngun.png");
 	associated.AddComponent(spr);
 	associated.box.w = spr->GetWidth();
@@ -32,6 +34,7 @@ PenguinCannon::PenguinCannon (GameObject& associated,
 
 void PenguinCannon::Update (float dt) {
 
+	timer.Update(dt);
 	auto go = pbody.lock();
 
 	if (!go) {
@@ -48,8 +51,10 @@ void PenguinCannon::Update (float dt) {
 		associated.box.x = pos.x - associated.box.w / 2;
 		associated.box.y = pos.y - associated.box.h / 2;
 
-		if (inputManager.MousePress(LEFT_MOUSE_BUTTON)) {
+		if (inputManager.MousePress(
+				LEFT_MOUSE_BUTTON) && timer.Get() > CANNON_COOLDOWN) {
 			Shoot();
+			timer.Restart();
 		}
 	}
 }
