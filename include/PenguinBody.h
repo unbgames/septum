@@ -32,6 +32,8 @@ class PenguinBody: public Component {
 		
 		void NotifyCollision (GameObject& other);
 
+		Vec2 GetCenterPosition () const;
+
 
 		static PenguinBody* player;
 

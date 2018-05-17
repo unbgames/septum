@@ -4,10 +4,9 @@
 #include "Vec2.h"
 #include <vector>
 #include <memory>
-#include <queue>
+#include "Timer.h"
 
 using std::vector;
-using std::queue;
 using std::weak_ptr;
 
 class Alien: public Component {
@@ -41,21 +40,20 @@ class Alien: public Component {
 		bool Is (string type) const;
 
 		void NotifyCollision (GameObject& other);
+
+		static int alienCount;
 	private:
-		class Action {
-			public:
-				enum ActionType {
-					MOVE, SHOOT
-				};
-				ActionType type;
-				Vec2 pos;
-				Action (ActionType type, float x, float y);
-		};
-		
 		Vec2 speed;
 		int hp;
 		int nMinions;
-		queue<Action> taskQueue;
 		vector<weak_ptr<GameObject>> minionArray;
+
+		enum AlienState {
+			MOVING, RESTING
+		};
+		
+		AlienState state;
+		Timer restTimer;
+		Vec2 destination;
 
 };

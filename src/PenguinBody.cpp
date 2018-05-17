@@ -115,3 +115,7 @@ void PenguinBody::NotifyCollision (GameObject& other) {
 		}
 	}
 }
+
+Vec2 PenguinBody::GetCenterPosition () const {
+	return associated.box.GetCenter();
+}
