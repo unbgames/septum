@@ -23,7 +23,7 @@ void Sound::Open (string file) {
 }
 
 void Sound::Play (int times) {
-	channel = Mix_PlayChannel(channel, chunk, times - 1);
+	channel = Mix_PlayChannel(channel, chunk.get(), times - 1);
 }
 
 void Sound::Stop () {

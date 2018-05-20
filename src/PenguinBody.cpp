@@ -74,10 +74,13 @@ void PenguinBody::Update (float dt) {
 	if (linearSpeed) {
 		Vec2 dir = { linearSpeed, 0 };
 		dir = dir.GetRotated(angle);
-		associated.box.x += (dir.x * dt);
-		associated.box.y += (dir.y * dt);
-		pcannon.lock()->box.x += (dir.x * dt);
-		pcannon.lock()->box.y += (dir.y * dt);
+		Vec2 result;
+		result.x = associated.box.x + (dir.x * dt);
+		result.y = associated.box.y + (dir.y * dt);
+		associated.box.x = result.x > 1380 ? 1380 : (result.x < 0 ? 0 : result.x);
+		associated.box.y = result.y > 1280 ? 1280 : (result.y < 0 ? 0 : result.y);
+		pcannon.lock()->box.x = associated.box.x;
+		pcannon.lock()->box.y = associated.box.y;
 	}
 	if (hp <= 0) {
 

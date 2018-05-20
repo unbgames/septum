@@ -27,7 +27,6 @@ void TitleState::LoadAssets () {
 			new Text(playText, "assets/font/Call me maybe.ttf", 32,
 					Text::BLENDED, "Press spacebar to play", { .r = 0, .g = 0,
 							.b = 0, .a = 255 }));
-	playText.AddComponent(new CameraFollower(playText));
 	playText.box.x = 360;
 	playText.box.y = 500;
 
@@ -68,5 +67,5 @@ void TitleState::Pause () {
 
 }
 void TitleState::Resume () {
-	Camera::pos = {0, 0}
+	Camera::pos = {0, 0};
 }

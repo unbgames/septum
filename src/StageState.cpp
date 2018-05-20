@@ -56,12 +56,12 @@ void StageState::LoadAssets () {
 	penguin->AddComponent(new PenguinBody(*penguin));
 	AddObject(penguin);
 
-	int alienCount = rand() % 4 + 3;
+	int alienCount = rand() % 3 + 1;
 	for (int var = 0; var < alienCount; ++var) {
 		GameObject *alien = new GameObject();
 		alien->box.x = rand() % 1408;
 		alien->box.y = rand() % 1280;
-		alien->AddComponent(new Alien(*alien, 7, var / 2));
+		alien->AddComponent(new Alien(*alien, 7, var));
 		AddObject(alien);
 	}
 

@@ -15,7 +15,7 @@ Music::Music (string file) {
 }
 
 void Music::Play (int times) {
-	Mix_PlayMusic(music, times);
+	Mix_PlayMusic(music.get(), times);
 }
 
 void Music::Stop (int msToStop) {

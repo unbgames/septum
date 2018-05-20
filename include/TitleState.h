@@ -27,5 +27,5 @@ class TitleState: public State {
 
 	private:
 		Timer textTimer;
-		weak_ptr<GameObject> text;
+		GameObject playText;
 };

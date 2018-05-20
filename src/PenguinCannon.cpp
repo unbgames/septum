@@ -12,7 +12,7 @@
 using std::weak_ptr;
 
 #define CANNON_DISTANCE 50
-#define CANNON_COOLDOWN 3
+#define CANNON_COOLDOWN 1
 
 PenguinCannon::PenguinCannon (GameObject& associated,
 		weak_ptr<GameObject> pbody) :
@@ -70,7 +70,7 @@ void PenguinCannon::Shoot () {
 
 	GameObject* go = new GameObject();
 	go->AddComponent(
-			new Bullet(*go, angle, 300, 20, 600, "assets/img/penguinbullet.png",
+			new Bullet(*go, angle, 300, 20, 1500, "assets/img/penguinbullet.png",
 					false, 4, 0.5));
 	Vec2 cannonCenter = associated.box.GetCenter()
 			+ Vec2(CANNON_DISTANCE, 0).GetRotated(angle);
