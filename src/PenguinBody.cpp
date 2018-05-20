@@ -4,7 +4,6 @@
 #include "PenguinCannon.h"
 #include "Game.h"
 #include "InputManager.h"
-#include <iostream>
 #include <math.h>
 #include "Collider.h"
 #include "Bullet.h"
@@ -37,10 +36,11 @@ PenguinBody::~PenguinBody () {
 void PenguinBody::Start () {
 
 	GameObject* go = new GameObject();
-	pcannon = Game::GetInstance().GetState().AddObject(go);
+	pcannon = Game::GetInstance().GetCurrentState().AddObject(go);
 	go->AddComponent(
 			new PenguinCannon(*go,
-					Game::GetInstance().GetState().GetObjectPtr(&associated)));
+					Game::GetInstance().GetCurrentState().GetObjectPtr(
+							&associated)));
 }
 void PenguinBody::Update (float dt) {
 	InputManager& inputManager = InputManager::GetInstance();
@@ -84,10 +84,10 @@ void PenguinBody::Update (float dt) {
 		GameObject* go = new GameObject();
 		go->box.x = associated.box.x;
 		go->box.y = associated.box.y;
-		Game::GetInstance().GetState().AddObject(go);
+		Game::GetInstance().GetCurrentState().AddObject(go);
 		go->AddComponent(
 				new Sprite(*go, "assets/img/penguindeath.png", 5, 0.3, 1.5));
-		
+
 		Sound* sound = new Sound(*go, "assets/audio/boom.wav");
 		go->AddComponent(sound);
 

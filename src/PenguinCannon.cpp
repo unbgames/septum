@@ -67,7 +67,7 @@ bool PenguinCannon::Is (string type) const {
 }
 
 void PenguinCannon::Shoot () {
-	
+
 	GameObject* go = new GameObject();
 	go->AddComponent(
 			new Bullet(*go, angle, 300, 20, 600, "assets/img/penguinbullet.png",
@@ -76,6 +76,6 @@ void PenguinCannon::Shoot () {
 			+ Vec2(CANNON_DISTANCE, 0).GetRotated(angle);
 	go->box.x = cannonCenter.x - go->box.w / 2;
 	go->box.y = cannonCenter.y - go->box.h / 2;
-	Game::GetInstance().GetState().AddObject(go);
+	Game::GetInstance().GetCurrentState().AddObject(go);
 
 }
