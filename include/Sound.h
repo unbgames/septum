@@ -3,8 +3,10 @@
 #include "SDL_include.h"
 #include <string>
 #include "Component.h"
+#include <memory>
 
 using std::string;
+using std::shared_ptr;
 
 class Sound: public Component {
 	public:
@@ -59,6 +61,6 @@ class Sound: public Component {
 		int GetChannel () const;
 
 	private:
-		Mix_Chunk* chunk;
+		shared_ptr<Mix_Chunk> chunk;
 		int channel = -1;
 };

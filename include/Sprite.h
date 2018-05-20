@@ -5,8 +5,10 @@
 #include "Vec2.h"
 #include "Timer.h"
 #include "Component.h"
+#include <memory>
 
 using std::string;
+using std::shared_ptr;
 
 /**
  * Class for game image
@@ -93,7 +95,7 @@ class Sprite : public Component{
 		void SetFrameTime (float frameTime);
 
 	private:
-		SDL_Texture* texture;
+		shared_ptr<SDL_Texture> texture;
 		int width = 0;
 		int height = 0;
 		SDL_Rect clipRect;

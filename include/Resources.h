@@ -1,12 +1,15 @@
 #pragma once
 #define INCLUDE_SDL
 #define INCLUDE_SDL_MIXER
+#define INCLUDE_SDL_TTF
 #include <string>
 #include "SDL_include.h"
 #include <unordered_map>
+#include <memory>
 
 using std::string;
 using std::unordered_map;
+using std::shared_ptr;
 
 class Resources {
 	public:
@@ -15,7 +18,7 @@ class Resources {
 		 * @param file resource filename
 		 * @return reference to opened texture
 		 */
-		static SDL_Texture* GetImage (string file);
+		static shared_ptr<SDL_Texture> GetImage (string file);
 
 		/**
 		 * Dumps the entire image table
@@ -27,7 +30,7 @@ class Resources {
 		 * @param file resource filename
 		 * @return reference to opened music
 		 */
-		static Mix_Music* GetMusic (string file);
+		static shared_ptr<Mix_Music> GetMusic (string file);
 		/**
 		 * Dumps the entire musics table
 		 */
@@ -37,14 +40,24 @@ class Resources {
 		 * @param file resource filename
 		 * @return reference to opened sound
 		 */
-		static Mix_Chunk* GetSound (string file);
+		static shared_ptr<Mix_Chunk> GetSound (string file);
 		/**
 		 * Dumps the entire sounds table
 		 */
 		static void ClearSounds ();
-
+		/**
+		 * Gets a font resource or adds one if it isn't already loaded
+		 * @param file resource filename
+		 * @return reference to opened sound
+		 */
+		static shared_ptr<TTF_Font> GetFont (string file, int fontSize);
+		/**
+		 * Dumps the entire fonts table
+		 */
+		static void ClearFonts ();
 	private:
-		static unordered_map<string, SDL_Texture*> imageTable;
-		static unordered_map<string, Mix_Music*> musicTable;
-		static unordered_map<string, Mix_Chunk*> soundTable;
+		static unordered_map<string, shared_ptr<SDL_Texture>> imageTable;
+		static unordered_map<string, shared_ptr<Mix_Music>> musicTable;
+		static unordered_map<string, shared_ptr<Mix_Chunk>> soundTable;
+		static unordered_map<string, shared_ptr<TTF_Font>> fontTable;
 };

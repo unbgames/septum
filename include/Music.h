@@ -2,8 +2,10 @@
 #define INCLUDE_SDL_MIXER
 #include "SDL_include.h"
 #include <string>
+#include <memory>
 
 using std::string;
+using std::shared_ptr;
 
 /**
  * Class for game Music
@@ -44,5 +46,5 @@ class Music {
 		bool isOpen () const;
 
 	private:
-		Mix_Music* music;
+		shared_ptr<Mix_Music> music;
 };

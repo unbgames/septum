@@ -1,62 +1,66 @@
 #pragma once
-#include "GameObject.h"
-#include "Music.h"
-#include <vector>
 #include <memory>
+#include <vector>
+#include "GameObject.h"
 
+using std::weak_ptr;
 using std::vector;
 using std::shared_ptr;
-using std::weak_ptr;
 
-/**
- * Class of game current state
- */
 class State {
 	public:
 		State ();
-		~State ();
+		virtual ~State ();
+
+		/**
+		 * Loads game assets
+		 */
+		virtual void LoadAssets () = 0;
+		/**
+		 * Updates game state
+		 * @param dt time interval since last update
+		 */
+		virtual void Update (float dt) = 0;
+		/**
+		 * Renders state on window
+		 */
+		virtual void Render () = 0;
+
+		virtual void Start () = 0;
+		virtual void Pause () = 0;
+		virtual void Resume () = 0;
+
+		virtual weak_ptr<GameObject> AddObject (GameObject*);
+		virtual weak_ptr<GameObject> GetObjectPtr (GameObject*);
+
+		bool PopRequested () const;
 		/**
 		 * Returns whether there was a close command to the game
 		 * @return if the close command was issued by the game
 		 */
 		bool QuitRequested () const;
-		/**
-		 * Loads game assets
-		 */
-		void LoadAssets ();
-		/**
-		 * Updates game state
-		 * @param dt
-		 */
-		void Update (float dt);
-		/**
-		 * Renders state on window
-		 */
-		void Render ();
+
+	protected:
 
 		/**
-		 * Starts all objects of the State
+		 * Starts all objects of the StageState
 		 */
-		void Start ();
-
+		void StartArray ();
 		/**
-		 * Adds an object to the State
-		 * @param go object to be added
-		 * @return weak pointer reference to the game object
+		 * Updates all objects of the StageState
+		 * @param dt time interval since last update
 		 */
-		weak_ptr<GameObject> AddObject (GameObject* go);
-
+		virtual void UpdateArray (float dt);
 		/**
-		 * Returns a weak pointer to the passed GameObject
-		 * @param go GameObject
-		 * @return weak pointer
+		 * Renders all objects of the StageState
 		 */
-		weak_ptr<GameObject> GetObjectPtr (GameObject* go);
-	private:
-		Music music;
-		GameObject map;
-		GameObject bg;
-		bool quitRequested;
-		bool started;
+		virtual void RenderArray ();
+
+		bool popRequested = false;
+		bool quitRequested = false;
+		bool started = false;
+
 		vector<shared_ptr<GameObject>> objectArray;
+
+	private:
 };

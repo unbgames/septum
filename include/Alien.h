@@ -16,7 +16,7 @@ class Alien: public Component {
 		 * @param associated associated GameObject
 		 * @param nMinions number of minions to orbit the alien
 		 */
-		Alien (GameObject& associated, int nMinions);
+		Alien (GameObject& associated, int nMinions, float timeOffset = 0);
 		~Alien ();
 		/**
 		 * Sets the component up
@@ -51,9 +51,10 @@ class Alien: public Component {
 		enum AlienState {
 			MOVING, RESTING
 		};
-		
+
 		AlienState state;
 		Timer restTimer;
 		Vec2 destination;
+		float timeOffset = 0;
 
 };

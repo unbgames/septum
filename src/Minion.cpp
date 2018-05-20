@@ -58,7 +58,7 @@ bool Minion::Is (string type) const {
 }
 
 void Minion::Shoot (Vec2 target) {
-	
+
 	GameObject* go = new GameObject();
 	float angle = target.GetAngle(associated.box.GetCenter());
 	go->AddComponent(
@@ -67,6 +67,6 @@ void Minion::Shoot (Vec2 target) {
 					true, 3, 0.2));
 	go->box.x = associated.box.GetCenter().x - go->box.w / 2;
 	go->box.y = associated.box.GetCenter().y - go->box.h / 2;
-	Game::GetInstance().GetState().AddObject(go);
+	Game::GetInstance().GetCurrentState().AddObject(go);
 
 }

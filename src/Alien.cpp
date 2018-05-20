@@ -14,9 +14,9 @@
 
 int Alien::alienCount = 0;
 
-Alien::Alien (GameObject& associated, int nMinions) :
+Alien::Alien (GameObject& associated, int nMinions, float timeOffset) :
 		Component(associated), speed(100, 100), hp(60), nMinions(nMinions), state(
-				RESTING) {
+				RESTING), timeOffset(timeOffset) {
 	Sprite* spr = new Sprite(associated, "assets/img/alien.png");
 	associated.AddComponent(spr);
 	associated.box.h = spr->GetHeight();
@@ -34,10 +34,10 @@ void Alien::Start () {
 		GameObject* go = new GameObject();
 		go->AddComponent(
 				new Minion(*go,
-						Game::GetInstance().GetState().GetObjectPtr(
+						Game::GetInstance().GetCurrentState().GetObjectPtr(
 								&associated), offset));
 		minionArray.emplace_back(
-				Game::GetInstance().GetState().AddObject(go));
+				Game::GetInstance().GetCurrentState().AddObject(go));
 	}
 }
 
@@ -54,7 +54,7 @@ void Alien::Update (float dt) {
 	if (PenguinBody::player != nullptr) {
 		if (state == RESTING) {
 			restTimer.Update(dt);
-			if (restTimer.Get() >= REST_COOLDOWN) {
+			if (restTimer.Get() >= REST_COOLDOWN + timeOffset) {
 				destination = PenguinBody::player->GetCenterPosition();
 				state = MOVING;
 			}
@@ -98,7 +98,7 @@ void Alien::Update (float dt) {
 		GameObject* go = new GameObject();
 		go->box.x = associated.box.x;
 		go->box.y = associated.box.y;
-		Game::GetInstance().GetState().AddObject(go);
+		Game::GetInstance().GetCurrentState().AddObject(go);
 		go->AddComponent(
 				new Sprite(*go, "assets/img/aliendeath.png", 4, 0.3, 1.2));
 		Sound* sound = new Sound(*go, "assets/audio/boom.wav");
