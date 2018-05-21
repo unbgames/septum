@@ -19,6 +19,12 @@ void FirstStageState::LoadAssets () {
 	splashScreen->AddComponent(new CameraFollower(*splashScreen));
 	AddObject(splashScreen);
 
+	GameObject *character = new GameObject();
+	character->AddComponent(
+			new Sprite(*character, "assets/img/player_indle.png"));
+		character->box.y = 400;
+	AddObject(character);
+
 }
 void FirstStageState::Update (float dt) {
 	InputManager& inputManager = InputManager::GetInstance();
