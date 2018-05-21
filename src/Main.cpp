@@ -1,7 +1,7 @@
 #include "Game.h"
-#include "TitleState.h"
+#include "FirstStageState.h"
 int main (int argc, char** argv) {
 	Game& game = Game::GetInstance();
-	game.Push(new TitleState());
+	game.Push(new FirstStageState());
 	game.Run();
 }
