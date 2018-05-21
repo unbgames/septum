@@ -1,16 +1,10 @@
 #pragma once
-#include "GameObject.h"
-#include "Music.h"
 #include "State.h"
 
-
-/**
- * Class of game current state
- */
-class StageState: public State {
+class FirstStageState: public State {
 	public:
-		StageState ();
-		~StageState ();
+	  FirstStageState ();
+		~FirstStageState ();
 
 		/**
 		 * Loads game assets
@@ -29,8 +23,6 @@ class StageState: public State {
 		void Start ();
 		void Pause ();
 		void Resume ();
+
 	private:
-		Music music;
-		GameObject map;
-		GameObject bg;
 };

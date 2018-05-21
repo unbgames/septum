@@ -13,7 +13,7 @@ Game* Game::instance = nullptr;
 
 Game& Game::GetInstance () {
 	if (instance == nullptr) {
-		new Game("Eduardo Sousa - 13/0108405", 1024, 600);
+		new Game("Septem", 1280, 720);
 	}
 	return *instance;
 }
