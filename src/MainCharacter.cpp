@@ -18,6 +18,8 @@ MainCharacter* MainCharacter::mainCharacter = nullptr;
 MainCharacter::MainCharacter (GameObject& associated) :
 		Component(associated),characterState(IDLE),demon(false) {
 	mainCharacter = this;
+	hp = 100;
+	furia = 80;
 	spr = new Sprite(associated, "assets/img/GenericIDLE.png",7,0.08);
 	associated.AddComponent(spr);
 	associated.box.h = spr->GetHeight();
@@ -73,13 +75,14 @@ void MainCharacter::Update (float dt) {
 	}else if(speed.x == 0 && speed.y==0){
 		changeState(IDLE);
 	}
-	
+
 	associated.box.x = associated.box.x > 1100 ? 1100 : associated.box.x < 0 ? 0 : associated.box.x;
 	if(characterState == IDLE && stateChanged){
 		spr->Open("assets/img/GenericIDLE.png");
 		stateChanged = false;
 	}else if(characterState == JUMP && stateChanged){
 		spr->Open("assets/img/GenericJUMP.png");
+		hp-=10;
 		stateChanged = false;
 	}else if(characterState == WALK && stateChanged){
 		spr->Open("assets/img/GenericWALK.png");

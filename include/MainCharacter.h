@@ -32,6 +32,8 @@ class MainCharacter : public Component {
 		bool Is (string type) const;
 		void changeState(stateType state);
 		bool demon;
+		float hp;
+		float furia;
 
     static MainCharacter* mainCharacter;
 

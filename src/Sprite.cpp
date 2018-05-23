@@ -97,12 +97,12 @@ void Sprite::SetScale (float scaleX, float scaleY) {
 	scale.x = scaleX > 0 ? scaleX : scale.x;
 	scale.y = scaleY > 0 ? scaleY : scale.y;
 
-	Vec2 currentCenter = associated.box.GetCenter();
+	/*Vec2 currentCenter = associated.box.GetCenter();
 
 	associated.box.w = (width / frameCount) * scale.x;
 	associated.box.h = height * scale.y;
 	associated.box.x = currentCenter.x - associated.box.w / 2;
-	associated.box.y = currentCenter.y - associated.box.h / 2;
+	associated.box.y = currentCenter.y - associated.box.h / 2;*/
 }
 
 Vec2 Sprite::GetScale () const {
