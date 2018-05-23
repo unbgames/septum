@@ -5,6 +5,7 @@
 #include "CameraFollower.h"
 #include "Camera.h"
 #include "Text.h"
+#include "MainCharacter.h"
 
 FirstStageState::FirstStageState () {
 }
@@ -21,8 +22,7 @@ void FirstStageState::LoadAssets () {
 
 	GameObject *character = new GameObject();
 	character->AddComponent(
-			new Sprite(*character, "assets/img/player_indle.png"));
-		character->box.y = 400;
+			new MainCharacter(*character));
 	AddObject(character);
 
 }
