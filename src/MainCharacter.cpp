@@ -1,5 +1,4 @@
 #include "MainCharacter.h"
-#include "Sprite.h"
 #include "GameObject.h"
 #include "Game.h"
 #include "InputManager.h"
@@ -11,15 +10,15 @@
 
 using std::weak_ptr;
 
-#define CHARACTER_SPEED 200
-#define GRAVITY 1000
+#define CHARACTER_SPEED 650
+#define GRAVITY 2000
 
 MainCharacter* MainCharacter::mainCharacter = nullptr;
 
 MainCharacter::MainCharacter (GameObject& associated) :
-		Component(associated) {
+		Component(associated),characterState(IDLE),demon(false) {
 	mainCharacter = this;
-	Sprite* spr = new Sprite(associated, "assets/img/player_indle.png");
+	spr = new Sprite(associated, "assets/img/GenericIDLE.png",7,0.08);
 	associated.AddComponent(spr);
 	associated.box.h = spr->GetHeight();
 	associated.box.w = spr->GetWidth();
@@ -35,9 +34,19 @@ void MainCharacter::Start () {
 }
 void MainCharacter::Update (float dt) {
 	InputManager& inputManager = InputManager::GetInstance();
-  int dir = inputManager.IsKeyDown('a') ? -1 : 0;
-  dir += inputManager.IsKeyDown('d') ? 1 : 0;
-  speed.x = dir * CHARACTER_SPEED;
+	int dir;
+  	if(inputManager.IsKeyDown('a')){
+  		dir = -1;
+  		changeState(WALK);
+  	}else if(inputManager.IsKeyDown('d')){
+  		dir = 1;
+  		  		changeState(WALK);
+  	}else{
+  		dir = 0;
+  	}
+  	speed.x = dir * CHARACTER_SPEED;
+  	if(inputManager.IsKeyDown('i'))
+  		demon = demon?false:true;
 
 	if (speed.x < 0) {
 		associated.flipHorizontal = true;
@@ -46,7 +55,8 @@ void MainCharacter::Update (float dt) {
 	}
 
 	if (speed.y == 0 && inputManager.KeyPress('w')) {
-		speed.y = 300;
+		changeState(JUMP);
+		speed.y = 800;
 	} else {
 		speed.y -= GRAVITY * dt;
 	}
@@ -57,7 +67,21 @@ void MainCharacter::Update (float dt) {
 		speed.y = 0;
 		associated.box.y = 350;
 	}
+	if(speed.x == 0 && speed.y==0){
+		changeState(IDLE);
+	}
 	associated.box.x = associated.box.x > 1100 ? 1100 : associated.box.x < 0 ? 0 : associated.box.x;
+	if(characterState == IDLE && stateChanged){
+		spr->Open("assets/img/GenericIDLE.png");
+		stateChanged = false;
+	}else if(characterState == JUMP && stateChanged){
+		spr->Open("assets/img/GenericJUMP.png");
+		stateChanged = false;
+	}else if(characterState == WALK && stateChanged){
+		spr->Open("assets/img/GenericWALK.png");
+		stateChanged = false;
+		printf("Andou!\n");
+	}
 }
 void MainCharacter::Render () {
 
@@ -65,4 +89,10 @@ void MainCharacter::Render () {
 
 bool MainCharacter::Is (string type) const {
 	return type == "MainCharacter";
+}
+void MainCharacter::changeState(stateType state){
+	if(characterState != state){
+		characterState = state;
+		stateChanged = true;
+	}
 }

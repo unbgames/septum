@@ -7,6 +7,8 @@
 #include "Text.h"
 #include "MainCharacter.h"
 
+Sprite *jujuba = nullptr;
+
 FirstStageState::FirstStageState () {
 }
 FirstStageState::~FirstStageState () {
@@ -16,7 +18,7 @@ FirstStageState::~FirstStageState () {
 void FirstStageState::LoadAssets () {
 	GameObject *splashScreen = new GameObject();
 	splashScreen->AddComponent(
-			new Sprite(*splashScreen, "assets/img/generic_hell.jpg"));
+			new Sprite(*splashScreen, "assets/img/backgroundHellBeta.png"));
 	splashScreen->AddComponent(new CameraFollower(*splashScreen));
 	AddObject(splashScreen);
 
@@ -25,10 +27,18 @@ void FirstStageState::LoadAssets () {
 			new MainCharacter(*character));
 	character->box.y = 350;
 	AddObject(character);
+	GameObject *HUDcara = new GameObject();
+	jujuba = new Sprite(*HUDcara,"assets/img/HUDface.png");
+	HUDcara->AddComponent(jujuba);
+	AddObject(HUDcara);
 
 }
 void FirstStageState::Update (float dt) {
 	InputManager& inputManager = InputManager::GetInstance();
+
+	if(MainCharacter::mainCharacter->demon){
+		jujuba->Open("assets/img/HUDdemon.png");
+	}
 
 	quitRequested = inputManager.QuitRequested();
 
