@@ -8,6 +8,7 @@
 #include "MainCharacter.h"
 
 Sprite *jujuba = nullptr;
+bool demonio = false;
 
 FirstStageState::FirstStageState () {
 }
@@ -36,8 +37,12 @@ void FirstStageState::LoadAssets () {
 void FirstStageState::Update (float dt) {
 	InputManager& inputManager = InputManager::GetInstance();
 
-	if(MainCharacter::mainCharacter->demon){
-		jujuba->Open("assets/img/HUDdemon.png");
+	if(MainCharacter::mainCharacter->demon != demonio){
+		demonio = MainCharacter::mainCharacter->demon;
+		if(demonio)
+			jujuba->Open("assets/img/HUDdemon.png");
+		else
+			jujuba->Open("assets/img/HUDface.png");
 	}
 
 	quitRequested = inputManager.QuitRequested();
