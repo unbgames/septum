@@ -47,7 +47,7 @@ void Sprite::Render (float x, float y) {
 	dstRect.w = clipRect.w * scale.x;
 	dstRect.h = clipRect.h * scale.y;
 	SDL_RenderCopyEx(Game::GetInstance().GetRenderer(), texture.get(), &clipRect,
-			&dstRect, associated.angleDeg, nullptr, SDL_FLIP_NONE);
+			&dstRect, associated.angleDeg, nullptr, associated.flipHorizontal ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
 }
 
 void Sprite::Render () {
@@ -133,4 +133,3 @@ void Sprite::SetFrameCount (int frameCount) {
 void Sprite::SetFrameTime (float frameTime) {
 	this->frameTime = frameTime;
 }
-
