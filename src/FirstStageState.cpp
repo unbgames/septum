@@ -23,6 +23,7 @@ void FirstStageState::LoadAssets () {
 	GameObject *character = new GameObject();
 	character->AddComponent(
 			new MainCharacter(*character));
+	character->box.y = 350;
 	AddObject(character);
 
 }
@@ -36,6 +37,7 @@ void FirstStageState::Update (float dt) {
 	}
 
 	UpdateArray(dt);
+	Camera::Update(dt);
 }
 void FirstStageState::Render () {
 	RenderArray();
@@ -50,5 +52,5 @@ void FirstStageState::Pause () {
 
 }
 void FirstStageState::Resume () {
-	Camera::pos = {0, 0};
+	// Camera::pos = {0, 0};
 }

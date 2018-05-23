@@ -72,6 +72,7 @@ class GameObject {
 		Rect box;
 
 		double angleDeg = 0;
+		bool flipHorizontal = false;
 
 	private:
 		vector<unique_ptr<Component>> components;

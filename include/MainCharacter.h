@@ -1,5 +1,6 @@
 #pragma once
 #include "Component.h"
+#include "Vec2.h"
 
 class MainCharacter : public Component {
 
@@ -29,4 +30,7 @@ class MainCharacter : public Component {
 		bool Is (string type) const;
 
     static MainCharacter* mainCharacter;
+
+  private:
+    Vec2 speed = {0, 0};
 };
