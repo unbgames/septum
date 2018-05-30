@@ -20,7 +20,7 @@ MainCharacter::MainCharacter (GameObject& associated) :
 		Component(associated),characterState(IDLE),demon(false) {
 	mainCharacter = this;
 	hp = 100;
-	furia = 80;
+	furia = 100;
 	spr = new Sprite(associated, "assets/img/GenericIDLE.png",7,0.08);
 	associated.AddComponent(spr);
 	associated.box.h = spr->GetHeight();
@@ -49,7 +49,22 @@ void MainCharacter::Update (float dt) {
   	if(inputManager.KeyRelease('i')){
   		demon = demon?false:true;
   	}
+  	if(demon)
+  		furia-=0.05;
+  	if (furia>100)
+  		furia = 100;
 
+  	if(inputManager.KeyRelease('u')){
+  		float aux;
+  		aux = hp+furia;
+  		if(aux>=100){
+  			furia += hp - 100;
+  			hp = 100;
+  		}else{
+  			hp+=furia;
+  			furia=0;
+  		}
+  	}
 	if (speed.x < 0) {
 		associated.flipHorizontal = true;
 	} else if (speed.x > 0) {
@@ -71,6 +86,7 @@ void MainCharacter::Update (float dt) {
 
 	if(inputManager.IsKeyDown('s')){
   		changeState(CROUCH);
+  		furia+=0.1;
   	}else if(inputManager.IsKeyDown('j')){
   		changeState(BLOCK);
 	}

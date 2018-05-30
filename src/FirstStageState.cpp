@@ -10,6 +10,8 @@
 Sprite *jujuba = nullptr;
 Sprite *life = nullptr;
 Sprite *lifepoints = nullptr;
+Sprite *fury = nullptr;
+Sprite *furypoints = nullptr;
 bool demonio = false;
 
 FirstStageState::FirstStageState () {
@@ -48,9 +50,22 @@ void FirstStageState::LoadAssets () {
 	HUDLifepoints->box.y = 8;
 	lifepoints = new Sprite(*HUDLifepoints,"assets/img/HUDlife.png");
 	lifepoints->SetScale(9.65,0.085);
-	HUDLife->AddComponent(lifepoints);
+	HUDLifepoints->AddComponent(lifepoints);
 	AddObject(HUDLifepoints);
 
+	GameObject *HUDfury = new GameObject();
+	HUDfury->box.x = 200;
+	HUDfury->box.y = 70;
+	fury = new Sprite(*HUDfury,"assets/img/HUDbox.png");
+	HUDfury->AddComponent(fury);
+	AddObject(HUDfury);
+	GameObject *HUDfurypoints = new GameObject();
+	HUDfurypoints->box.x = 208;
+	HUDfurypoints->box.y = 78;
+	furypoints = new Sprite(*HUDfurypoints,"assets/img/HUDlife.png");
+	furypoints->SetScale(9.65,0.085);
+	HUDfurypoints->AddComponent(furypoints);
+	AddObject(HUDfurypoints);
 
 
 }
@@ -65,6 +80,7 @@ void FirstStageState::Update (float dt) {
 			jujuba->Open("assets/img/HUDface.png");
 	}
 	lifepoints->SetScale(0.0965*MainCharacter::mainCharacter->hp,0.085);
+	furypoints->SetScale(0.0965*MainCharacter::mainCharacter->furia,0.085);
 	quitRequested = inputManager.QuitRequested();
 
 	if (inputManager.KeyPress(ESCAPE_KEY)) {
