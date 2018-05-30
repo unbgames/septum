@@ -94,8 +94,8 @@ bool Sprite::Is (string type) const {
 }
 
 void Sprite::SetScale (float scaleX, float scaleY) {
-	scale.x = scaleX > 0 ? scaleX : scale.x;
-	scale.y = scaleY > 0 ? scaleY : scale.y;
+	scale.x = scaleX > 0 ? scaleX : 0.01;
+	scale.y = scaleY > 0 ? scaleY : 0.01;
 
 	/*Vec2 currentCenter = associated.box.GetCenter();
 

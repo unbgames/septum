@@ -50,14 +50,12 @@ void MainCharacter::Update (float dt) {
   		demon = demon?false:true;
   	}
   	if(demon)
-  		furia-=0.05;
+  		furia-=0.1;
   	if (furia>100)
-  		furia = 100;
+  		furia=100;
 
   	if(inputManager.KeyRelease('u')){
-  		float aux;
-  		aux = hp+furia;
-  		if(aux>=100){
+  		if(hp+furia>=100){
   			furia += hp - 100;
   			hp = 100;
   		}else{
@@ -86,7 +84,7 @@ void MainCharacter::Update (float dt) {
 
 	if(inputManager.IsKeyDown('s')){
   		changeState(CROUCH);
-  		furia+=0.1;
+  		furia+=0.5;
   	}else if(inputManager.IsKeyDown('j')){
   		changeState(BLOCK);
 	}
