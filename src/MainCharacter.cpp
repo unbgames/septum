@@ -11,7 +11,8 @@
 using std::weak_ptr;
 
 #define CHARACTER_SPEED 650
-#define GRAVITY 2000
+#define GRAVITY 2500
+int ISBLOCKED = 0;
 
 MainCharacter* MainCharacter::mainCharacter = nullptr;
 
@@ -56,19 +57,24 @@ void MainCharacter::Update (float dt) {
 	}
 
 	if (speed.y == 0 && inputManager.KeyPress('w')) {
-		speed.y = 800;
+		speed.y = 1000;
 	} else {
 		speed.y -= GRAVITY * dt;
 	}
 	associated.box.y -= (speed.y * dt);
 	associated.box.x += (speed.x * dt);
 
-	if (associated.box.y > 350) {
+	if (associated.box.y > 350 + ISBLOCKED) {
 		speed.y = 0;
-		associated.box.y = 350;
+		associated.box.y = 350+ISBLOCKED;
 	}
 
-	if(associated.box.y < 350){
+	if(inputManager.IsKeyDown('s')){
+  		changeState(CROUCH);
+  	}else if(inputManager.IsKeyDown('j')){
+  		changeState(BLOCK);
+	}
+  	else if(associated.box.y < 350){
 		changeState(JUMP);
 	}else if(dir != 0){
 		changeState(WALK);
@@ -88,6 +94,13 @@ void MainCharacter::Update (float dt) {
 		spr->Open("assets/img/GenericWALK.png");
 		stateChanged = false;
 		//printf("Andou!\n");
+	}else if(characterState == BLOCK && stateChanged){
+		spr->Open("assets/img/GenericBLOCK.png");
+		stateChanged = false;
+		//printf("Andou!\n");
+	}else if(characterState== CROUCH && stateChanged){
+		spr->Open("assets/img/GenericCROUCH.png");
+		stateChanged = false;
 	}
 }
 void MainCharacter::Render () {
@@ -99,6 +112,14 @@ bool MainCharacter::Is (string type) const {
 }
 void MainCharacter::changeState(stateType state){
 	if(characterState != state){
+		// if(state == BLOCK){
+		// 	associated.box.y -=110;
+		// 	ISBLOCKED = -110;
+		// }
+		// else if(characterState == BLOCK){
+		// 	associated.box.y+=100;
+		// 	ISBLOCKED = 0;
+		// }
 		characterState = state;
 		stateChanged = true;
 	}

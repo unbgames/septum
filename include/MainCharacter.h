@@ -8,7 +8,7 @@ class MainCharacter : public Component {
   public:
     MainCharacter (GameObject& associated);
     ~MainCharacter ();
-    enum stateType{IDLE,WALK,JUMP};
+    enum stateType{IDLE,WALK,JUMP,BLOCK,CROUCH};
     stateType characterState;
     /**
 		 * Sets the component up
