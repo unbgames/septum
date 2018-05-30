@@ -51,10 +51,14 @@ void MainCharacter::Update (float dt) {
   	}
   	if(demon)
   		furia-=0.1;
+  	if(furia<0){
+  		furia=0;
+  		demon = false;
+  	}
   	if (furia>100)
   		furia=100;
 
-  	if(inputManager.KeyRelease('u')){
+  	if(inputManager.KeyRelease('u') && !demon){
   		if(hp+furia>=100){
   			furia += hp - 100;
   			hp = 100;
