@@ -68,7 +68,7 @@ void FirstStageState::Update (float dt) {
 	quitRequested = inputManager.QuitRequested();
 
 	if (inputManager.KeyPress(ESCAPE_KEY)) {
-		quitRequested = true;
+		popRequested = true;
 	}
 
 	UpdateArray(dt);
