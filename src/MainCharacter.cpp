@@ -103,21 +103,26 @@ void MainCharacter::Update (float dt) {
 	associated.box.x = associated.box.x > 1100 ? 1100 : associated.box.x < 0 ? 0 : associated.box.x;
 	if(characterState == IDLE && stateChanged){
 		spr->Open("assets/img/GenericIDLE.png");
+		spr->SetFrameCount(7);
 		stateChanged = false;
 	}else if(characterState == JUMP && stateChanged){
 		spr->Open("assets/img/GenericJUMP.png");
+		spr->SetFrameCount(7);
 		hp-=10;
 		stateChanged = false;
 	}else if(characterState == WALK && stateChanged){
-		spr->Open("assets/img/GenericWALK.png");
+		spr->Open("assets/img/testewalk.png");
+		spr->SetFrameCount(8);
 		stateChanged = false;
 		//printf("Andou!\n");
 	}else if(characterState == BLOCK && stateChanged){
 		spr->Open("assets/img/GenericBLOCK.png");
+		spr->SetFrameCount(7);
 		stateChanged = false;
 		//printf("Andou!\n");
 	}else if(characterState== CROUCH && stateChanged){
 		spr->Open("assets/img/GenericCROUCH.png");
+		spr->SetFrameCount(7);
 		stateChanged = false;
 	}
 }

@@ -24,16 +24,16 @@ void Camera::Update (float dt) {
 	}
 	else {
 		InputManager& inputManager = InputManager::GetInstance();
-		Vec2 dir;
-		dir.x = inputManager.IsKeyDown(LEFT_ARROW_KEY) ? -1 : 0;
-		dir.x += inputManager.IsKeyDown(RIGHT_ARROW_KEY) ? 1 : 0;
+		//Vec2 dir;
+		//dir.x = inputManager.IsKeyDown(LEFT_ARROW_KEY) ? -1 : 0;
+		//dir.x += inputManager.IsKeyDown(RIGHT_ARROW_KEY) ? 1 : 0;
 
-		dir.y = inputManager.IsKeyDown(UP_ARROW_KEY) ? -1 : 0;
-		dir.y += inputManager.IsKeyDown(DOWN_ARROW_KEY) ? 1 : 0;
+		//dir.y = inputManager.IsKeyDown(UP_ARROW_KEY) ? -1 : 0;
+		//dir.y += inputManager.IsKeyDown(DOWN_ARROW_KEY) ? 1 : 0;
 
-		dir.x *= speed.x;
-		dir.y *= speed.y;
+		//dir.x *= speed.x;
+		//dir.y *= speed.y;
 
-		pos += (dir * dt);
+		//pos += (dir * dt);
 	}
 }
