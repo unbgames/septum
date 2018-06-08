@@ -1,6 +1,6 @@
 #pragma once
 #include "State.h"
-
+#include "TileMap.h"
 class FirstStageState: public State {
 	public:
 	  FirstStageState ();
@@ -25,4 +25,5 @@ class FirstStageState: public State {
 		void Resume ();
 
 	private:
+		//TileMap map;
 };

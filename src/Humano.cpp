@@ -1,45 +1,45 @@
-#include "MainCharacter.h"
+#include "Humano.h"
 #include "GameObject.h"
 #include "Game.h"
 #include "InputManager.h"
 #include <math.h>
 #include "Collider.h"
-#include "State.h"
 #include "Bullet.h"
 #include "Camera.h"
 #include "Sound.h"
 #include "FirstStageState.h"
-#include "Collision.h"
+#include "MainCharacter.h"
 
 using std::weak_ptr;
 
-#define CHARACTER_SPEED 650
-#define GRAVITY 2500
-int ISBLOCKED = 0;
+//#define CHARACTER_SPEED 650
+//#define GRAVITY 2500
+//int ISBLOCKED = 0;
 
-MainCharacter* MainCharacter::mainCharacter = nullptr;
+//Humano* Humano::Humano = nullptr;
 
-MainCharacter::MainCharacter (GameObject& associated) :
-		Component(associated),characterState(IDLE),demon(false) {
-	mainCharacter = this;
+Humano::Humano (GameObject& associated):Component(associated),characterState(IDLE),demon(false) {
+	//Humano = this;
 	hp = 100;
 	furia = 100;
-	spr = new Sprite(associated, "assets/img/player_idle.png",1,0.08);
+	spr = new Sprite(associated, "assets/img/Colectable_human.png",1,0.08);
 	associated.AddComponent(spr);
 	associated.box.h = spr->GetHeight();
 	associated.box.w = spr->GetWidth();
-	collisionbox = new Collider(associated,{0.8,0.8});
+	collisionbox = new Collider(associated,{0.6,0.6});
 	associated.AddComponent(collisionbox);
+	MainCharacter::mainCharacter->colideCOM.push_back(collisionbox);
 }
-MainCharacter::~MainCharacter () {
-	mainCharacter = nullptr;
+Humano::~Humano () {
+	//Humano = nullptr;
 
 }
 
-void MainCharacter::Start () {
+void Humano::Start () {
 }
-void MainCharacter::Update (float dt) {
-	InputManager& inputManager = InputManager::GetInstance();
+void Humano::Update (float dt) {
+	collisionbox->Update(dt);
+	/*InputManager& inputManager = InputManager::GetInstance();
 	int dir;
   	if(inputManager.IsKeyDown('a')){
   		dir = -1;
@@ -81,19 +81,12 @@ void MainCharacter::Update (float dt) {
 	} else {
 		speed.y -= GRAVITY * dt;
 	}
-	
 	associated.box.y -= (speed.y * dt);
 	associated.box.x += (speed.x * dt);
 
-	if (associated.box.y > 250 + ISBLOCKED) {
+	if (associated.box.y > 350 + ISBLOCKED) {
 		speed.y = 0;
-		associated.box.y = 250+ISBLOCKED;
-	}
-	collisionbox->Update(dt);
-	float ofsetjump=CantWalk();
-	if(ofsetjump){
-			//associated.box.y += (speed.y * dt);
-			associated.box.x -= (speed.x * dt);
+		associated.box.y = 350+ISBLOCKED;
 	}
 
 	if(inputManager.IsKeyDown('s')){
@@ -102,7 +95,7 @@ void MainCharacter::Update (float dt) {
   	}else if(inputManager.IsKeyDown('j')){
   		changeState(BLOCK);
 	}
-  	else if(associated.box.y < 250){
+  	else if(associated.box.y < 350){
 		changeState(JUMP);
 	}else if(dir != 0){
 		changeState(WALK);
@@ -112,8 +105,8 @@ void MainCharacter::Update (float dt) {
 
 	associated.box.x = associated.box.x > 1100 ? 1100 : associated.box.x < 0 ? 0 : associated.box.x;
 	if(characterState == IDLE && stateChanged){
-		spr->Open("assets/img/player_idle.png");
-		spr->SetFrameCount(1);
+		spr->Open("assets/img/GenericIDLE.png");
+		spr->SetFrameCount(7);
 		stateChanged = false;
 	}else if(characterState == JUMP && stateChanged){
 		spr->Open("assets/img/GenericJUMP.png");
@@ -134,16 +127,16 @@ void MainCharacter::Update (float dt) {
 		spr->Open("assets/img/GenericCROUCH.png");
 		spr->SetFrameCount(7);
 		stateChanged = false;
-	}
+	}*/
 }
-void MainCharacter::Render () {
+void Humano::Render () {
 
 }
 
-bool MainCharacter::Is (string type) const {
-	return type == "MainCharacter";
+bool Humano::Is (string type) const {
+	return type == "Humano";
 }
-void MainCharacter::changeState(stateType state){
+void Humano::changeState(stateType state){
 	if(characterState != state){
 		// if(state == BLOCK){
 		// 	associated.box.y -=110;
@@ -156,25 +149,4 @@ void MainCharacter::changeState(stateType state){
 		characterState = state;
 		stateChanged = true;
 	}
-}
-float MainCharacter::CantWalk(){
-	//printf("Chamou CantWalk size:%d\n",colideCOM.size());
-	for(int i=0;i<colideCOM.size();i++){
-		//printf("Atual:%.0f,%.0f,Bloco:%.0f,%.0f\n",collisionbox->box.x,collisionbox->box.y,colideCOM[i]->box.x,colideCOM[i]->box.y);
-		if(Collision::IsColliding(collisionbox->box, colideCOM[i]->box,0, 0)){
-			if(characterState!=WALK){//3 é chute
-				//problema pulando
-				printf("Achou o bug no pulo\n");
-				if(collisionbox->box.x+collisionbox->box.w/2>colideCOM[i]->box.x+colideCOM[i]->box.w/2)
-					//passa
-					associated.box.x = colideCOM[i]->box.x+colideCOM[i]->box.w;
-				else{
-					associated.box.x =(colideCOM[i]->box.x - associated.box.w);
-				}
-			}
-			printf("COlidiu\n");
-			return 1;
-		}
-	}
-	return 0;
 }

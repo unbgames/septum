@@ -7,7 +7,9 @@
 #include "Text.h"
 #include "MainCharacter.h"
 #include "HUD.h"
-
+#include "Humano.h"
+#include "TileSet.h"
+#include "TileMap.h"
 
 FirstStageState::FirstStageState () {
 }
@@ -22,15 +24,27 @@ void FirstStageState::LoadAssets () {
 	splashScreen->AddComponent(new CameraFollower(*splashScreen));
 	AddObject(splashScreen);
 
+	GameObject *map = new GameObject();
+	map->AddComponent(
+			new TileMap(*map, "assets/map/tileMap.txt",
+				new TileSet(256, 128, "assets/img/teste tile1.png", *map)));
+	AddObject(map);
+
 	GameObject *character = new GameObject();
 	character->AddComponent(
 			new MainCharacter(*character));
-	character->box.y = 350;
+	character->box.y = 250;
 	AddObject(character);
 
 	GameObject *Hud = new GameObject();
 	Hud->AddComponent(new HUD(*Hud));
 	AddObject(Hud);
+
+	GameObject *Human = new GameObject();
+	Human->box.x = 500;
+	Human->box.y = 450;
+	Human->AddComponent(new Humano(*Human));
+	AddObject(Human);
 }
 void FirstStageState::Update (float dt) {
 	InputManager& inputManager = InputManager::GetInstance();
@@ -46,6 +60,7 @@ void FirstStageState::Update (float dt) {
 }
 void FirstStageState::Render () {
 	RenderArray();
+	//map.Render();
 }
 
 void FirstStageState::Start () {

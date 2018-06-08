@@ -3,13 +3,12 @@
 #include "Vec2.h"
 #include "Sprite.h"
 #include "Collider.h"
-#include <vector>
 
-class MainCharacter : public Component {
+class Humano : public Component {
 
   public:
-    MainCharacter (GameObject& associated);
-    ~MainCharacter ();
+    Humano (GameObject& associated);
+    ~Humano ();
     enum stateType{IDLE,WALK,JUMP,BLOCK,CROUCH};
     stateType characterState;
     /**
@@ -33,13 +32,12 @@ class MainCharacter : public Component {
 		 */
 		bool Is (string type) const;
 		void changeState(stateType state);
-		float CantWalk();
 		bool demon;
 		float hp;
 		float furia;
-		std::vector<Collider*> colideCOM;
 
-    static MainCharacter* mainCharacter;
+    //static MainCharacter* mainCharacter;
+
   private:
   	Collider* collisionbox;
     Vec2 speed = {0, 0};

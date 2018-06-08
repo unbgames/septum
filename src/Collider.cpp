@@ -15,6 +15,7 @@ Collider::Collider (GameObject& associated, Vec2 scale, Vec2 offset) :
 }
 
 void Collider::Update (float dt) {
+
 	box.w = associated.box.w * scale.x;
 	box.h = associated.box.h * scale.y;
 
@@ -22,7 +23,7 @@ void Collider::Update (float dt) {
 
 	box.x = associated.box.GetCenter().x + rotated.x - box.w / 2;
 	box.y = associated.box.GetCenter().y + rotated.y - box.h / 2;
-
+	//printf("UpdateCOllider x:%.0f,y:%.0f\n",box.x,box.y);
 }
 
 void Collider::Render () {
