@@ -111,6 +111,8 @@ void MainCharacter::Update (float dt) {
 	}
 
 	associated.box.x = associated.box.x > 1100 ? 1100 : associated.box.x < 0 ? 0 : associated.box.x;
+
+	
 	if(characterState == IDLE && stateChanged){
 		spr->Open("assets/img/player_idle.png");
 		spr->SetFrameCount(1);

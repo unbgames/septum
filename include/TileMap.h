@@ -4,13 +4,14 @@
 #include <vector>
 #include "TileSet.h"
 #include "Component.h"
+#include "Vec2.h"
 
 using std::string;
 using std::vector;
 
 class TileMap: public Component {
 	public:
-		TileMap (GameObject& associated, string file, TileSet* tileSet);
+		TileMap (GameObject& associated, string file, TileSet* tileSet, Vec2 offset = {0,0});
 		void Load (string file);
 		void SetTileSet (TileSet* tileSet);
 		int& At (int x, int y, int z = 0);
@@ -46,4 +47,5 @@ class TileMap: public Component {
 		int mapWidth;
 		int mapHeight;
 		int mapDepth;
+		Vec2 offset;
 };

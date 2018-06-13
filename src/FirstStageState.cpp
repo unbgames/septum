@@ -25,9 +25,10 @@ void FirstStageState::LoadAssets () {
 	AddObject(splashScreen);
 
 	GameObject *map = new GameObject();
+	map->box.y = 60;
 	map->AddComponent(
 			new TileMap(*map, "assets/map/tileMap.txt",
-				new TileSet(256, 128, "assets/img/teste tile1.png", *map)));
+				new TileSet(256, 128, "assets/img/teste tile1.png", *map),{0,-75}));
 	AddObject(map);
 
 	GameObject *character = new GameObject();
