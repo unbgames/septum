@@ -2,6 +2,7 @@
 #include "Sprite.h"
 #include "Collider.h"
 #include "MainCharacter.h"
+#include "Camera.h"
 
 bool demonio = false;
 
@@ -49,6 +50,12 @@ void HUD::Update (float dt) {
 	}
 	Slife->SetScale(0.01*MainCharacter::mainCharacter->hp,1);
 	Sfury->SetScale(0.01*MainCharacter::mainCharacter->furia,1);
+	fundo->box.x = 36 + Camera::pos.x;
+	frente->box.x = 36+ Camera::pos.x;
+	lifepoints->box.x = 124+ Camera::pos.x;
+	face->box.x = 200+ Camera::pos.x;
+	furypoints->box.x = 124+ Camera::pos.x;
+
 
 }
 void HUD::Render () {

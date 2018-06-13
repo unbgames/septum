@@ -26,7 +26,7 @@ Humano::Humano (GameObject& associated):Component(associated),characterState(IDL
 	associated.AddComponent(spr);
 	associated.box.h = spr->GetHeight();
 	associated.box.w = spr->GetWidth();
-	collisionbox = new Collider(associated,{0.6,0.6});
+	collisionbox = new Collider(associated,{0.25,0.3},{-20,0});
 	associated.AddComponent(collisionbox);
 	MainCharacter::mainCharacter->colideCOM.push_back(collisionbox);
 }

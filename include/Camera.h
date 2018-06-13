@@ -19,7 +19,7 @@ class Camera {
 		 * @param dt
 		 */
 		static void Update (float dt);
-		
+		static bool IsFollowing();
 		static Vec2 pos;
 		static Vec2 speed;
 
