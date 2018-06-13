@@ -66,6 +66,8 @@ class GameObject {
 
 		void NotifyCollision (GameObject& other);
 
+		void NotifyAnimationEnd ();
+
 		/**
 		 * GameObject position and dimension on window
 		 */

@@ -10,7 +10,7 @@ class MainCharacter : public Component {
   public:
     MainCharacter (GameObject& associated);
     ~MainCharacter ();
-    enum stateType{IDLE,WALK,JUMP,BLOCK,CROUCH};
+    enum stateType{IDLE,WALK,JUMP,BLOCK,CROUCH,ATTACK,JUMP_ATTACK,CROUCH_ATTACK};
     stateType characterState;
     /**
 		 * Sets the component up
@@ -34,6 +34,9 @@ class MainCharacter : public Component {
 		bool Is (string type) const;
 		void changeState(stateType state);
 		float CantWalk();
+
+    void NotifyAnimationEnd();
+    
 		bool demon;
 		float hp;
 		float furia;
@@ -41,6 +44,7 @@ class MainCharacter : public Component {
 
     static MainCharacter* mainCharacter;
   private:
+    bool attackIssued;
   	Collider* collisionbox;
     Vec2 speed = {0, 0};
     Sprite* spr;

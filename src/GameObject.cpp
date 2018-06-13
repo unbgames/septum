@@ -77,3 +77,9 @@ void GameObject::NotifyCollision (GameObject& other) {
 		cpt->NotifyCollision(other);
 	}
 }
+
+void GameObject::NotifyAnimationEnd () {
+	for (auto& cpt : components) {
+		cpt->NotifyAnimationEnd();
+	}
+}

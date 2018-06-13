@@ -36,6 +36,8 @@ class Component {
 
 		void virtual NotifyCollision (GameObject& other);
 
+		void virtual NotifyAnimationEnd ();
+
 	protected:
 		GameObject& associated;
 };

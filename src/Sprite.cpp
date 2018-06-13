@@ -83,6 +83,7 @@ void Sprite::Update (float dt) {
 			SetFrame(currentFrame + 1);
 		}
 		else {
+			associated.NotifyAnimationEnd();
 			SetFrame(0);
 		}
 	}

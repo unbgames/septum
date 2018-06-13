@@ -41,35 +41,39 @@ void MainCharacter::Start () {
 void MainCharacter::Update (float dt) {
 	InputManager& inputManager = InputManager::GetInstance();
 	int dir;
-  	if(inputManager.IsKeyDown('a')){
-  		dir = -1;
-  	}else if(inputManager.IsKeyDown('d')){
-  		dir = 1;
-  	}else{
-  		dir = 0;
-  	}
-  	speed.x = dir * CHARACTER_SPEED;
-  	if(inputManager.KeyRelease('i')){
-  		demon = demon?false:true;
-  	}
-  	if(demon)
-  		furia-=0.1;
-  	if(furia<0){
-  		furia=0;
-  		demon = false;
-  	}
-  	if (furia>100)
-  		furia=100;
+	if (inputManager.KeyPress('k')) {
+		attackIssued = true;
+	}
+	if(inputManager.IsKeyDown('a')){
+		dir = -1;
+	}else if(inputManager.IsKeyDown('d')){
+		dir = 1;
+	}else{
+		dir = 0;
+	}
+	speed.x = dir * CHARACTER_SPEED;
+	if(inputManager.KeyRelease('i')){
+		demon = demon?false:true;
+	}
+	if(demon)
+		furia-=0.1;
+	if(furia<0){
+		furia=0;
+		demon = false;
+	}
+	if (furia>100)
+		furia=100;
 
-  	if(inputManager.KeyRelease('u') && !demon){
-  		if(hp+furia>=100){
-  			furia += hp - 100;
-  			hp = 100;
-  		}else{
-  			hp+=furia;
-  			furia=0;
-  		}
-  	}
+	if(inputManager.KeyRelease('u') && !demon){
+		if(hp+furia>=100){
+			furia += hp - 100;
+			hp = 100;
+		}else{
+			hp+=furia;
+			furia=0;
+		}
+	}
+
 	if (speed.x < 0) {
 		associated.flipHorizontal = true;
 	} else if (speed.x > 0) {
@@ -81,7 +85,7 @@ void MainCharacter::Update (float dt) {
 	} else {
 		speed.y -= GRAVITY * dt;
 	}
-	
+
 	associated.box.y -= (speed.y * dt);
 	associated.box.x += (speed.x * dt);
 
@@ -92,22 +96,21 @@ void MainCharacter::Update (float dt) {
 	collisionbox->Update(dt);
 	float ofsetjump=CantWalk();
 	if(ofsetjump){
-			//associated.box.y += (speed.y * dt);
 			associated.box.x -= (speed.x * dt);
 	}
 
 	if(inputManager.IsKeyDown('s')){
-  		changeState(CROUCH);
+  		changeState(attackIssued ? CROUCH_ATTACK : CROUCH);
   		furia+=0.5;
   	}else if(inputManager.IsKeyDown('j')){
   		changeState(BLOCK);
 	}
   	else if(associated.box.y < 250){
-		changeState(JUMP);
+		changeState(attackIssued ? JUMP_ATTACK : JUMP);
 	}else if(dir != 0){
-		changeState(WALK);
+		changeState(attackIssued ? ATTACK : WALK);
 	}else if(speed.x == 0 && speed.y==0){
-		changeState(IDLE);
+		changeState(attackIssued ? ATTACK : IDLE);
 	}
 
 	associated.box.x = associated.box.x > 1100 ? 1100 : associated.box.x < 0 ? 0 : associated.box.x;
@@ -124,14 +127,24 @@ void MainCharacter::Update (float dt) {
 		spr->Open("assets/img/testewalk.png");
 		spr->SetFrameCount(8);
 		stateChanged = false;
-		//printf("Andou!\n");
 	}else if(characterState == BLOCK && stateChanged){
 		spr->Open("assets/img/GenericBLOCK.png");
 		spr->SetFrameCount(7);
 		stateChanged = false;
-		//printf("Andou!\n");
 	}else if(characterState== CROUCH && stateChanged){
 		spr->Open("assets/img/GenericCROUCH.png");
+		spr->SetFrameCount(7);
+		stateChanged = false;
+	}else if(characterState== ATTACK && stateChanged){
+		spr->Open("assets/img/GenericJUMP.png");
+		spr->SetFrameCount(7);
+		stateChanged = false;
+	}else if(characterState== JUMP_ATTACK && stateChanged){
+		spr->Open("assets/img/GenericJUMP.png");
+		spr->SetFrameCount(7);
+		stateChanged = false;
+	}else if(characterState== CROUCH_ATTACK && stateChanged){
+		spr->Open("assets/img/GenericJUMP.png");
 		spr->SetFrameCount(7);
 		stateChanged = false;
 	}
@@ -177,4 +190,10 @@ float MainCharacter::CantWalk(){
 		}
 	}
 	return 0;
+}
+
+void MainCharacter::NotifyAnimationEnd () {
+	if (attackIssued) {
+		attackIssued = false;
+	}
 }

@@ -15,7 +15,6 @@ TileMap::TileMap (GameObject& associated, string file, TileSet* tileSet) :
 }
 
 void TileMap::Load (string file) {
-	printf("Carregou img\n");
 	ifstream tileFile(file.c_str());
 	if (tileFile.is_open()) {
 		string aux;
@@ -56,7 +55,6 @@ void TileMap::RenderLayer (int layer, int cameraX, int cameraY) {
 	for (int y = 0; y < mapHeight; ++y) {
 		for (int x = 0; x < mapWidth; ++x) {
 			int index = At(x, y, layer);
-			printf("index:%d",index);
 			if (index >= 0) {
 				tileSet->RenderTile(index,
 						(tileSet->GetTileWidth() * x) - cameraX
