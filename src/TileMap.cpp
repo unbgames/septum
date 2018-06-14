@@ -9,8 +9,8 @@
 using std::ifstream;
 using std::string;
 
-TileMap::TileMap (GameObject& associated, string file, TileSet* tileSet) :
-		Component(associated), tileSet(tileSet) {
+TileMap::TileMap (GameObject& associated, string file, TileSet* tileSet, Vec2 offset) :
+		Component(associated), tileSet(tileSet), offset(offset) {
 	Load(file);
 }
 
@@ -52,15 +52,17 @@ int& TileMap::At (int x, int y, int z) {
 }
 
 void TileMap::RenderLayer (int layer, int cameraX, int cameraY) {
+	int posx = cameraX + offset.x;
+	int posy = cameraY + offset.y;
 	for (int y = 0; y < mapHeight; ++y) {
 		for (int x = 0; x < mapWidth; ++x) {
 			int index = At(x, y, layer);
 			if (index >= 0) {
 				tileSet->RenderTile(index,
-						(tileSet->GetTileWidth() * x) - cameraX
-								- cameraX * layer * PARALLAX_FACTOR,
-						(tileSet->GetTileHeight() * y) - cameraY
-								- cameraY * layer * PARALLAX_FACTOR);
+						(tileSet->GetTileWidth() * x) - posx
+								- posx * layer * PARALLAX_FACTOR,
+						(tileSet->GetTileHeight() * y) - posy
+								- posy * layer * PARALLAX_FACTOR);
 			}
 		}
 	}

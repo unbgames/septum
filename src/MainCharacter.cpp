@@ -16,6 +16,7 @@ using std::weak_ptr;
 #define CHARACTER_SPEED 650
 #define GRAVITY 2500
 int ISBLOCKED = 0;
+Vec2 Bloqueiotela = {0,1286};
 
 MainCharacter* MainCharacter::mainCharacter = nullptr;
 
@@ -28,7 +29,7 @@ MainCharacter::MainCharacter (GameObject& associated) :
 	associated.AddComponent(spr);
 	associated.box.h = spr->GetHeight();
 	associated.box.w = spr->GetWidth();
-	collisionbox = new Collider(associated,{0.8,0.8});
+	collisionbox = new Collider(associated,{0.7,0.8});
 	associated.AddComponent(collisionbox);
 }
 MainCharacter::~MainCharacter () {
@@ -113,7 +114,33 @@ void MainCharacter::Update (float dt) {
 		changeState(attackIssued ? ATTACK : IDLE);
 	}
 
-	associated.box.x = associated.box.x > 1100 ? 1100 : associated.box.x < 0 ? 0 : associated.box.x;
+	printf("X:%f,Y:%f\n",Camera::pos.x,Camera::pos.y);
+	if(associated.box.x > 640 + Camera::pos.x/2 && speed.x > 0)
+		Camera::Follow(&associated);
+	if(associated.box.x <640 + Camera::pos.x && speed.x <0)
+		Camera::Follow(&associated);
+
+	if(associated.box.x > Bloqueiotela.y  && Camera::IsFollowing){
+		//associated.box.x = Bloqueiotela.y;
+		Camera::Unfollow();
+		if(associated.box.x > Bloqueiotela.y + 512){
+			associated.box.x = Bloqueiotela.y+ 512;
+		}
+	}
+	else if(associated.box.x < Bloqueiotela.x + 512){
+		//associated.box.x = Bloqueiotela.x;
+		Camera::Unfollow();
+		if(associated.box.x < Bloqueiotela.x){
+			associated.box.x = Bloqueiotela.x;
+		}
+	}
+	else{
+		associated.box.x = associated.box.x;
+	}
+
+	//associated.box.x = associated.box.x > Bloqueiotela.y ? Bloqueiotela.y : associated.box.x < Bloqueiotela.x ? Bloqueiotela.x : associated.box.x;
+
+
 	if(characterState == IDLE && stateChanged){
 		spr->Open("assets/img/player_idle.png");
 		spr->SetFrameCount(1);

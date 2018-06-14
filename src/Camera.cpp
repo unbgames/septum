@@ -19,8 +19,8 @@ void Camera::Update (float dt) {
 	if (focus != nullptr) {
 		pos.x = float(
 				focus->box.GetCenter().x - Game::GetInstance().GetWidth() / 2);
-		pos.y = float(
-				focus->box.GetCenter().y - Game::GetInstance().GetHeight() / 2);
+		//pos.y = float(
+		//		focus->box.GetCenter().y - Game::GetInstance().GetHeight() / 2);
 	}
 	else {
 		InputManager& inputManager = InputManager::GetInstance();
@@ -36,4 +36,8 @@ void Camera::Update (float dt) {
 
 		//pos += (dir * dt);
 	}
+}
+bool Camera::IsFollowing(){
+	return focus!=nullptr;	
+
 }
