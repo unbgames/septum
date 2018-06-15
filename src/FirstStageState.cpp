@@ -96,6 +96,7 @@ void FirstStageState::Render () {
 }
 
 void FirstStageState::Start () {
+	Camera::pos = {0, 0};
 	LoadAssets();
 	StartArray();
 	started = true;
@@ -104,5 +105,4 @@ void FirstStageState::Pause () {
 
 }
 void FirstStageState::Resume () {
-	// Camera::pos = {0, 0};
 }
