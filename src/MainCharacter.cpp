@@ -278,3 +278,6 @@ void MainCharacter::StateLogic () {
 	// associated.box.w = spr->GetWidth();
 	stateChanged = false;
 }
+Vec2 MainCharacter::GetCharacterPosition(){
+	return associated.box.GetCenter();
+}

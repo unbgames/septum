@@ -11,6 +11,7 @@
 #include "TileSet.h"
 #include "TileMap.h"
 #include "Colliders.h"
+#include "Corvus.h"
 
 FirstStageState::FirstStageState () {
 }
@@ -50,13 +51,13 @@ void FirstStageState::LoadAssets () {
 	Human1->box.x = 500;
 	Human1->box.y = 100;
 	Human1->AddComponent(new Humano(*Human1));
-	GameObject *Human2 = new GameObject();
-	Human2->box.x = 800;
-	Human2->box.y = 450;
-	Human2->AddComponent(new Humano(*Human2));
+	GameObject *corvo = new GameObject();
+	corvo->box.x = 800;
+	corvo->box.y = 400;
+	corvo->AddComponent(new Corvus(*corvo));
 	AddObject(Human);
 	AddObject(Human1);
-	AddObject(Human2);
+	AddObject(corvo);
 }
 void FirstStageState::Update (float dt) {
 	Camera::Update(dt);
