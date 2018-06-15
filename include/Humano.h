@@ -1,10 +1,11 @@
 #pragma once
 #include "Component.h"
+#include "Damageable.h"
 #include "Vec2.h"
 #include "Sprite.h"
 #include "Collider.h"
 
-class Humano : public Component {
+class Humano : public Damageable {
 
   public:
     Humano (GameObject& associated);
@@ -31,16 +32,12 @@ class Humano : public Component {
 		 * @retval false the passed type is not MainCharacter
 		 */
 		bool Is (string type) const;
-		void changeState(stateType state);
-		bool demon;
-		float hp;
-		float furia;
+		void ChangeState(stateType state);
 
     //static MainCharacter* mainCharacter;
 
   private:
   	Collider* collisionbox;
-    Vec2 speed = {0, 0};
     Sprite* spr;
     bool stateChanged = false;
 };

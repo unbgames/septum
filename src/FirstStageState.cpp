@@ -46,9 +46,20 @@ void FirstStageState::LoadAssets () {
 	Human->box.x = 500;
 	Human->box.y = 450;
 	Human->AddComponent(new Humano(*Human));
+	GameObject *Human1 = new GameObject();
+	Human1->box.x = 500;
+	Human1->box.y = 100;
+	Human1->AddComponent(new Humano(*Human1));
+	GameObject *Human2 = new GameObject();
+	Human2->box.x = 800;
+	Human2->box.y = 450;
+	Human2->AddComponent(new Humano(*Human2));
 	AddObject(Human);
+	AddObject(Human1);
+	AddObject(Human2);
 }
 void FirstStageState::Update (float dt) {
+	Camera::Update(dt);
 	InputManager& inputManager = InputManager::GetInstance();
 
 	quitRequested = inputManager.QuitRequested();
@@ -56,8 +67,6 @@ void FirstStageState::Update (float dt) {
 	if (inputManager.KeyPress(ESCAPE_KEY)) {
 		popRequested = true;
 	}
-
-	UpdateArray(dt);
 
 	for (int i = 0; i < objectArray.size(); ++i) {
 		Component* cptA = objectArray[i]->GetComponent("Colliders");
@@ -70,8 +79,16 @@ void FirstStageState::Update (float dt) {
 			}
 		}
 	}
+	UpdateArray(dt);
 
-	Camera::Update(dt);
+	vector<shared_ptr<GameObject>>::iterator it = objectArray.begin();
+	for (int i = objectArray.size() - 1; i >= 0; --i) {
+		if (objectArray[i]->IsDead()) {
+			objectArray.erase(it + i);
+		}
+	}
+
+
 }
 void FirstStageState::Render () {
 	RenderArray();

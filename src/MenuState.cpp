@@ -26,14 +26,6 @@ void MenuState::LoadAssets () {
 void MenuState::Update (float dt) {
 	InputManager& inputManager = InputManager::GetInstance();
 
-	/*if(MainCharacter::mainCharacter->demon != demonio){
-		demonio = MainCharacter::mainCharacter->demon;
-		if(demonio)
-			jujuba->Open("assets/img/HUDdemon.png");
-		else
-			jujuba->Open("assets/img/HUDface.png");
-	}
-	lifepoints->SetScale(0.0965*MainCharacter::mainCharacter->hp,0.085);*/
 	quitRequested = inputManager.QuitRequested();
 
 	if (inputManager.KeyPress(ESCAPE_KEY)) {

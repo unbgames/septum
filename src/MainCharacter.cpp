@@ -6,7 +6,7 @@
 #include "Collider.h"
 #include "Colliders.h"
 #include "State.h"
-#include "Bullet.h"
+#include "Damageable.h"
 #include "Camera.h"
 #include "Sound.h"
 #include "FirstStageState.h"
@@ -16,18 +16,27 @@ using std::weak_ptr;
 
 #define CHARACTER_SPEED 650
 #define GRAVITY 2500
-#define NORMAL_ATTACK_HIT_FRAME_START 0.450
+#define NORMAL_ATTACK_HIT_FRAME_START 0.600
 #define NORMAL_ATTACK_HIT_FRAME_END 0.650
+#define NORMAL_ATTACK_DAMAGE 35
+
+#define CROUCH_ATTACK_HIT_FRAME_START 0.600
+#define CROUCH_ATTACK_HIT_FRAME_END 0.650
+#define CROUCH_ATTACK_DAMAGE 100
+
+#define JUMP_ATTACK_HIT_FRAME_START 0.450
+#define JUMP_ATTACK_HIT_FRAME_END 0.500
+#define JUMP_ATTACK_DAMAGE 50
+
 int ISBLOCKED = 0;
-bool CantWalk = false;
+bool ENEMY_HIT = false;
 Vec2 Bloqueiotela = {0,1286};
 
 MainCharacter* MainCharacter::mainCharacter = nullptr;
 
 MainCharacter::MainCharacter (GameObject& associated) :
-		Component(associated),characterState(IDLE),demon(false) {
+		Damageable(associated, 100),characterState(IDLE),demon(false) {
 	mainCharacter = this;
-	hp = 100;
 	furia = 100;
 	spr = new Sprite(associated, "assets/img/player_idle.png",1,0.08);
 	associated.AddComponent(spr);
@@ -79,11 +88,11 @@ void MainCharacter::Update (float dt) {
 		furia=100;
 
 	if(inputManager.KeyRelease('u') && !demon){
-		if(hp+furia>=100){
-			furia += hp - 100;
-			hp = 100;
+		if(GetHP()+furia>=100){
+			furia += GetHP() - 100;
+			SetHP(100);
 		}else{
-			hp+=furia;
+			Damage(-furia);
 			furia=0;
 		}
 	}
@@ -103,28 +112,26 @@ void MainCharacter::Update (float dt) {
 	associated.box.y -= (speed.y * dt);
 	associated.box.x += (speed.x * dt);
 
-	if (associated.box.y > 250 + ISBLOCKED) {
+	if(inputManager.IsKeyDown('s')){
+		associated.box.y = 420;
+		furia+=0.5;
+	} else if (associated.box.y > 250 + ISBLOCKED) {
 		speed.y = 0;
-		associated.box.y = 250+ISBLOCKED;
-	}
-
-	if (CantWalk) {
-			associated.box.x -= (speed.x * dt);
+		associated.box.y = 250 + ISBLOCKED;
 	}
 
 	if (!attacking) {
-		if(inputManager.IsKeyDown('s')){
-	  		changeState(attackIssued ? CROUCH_ATTACK : CROUCH);
-	  		furia+=0.5;
-	  	}else if(inputManager.IsKeyDown('j')){
-	  		changeState(BLOCK);
+			if (associated.box.y > 250 + ISBLOCKED) {
+				ChangeState(attackIssued ? CROUCH_ATTACK : CROUCH);
+	  	} else if(inputManager.IsKeyDown('j')){
+	  		ChangeState(BLOCK);
 		}
-	  	else if(associated.box.y < 250){
-			changeState(attackIssued ? JUMP_ATTACK : JUMP);
+  	else if(associated.box.y < 250){
+			ChangeState(attackIssued ? JUMP_ATTACK : JUMP);
 		}else if(dir != 0){
-			changeState(attackIssued ? ATTACK : WALK);
+			ChangeState(attackIssued ? ATTACK : WALK);
 		}else if(speed.x == 0 && speed.y==0){
-			changeState(attackIssued ? ATTACK : IDLE);
+			ChangeState(attackIssued ? ATTACK : IDLE);
 		}
 		if (attackIssued) {
 			attacking = true;
@@ -132,23 +139,41 @@ void MainCharacter::Update (float dt) {
 	}
 
 	if (characterState == ATTACK) {
-		if (NORMAL_ATTACK_HIT_FRAME_START >= (currentTime - dt) && NORMAL_ATTACK_HIT_FRAME_START <= currentTime) {
-			colliders->GetCollider("hand")->SetScale({0.45, 0.3});
-			colliders->GetCollider("hand")->SetOffset({210, 40});
-		} else if (NORMAL_ATTACK_HIT_FRAME_END >= (currentTime - dt) && NORMAL_ATTACK_HIT_FRAME_END <= currentTime){
+		if (NORMAL_ATTACK_HIT_FRAME_START <= currentTime && NORMAL_ATTACK_HIT_FRAME_END > currentTime) {
+			colliders->GetCollider("hand")->SetScale({0.6, 0.3});
+			colliders->GetCollider("hand")->SetOffset({160, 40});
+		} else if (NORMAL_ATTACK_HIT_FRAME_END <= currentTime){
+			colliders->GetCollider("hand")->SetScale({0,0});
+			colliders->GetCollider("hand")->SetOffset({0,0});
+		}
+	}
+	if (characterState == JUMP_ATTACK) {
+		if (JUMP_ATTACK_HIT_FRAME_START <= currentTime) {
+			colliders->GetCollider("hand")->SetScale({0.25, 0.35});
+			colliders->GetCollider("hand")->SetOffset({210, 0});
+		} else if (JUMP_ATTACK_HIT_FRAME_END <= currentTime){
+			colliders->GetCollider("hand")->SetScale({0,0});
+			colliders->GetCollider("hand")->SetOffset({0,0});
+		}
+	}
+	if (characterState == CROUCH_ATTACK) {
+		if (CROUCH_ATTACK_HIT_FRAME_START <= currentTime) {
+			colliders->GetCollider("hand")->SetScale({0.55, 0.35});
+			colliders->GetCollider("hand")->SetOffset({160, 0});
+		} else if (CROUCH_ATTACK_HIT_FRAME_END <= currentTime){
 			colliders->GetCollider("hand")->SetScale({0,0});
 			colliders->GetCollider("hand")->SetOffset({0,0});
 		}
 	}
 
-	if(associated.box.x > 640 + Camera::pos.x/2 && speed.x > 0)
+	if(associated.box.x >= 512 + Camera::pos.x/2 && speed.x > 0)
 		Camera::Follow(&associated);
-	if(associated.box.x <640 + Camera::pos.x && speed.x <0)
+	if(associated.box.x < 512 + Camera::pos.x && speed.x <0)
 		Camera::Follow(&associated);
 
-	if(associated.box.x > Bloqueiotela.y  && Camera::IsFollowing()){
+	if(associated.box.x >= Bloqueiotela.y  && Camera::IsFollowing()){
 		Camera::Unfollow();
-		if(associated.box.x > Bloqueiotela.y + 512){
+		if(associated.box.x >= Bloqueiotela.y + 512){
 			associated.box.x = Bloqueiotela.y+ 512;
 		}
 	}
@@ -158,12 +183,10 @@ void MainCharacter::Update (float dt) {
 			associated.box.x = Bloqueiotela.x;
 		}
 	}
-	else{
-		associated.box.x = associated.box.x;
-	}
 
 	if (stateChanged) {
 		StateLogic();
+		animationTimer.Restart();
 	}
 }
 void MainCharacter::Render () {
@@ -171,18 +194,10 @@ void MainCharacter::Render () {
 }
 
 bool MainCharacter::Is (string type) const {
-	return type == "MainCharacter";
+	return type == "MainCharacter" || type == "Damageable";
 }
-void MainCharacter::changeState(stateType state){
+void MainCharacter::ChangeState(stateType state){
 	if(characterState != state){
-		// if(state == BLOCK){
-		// 	associated.box.y -=110;
-		// 	ISBLOCKED = -110;
-		// }
-		// else if(characterState == BLOCK){
-		// 	associated.box.y+=100;
-		// 	ISBLOCKED = 0;
-		// }
 		characterState = state;
 		stateChanged = true;
 	}
@@ -190,27 +205,46 @@ void MainCharacter::changeState(stateType state){
 
 void MainCharacter::NotifyCollision (GameObject& other, string idCollider, string idOtherCollider) {
 	Colliders* otherColliders = (Colliders*)(other.GetComponent("Colliders"));
+	Collider* collider = colliders->GetCollider(idCollider).get();
 	Collider* otherCollider = otherColliders->GetCollider(idOtherCollider).get();
 	if (otherColliders != nullptr) {
 		if (idCollider == "body" && idOtherCollider == "body") {
-			if(characterState!=WALK){
-				if(colliders->GetCollider("body")->box.x+colliders->GetCollider("body")->box.w/2>otherCollider->box.x+otherCollider->box.w/2)
-				associated.box.x = otherCollider->box.x + otherCollider->box.w;
-				else{
-					associated.box.x =(otherCollider->box.x - associated.box.w);
-				}
-				CantWalk = true;
+			float offsetX = abs(associated.box.x - collider->box.x);
+			if(collider->box.x + collider->box.w/2 > otherCollider->box.x + otherCollider->box.w / 2){
+				associated.box.x = otherCollider->box.x + otherCollider->box.w - offsetX + 1;
 			}
-			CantWalk = false;
+			else{
+				associated.box.x = otherCollider->box.x - collider->box.w - offsetX - 1;
+			}
+		}
+		if (idCollider == "hand" && idOtherCollider == "body") {
+			Component* damageable = other.GetComponent("Damageable");
+			if (damageable != nullptr) {
+				if (characterState == ATTACK && !ENEMY_HIT) {
+					((Damageable*) damageable)->Damage(NORMAL_ATTACK_DAMAGE);
+					ENEMY_HIT = true;
+				}
+				if (characterState == JUMP_ATTACK && !ENEMY_HIT) {
+					((Damageable*) damageable)->Damage(JUMP_ATTACK_DAMAGE);
+					ENEMY_HIT = true;
+				}
+				if (characterState == CROUCH_ATTACK && !ENEMY_HIT) {
+					((Damageable*) damageable)->Damage(CROUCH_ATTACK_DAMAGE);
+					ENEMY_HIT = true;
+				}
+			}
 		}
 	}
 }
 
 void MainCharacter::NotifyAnimationEnd () {
-	animationTimer.Restart();
 	if (attacking) {
 		attacking = false;
+		colliders->GetCollider("hand")->SetScale({0,0});
+		colliders->GetCollider("hand")->SetOffset({0,0});
+		ENEMY_HIT = false;
 	}
+	animationTimer.Restart();
 }
 
 void MainCharacter::StateLogic () {
@@ -220,7 +254,7 @@ void MainCharacter::StateLogic () {
 	}else if(characterState == JUMP && stateChanged){
 		spr->Open("assets/img/GenericJUMP.png");
 		spr->SetFrameCount(7);
-		hp-=10;
+		Damage(10);
 	}else if(characterState == WALK && stateChanged){
 		spr->Open("assets/img/testewalk.png");
 		spr->SetFrameCount(8);
@@ -234,10 +268,10 @@ void MainCharacter::StateLogic () {
 		spr->Open("assets/img/GenericATTACK.png");
 		spr->SetFrameCount(7);
 	}else if(characterState== JUMP_ATTACK && stateChanged){
-		spr->Open("assets/img/GenericCROUCH.png");
+		spr->Open("assets/img/GenericATTACK.png");
 		spr->SetFrameCount(7);
 	}else if(characterState== CROUCH_ATTACK && stateChanged){
-		spr->Open("assets/img/GenericBLOCK.png");
+		spr->Open("assets/img/GenericATTACK.png");
 		spr->SetFrameCount(7);
 	}
 	// associated.box.h = spr->GetHeight();

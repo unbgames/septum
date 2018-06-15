@@ -13,16 +13,7 @@
 
 using std::weak_ptr;
 
-//#define CHARACTER_SPEED 650
-//#define GRAVITY 2500
-//int ISBLOCKED = 0;
-
-//Humano* Humano::Humano = nullptr;
-
-Humano::Humano (GameObject& associated):Component(associated),characterState(IDLE),demon(false) {
-	//Humano = this;
-	hp = 100;
-	furia = 100;
+Humano::Humano (GameObject& associated):Damageable(associated, 100) {
 	spr = new Sprite(associated, "assets/img/Colectable_human.png",1,0.08);
 	associated.AddComponent(spr);
 	associated.box.h = spr->GetHeight();
@@ -33,32 +24,23 @@ Humano::Humano (GameObject& associated):Component(associated),characterState(IDL
 	associated.AddComponent(colliders);
 }
 Humano::~Humano () {
-	//Humano = nullptr;
-
 }
 
 void Humano::Start () {
 }
 void Humano::Update (float dt) {
-	collisionbox->Update(dt);
+	if (GetHP() <= 0) {
+		associated.RequestDelete();
+	}
 }
 void Humano::Render () {
-
 }
 
 bool Humano::Is (string type) const {
-	return type == "Humano";
+	return type == "Humano" || type == "Damageable";
 }
-void Humano::changeState(stateType state){
+void Humano::ChangeState(stateType state){
 	if(characterState != state){
-		// if(state == BLOCK){
-		// 	associated.box.y -=110;
-		// 	ISBLOCKED = -110;
-		// }
-		// else if(characterState == BLOCK){
-		// 	associated.box.y+=100;
-		// 	ISBLOCKED = 0;
-		// }
 		characterState = state;
 		stateChanged = true;
 	}
