@@ -3,15 +3,14 @@
 #include "Damageable.h"
 #include "Vec2.h"
 #include "Sprite.h"
-#include "Colliders.h"
-#include <vector>
+#include "Collider.h"
 
-class MainCharacter : public Damageable {
+class Corvus : public Damageable {
 
   public:
-    MainCharacter (GameObject& associated);
-    ~MainCharacter ();
-    enum stateType{IDLE,WALK,JUMP,BLOCK,CROUCH,ATTACK,JUMP_ATTACK,CROUCH_ATTACK};
+    Corvus (GameObject& associated);
+    ~Corvus ();
+    enum stateType{IDLE,WALK,ATK};
     stateType characterState;
     /**
 		 * Sets the component up
@@ -35,22 +34,13 @@ class MainCharacter : public Damageable {
 		bool Is (string type) const;
 		void ChangeState(stateType state);
 
-    void NotifyAnimationEnd();
-    void NotifyCollision (GameObject& other, string idCollider, string idOtherCollider);
+    //static MainCharacter* mainCharacter;
 
-		bool demon;
-		float furia;
-
-    static MainCharacter* mainCharacter;
-    Vec2 GetCharacterPosition();
   private:
-
-    void StateLogic ();
-
-    bool attacking;
-  	Colliders* colliders;
-    Vec2 speed = {0, 0};
+  	Collider* collisionbox;
     Sprite* spr;
     bool stateChanged = false;
-    Timer animationTimer;
+    stateType ESTADO;
+    int AtackRange = 20;
+    Vec2 speed = {0, 0};
 };
