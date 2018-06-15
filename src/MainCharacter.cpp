@@ -121,12 +121,12 @@ void MainCharacter::Update (float dt) {
 	}
 
 	if (!attacking) {
-			if (associated.box.y > 250 + ISBLOCKED) {
-				ChangeState(attackIssued ? CROUCH_ATTACK : CROUCH);
+		if (associated.box.y > 250 + ISBLOCKED) {
+			ChangeState(attackIssued ? CROUCH_ATTACK : CROUCH);
 	  	} else if(inputManager.IsKeyDown('j')){
 	  		ChangeState(BLOCK);
 		}
-  	else if(associated.box.y < 250){
+  		else if(associated.box.y < 250){
 			ChangeState(attackIssued ? JUMP_ATTACK : JUMP);
 		}else if(dir != 0){
 			ChangeState(attackIssued ? ATTACK : WALK);

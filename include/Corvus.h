@@ -4,7 +4,7 @@
 #include "Vec2.h"
 #include "Sprite.h"
 #include "Collider.h"
-
+#include "Timer.h"
 class Corvus : public Damageable {
 
   public:
@@ -33,6 +33,7 @@ class Corvus : public Damageable {
 		 */
 		bool Is (string type) const;
 		void ChangeState(stateType state);
+		void NotifyAnimationEnd();
 
     //static MainCharacter* mainCharacter;
 
@@ -41,6 +42,7 @@ class Corvus : public Damageable {
     Sprite* spr;
     bool stateChanged = false;
     stateType ESTADO;
-    int AtackRange = 20;
+    int AtackRange = 100;
     Vec2 speed = {0, 0};
+    Timer animationTimer;
 };
