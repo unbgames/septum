@@ -24,8 +24,8 @@ using std::weak_ptr;
 #define CROUCH_ATTACK_HIT_FRAME_END 0.650
 #define CROUCH_ATTACK_DAMAGE 100
 
-#define JUMP_ATTACK_HIT_FRAME_START 0.450
-#define JUMP_ATTACK_HIT_FRAME_END 0.500
+#define JUMP_ATTACK_HIT_FRAME_START 0.300
+#define JUMP_ATTACK_HIT_FRAME_END 0.350
 #define JUMP_ATTACK_DAMAGE 50
 
 int ISBLOCKED = 0;
@@ -53,7 +53,7 @@ MainCharacter::MainCharacter (GameObject& associated) :
 }
 MainCharacter::~MainCharacter () {
 	mainCharacter = nullptr;
-
+	Camera::Unfollow();
 }
 
 void MainCharacter::Start () {
@@ -140,8 +140,8 @@ void MainCharacter::Update (float dt) {
 
 	if (characterState == ATTACK) {
 		if (NORMAL_ATTACK_HIT_FRAME_START <= currentTime && NORMAL_ATTACK_HIT_FRAME_END > currentTime) {
-			colliders->GetCollider("hand")->SetScale({0.6, 0.3});
-			colliders->GetCollider("hand")->SetOffset({160, 40});
+			colliders->GetCollider("hand")->SetScale({0.3, 0.4});
+			colliders->GetCollider("hand")->SetOffset({120, 40});
 		} else if (NORMAL_ATTACK_HIT_FRAME_END <= currentTime){
 			colliders->GetCollider("hand")->SetScale({0,0});
 			colliders->GetCollider("hand")->SetOffset({0,0});
@@ -149,8 +149,8 @@ void MainCharacter::Update (float dt) {
 	}
 	if (characterState == JUMP_ATTACK) {
 		if (JUMP_ATTACK_HIT_FRAME_START <= currentTime) {
-			colliders->GetCollider("hand")->SetScale({0.25, 0.35});
-			colliders->GetCollider("hand")->SetOffset({210, 0});
+			colliders->GetCollider("hand")->SetScale({0.25, 0.4});
+			colliders->GetCollider("hand")->SetOffset({120, -10});
 		} else if (JUMP_ATTACK_HIT_FRAME_END <= currentTime){
 			colliders->GetCollider("hand")->SetScale({0,0});
 			colliders->GetCollider("hand")->SetOffset({0,0});
@@ -158,8 +158,8 @@ void MainCharacter::Update (float dt) {
 	}
 	if (characterState == CROUCH_ATTACK) {
 		if (CROUCH_ATTACK_HIT_FRAME_START <= currentTime) {
-			colliders->GetCollider("hand")->SetScale({0.55, 0.35});
-			colliders->GetCollider("hand")->SetOffset({160, 0});
+			colliders->GetCollider("hand")->SetScale({0.25, 0.35});
+			colliders->GetCollider("hand")->SetOffset({130, 0});
 		} else if (CROUCH_ATTACK_HIT_FRAME_END <= currentTime){
 			colliders->GetCollider("hand")->SetScale({0,0});
 			colliders->GetCollider("hand")->SetOffset({0,0});
@@ -274,7 +274,7 @@ void MainCharacter::StateLogic () {
 		spr->Open("assets/img/GenericATTACK.png");
 		spr->SetFrameCount(7);
 	}
-	// associated.box.h = spr->GetHeight();
-	// associated.box.w = spr->GetWidth();
+	associated.box.h = spr->GetHeight();
+	associated.box.w = spr->GetWidth();
 	stateChanged = false;
 }
