@@ -2,6 +2,7 @@
 #include "Sprite.h"
 #include <math.h>
 #include "Collider.h"
+#include "Colliders.h"
 
 Bullet::Bullet (GameObject& associated, float angle, float speed, int damage,
 		float maxDistance, string sprite, bool targetsPlayer, int frameCount,
@@ -15,8 +16,10 @@ Bullet::Bullet (GameObject& associated, float angle, float speed, int damage,
 	associated.angleDeg = (180 / M_PI) * angle;
 	this->speed = this->speed.GetRotated(angle);
 
+	Colliders* colliders = new Colliders(associated);
 	Collider* col = new Collider(associated);
-	associated.AddComponent(col);
+	colliders->AddCollider("bullet", col);
+	associated.AddComponent(colliders);
 
 }
 void Bullet::Update (float dt) {
@@ -44,11 +47,4 @@ bool Bullet::Is (string type) const {
 }
 int Bullet::GetDamage () const {
 	return damage;
-}
-
-void Bullet::NotifyCollision (GameObject& other) {
-	if ((other.GetComponent("Alien") && !targetsPlayer)
-			|| (other.GetComponent("PenguinBody") && targetsPlayer)) {
-		associated.RequestDelete();
-	}
 }

@@ -2,7 +2,7 @@
 #include "Component.h"
 #include "Vec2.h"
 #include "Sprite.h"
-#include "Collider.h"
+#include "Colliders.h"
 #include <vector>
 
 class MainCharacter : public Component {
@@ -33,20 +33,23 @@ class MainCharacter : public Component {
 		 */
 		bool Is (string type) const;
 		void changeState(stateType state);
-		float CantWalk();
 
     void NotifyAnimationEnd();
-    
+    void NotifyCollision (GameObject& other, string idCollider, string idOtherCollider);
+
 		bool demon;
 		float hp;
 		float furia;
-		std::vector<Collider*> colideCOM;
 
     static MainCharacter* mainCharacter;
   private:
-    bool attackIssued;
-  	Collider* collisionbox;
+
+    void StateLogic ();
+
+    bool attacking;
+  	Colliders* colliders;
     Vec2 speed = {0, 0};
     Sprite* spr;
     bool stateChanged = false;
+    Timer animationTimer;
 };

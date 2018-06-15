@@ -10,8 +10,8 @@
 #endif // DEBUG
 
 Collider::Collider (GameObject& associated, Vec2 scale, Vec2 offset) :
-		Component(associated), scale(scale), offset(offset) {
-	
+		associated(associated), scale(scale), offset(offset) {
+
 }
 
 void Collider::Update (float dt) {
@@ -21,7 +21,9 @@ void Collider::Update (float dt) {
 
 	Vec2 rotated = offset.GetRotated(associated.angleDeg * M_PI / 180);
 
-	box.x = associated.box.GetCenter().x + rotated.x - box.w / 2;
+	int flipped = associated.flipHorizontal ? -1 : 1;
+
+	box.x = associated.box.GetCenter().x + (flipped * rotated.x) - box.w / 2;
 	box.y = associated.box.GetCenter().y + rotated.y - box.h / 2;
 	//printf("UpdateCOllider x:%.0f,y:%.0f\n",box.x,box.y);
 }
@@ -52,10 +54,6 @@ void Collider::Render () {
 	SDL_SetRenderDrawColor(Game::GetInstance().GetRenderer(), 255, 0, 0, SDL_ALPHA_OPAQUE);
 	SDL_RenderDrawLines(Game::GetInstance().GetRenderer(), points, 5);
 #endif // DEBUG
-}
-
-bool Collider::Is (string type) const {
-	return type == "Collider";
 }
 
 void Collider::SetScale (Vec2 scale) {

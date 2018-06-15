@@ -34,7 +34,7 @@ class Component {
 		 */
 		void virtual Start ();
 
-		void virtual NotifyCollision (GameObject& other);
+		void virtual NotifyCollision (GameObject& other, string idCollider, string idOtherCollider);
 
 		void virtual NotifyAnimationEnd ();
 

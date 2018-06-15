@@ -10,6 +10,7 @@
 #include "Humano.h"
 #include "TileSet.h"
 #include "TileMap.h"
+#include "Colliders.h"
 
 FirstStageState::FirstStageState () {
 }
@@ -57,6 +58,19 @@ void FirstStageState::Update (float dt) {
 	}
 
 	UpdateArray(dt);
+
+	for (int i = 0; i < objectArray.size(); ++i) {
+		Component* cptA = objectArray[i]->GetComponent("Colliders");
+		if (cptA != nullptr) {
+			for (int j = i + 1; j < objectArray.size(); ++j) {
+				Component* cptB = objectArray[j]->GetComponent("Colliders");
+				if (cptB != nullptr) {
+					((Colliders*) cptA)->CheckCollision(*objectArray[j].get());
+				}
+			}
+		}
+	}
+
 	Camera::Update(dt);
 }
 void FirstStageState::Render () {

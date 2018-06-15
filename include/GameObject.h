@@ -64,7 +64,7 @@ class GameObject {
 		 */
 		Component* GetComponent (string type) const;
 
-		void NotifyCollision (GameObject& other);
+		void NotifyCollision (GameObject& other, string idCollider, string idOtherCollider);
 
 		void NotifyAnimationEnd ();
 

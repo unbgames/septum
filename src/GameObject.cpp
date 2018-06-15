@@ -72,9 +72,9 @@ Component* GameObject::GetComponent (string type) const {
 	}
 }
 
-void GameObject::NotifyCollision (GameObject& other) {
+void GameObject::NotifyCollision (GameObject& other, string idCollider, string idOtherCollider) {
 	for (auto& cpt : components) {
-		cpt->NotifyCollision(other);
+		cpt->NotifyCollision(other, idCollider, idOtherCollider);
 	}
 }
 

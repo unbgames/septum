@@ -12,7 +12,7 @@ void Component::Start () {
 
 }
 
-void Component::NotifyCollision (GameObject& other) {
+void Component::NotifyCollision (GameObject& other, string idCollider, string idOtherCollider) {
 
 }
 

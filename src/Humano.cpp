@@ -4,6 +4,7 @@
 #include "InputManager.h"
 #include <math.h>
 #include "Collider.h"
+#include "Colliders.h"
 #include "Bullet.h"
 #include "Camera.h"
 #include "Sound.h"
@@ -26,9 +27,10 @@ Humano::Humano (GameObject& associated):Component(associated),characterState(IDL
 	associated.AddComponent(spr);
 	associated.box.h = spr->GetHeight();
 	associated.box.w = spr->GetWidth();
+	Colliders* colliders = new Colliders(associated);
 	collisionbox = new Collider(associated,{0.25,0.3},{-20,0});
-	associated.AddComponent(collisionbox);
-	MainCharacter::mainCharacter->colideCOM.push_back(collisionbox);
+	colliders->AddCollider("body", collisionbox);
+	associated.AddComponent(colliders);
 }
 Humano::~Humano () {
 	//Humano = nullptr;
@@ -39,95 +41,6 @@ void Humano::Start () {
 }
 void Humano::Update (float dt) {
 	collisionbox->Update(dt);
-	/*InputManager& inputManager = InputManager::GetInstance();
-	int dir;
-  	if(inputManager.IsKeyDown('a')){
-  		dir = -1;
-  	}else if(inputManager.IsKeyDown('d')){
-  		dir = 1;
-  	}else{
-  		dir = 0;
-  	}
-  	speed.x = dir * CHARACTER_SPEED;
-  	if(inputManager.KeyRelease('i')){
-  		demon = demon?false:true;
-  	}
-  	if(demon)
-  		furia-=0.1;
-  	if(furia<0){
-  		furia=0;
-  		demon = false;
-  	}
-  	if (furia>100)
-  		furia=100;
-
-  	if(inputManager.KeyRelease('u') && !demon){
-  		if(hp+furia>=100){
-  			furia += hp - 100;
-  			hp = 100;
-  		}else{
-  			hp+=furia;
-  			furia=0;
-  		}
-  	}
-	if (speed.x < 0) {
-		associated.flipHorizontal = true;
-	} else if (speed.x > 0) {
-		associated.flipHorizontal = false;
-	}
-
-	if (speed.y == 0 && inputManager.KeyPress('w')) {
-		speed.y = 1000;
-	} else {
-		speed.y -= GRAVITY * dt;
-	}
-	associated.box.y -= (speed.y * dt);
-	associated.box.x += (speed.x * dt);
-
-	if (associated.box.y > 350 + ISBLOCKED) {
-		speed.y = 0;
-		associated.box.y = 350+ISBLOCKED;
-	}
-
-	if(inputManager.IsKeyDown('s')){
-  		changeState(CROUCH);
-  		furia+=0.5;
-  	}else if(inputManager.IsKeyDown('j')){
-  		changeState(BLOCK);
-	}
-  	else if(associated.box.y < 350){
-		changeState(JUMP);
-	}else if(dir != 0){
-		changeState(WALK);
-	}else if(speed.x == 0 && speed.y==0){
-		changeState(IDLE);
-	}
-
-	associated.box.x = associated.box.x > 1100 ? 1100 : associated.box.x < 0 ? 0 : associated.box.x;
-	if(characterState == IDLE && stateChanged){
-		spr->Open("assets/img/GenericIDLE.png");
-		spr->SetFrameCount(7);
-		stateChanged = false;
-	}else if(characterState == JUMP && stateChanged){
-		spr->Open("assets/img/GenericJUMP.png");
-		spr->SetFrameCount(7);
-		hp-=10;
-		stateChanged = false;
-	}else if(characterState == WALK && stateChanged){
-		spr->Open("assets/img/testewalk.png");
-		spr->SetFrameCount(8);
-		stateChanged = false;
-		//printf("Andou!\n");
-	}else if(characterState == BLOCK && stateChanged){
-		spr->Open("assets/img/GenericBLOCK.png");
-		spr->SetFrameCount(7);
-		stateChanged = false;
-		//printf("Andou!\n");
-	}else if(characterState== CROUCH && stateChanged){
-		spr->Open("assets/img/GenericCROUCH.png");
-		spr->SetFrameCount(7);
-		stateChanged = false;
-	}*/
 }
 void Humano::Render () {
 

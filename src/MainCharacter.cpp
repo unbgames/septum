@@ -4,6 +4,7 @@
 #include "InputManager.h"
 #include <math.h>
 #include "Collider.h"
+#include "Colliders.h"
 #include "State.h"
 #include "Bullet.h"
 #include "Camera.h"
@@ -15,7 +16,10 @@ using std::weak_ptr;
 
 #define CHARACTER_SPEED 650
 #define GRAVITY 2500
+#define NORMAL_ATTACK_HIT_FRAME_START 0.450
+#define NORMAL_ATTACK_HIT_FRAME_END 0.650
 int ISBLOCKED = 0;
+bool CantWalk = false;
 Vec2 Bloqueiotela = {0,1286};
 
 MainCharacter* MainCharacter::mainCharacter = nullptr;
@@ -29,8 +33,14 @@ MainCharacter::MainCharacter (GameObject& associated) :
 	associated.AddComponent(spr);
 	associated.box.h = spr->GetHeight();
 	associated.box.w = spr->GetWidth();
-	collisionbox = new Collider(associated,{0.7,0.8});
-	associated.AddComponent(collisionbox);
+
+	colliders = new Colliders(associated);
+	Collider* collisionbox = new Collider(associated,{0.7,0.8});
+	Collider* weaponCollider = new Collider(associated,{0,0}, {0, 0});
+	colliders->AddCollider("body", collisionbox);
+	colliders->AddCollider("hand", weaponCollider);
+
+	associated.AddComponent(colliders);
 }
 MainCharacter::~MainCharacter () {
 	mainCharacter = nullptr;
@@ -41,7 +51,10 @@ void MainCharacter::Start () {
 }
 void MainCharacter::Update (float dt) {
 	InputManager& inputManager = InputManager::GetInstance();
+	animationTimer.Update(dt);
+	float currentTime = animationTimer.Get();
 	int dir;
+	int attackIssued = false;
 	if (inputManager.KeyPress('k')) {
 		attackIssued = true;
 	}
@@ -94,41 +107,52 @@ void MainCharacter::Update (float dt) {
 		speed.y = 0;
 		associated.box.y = 250+ISBLOCKED;
 	}
-	collisionbox->Update(dt);
-	float ofsetjump=CantWalk();
-	if(ofsetjump){
+
+	if (CantWalk) {
 			associated.box.x -= (speed.x * dt);
 	}
 
-	if(inputManager.IsKeyDown('s')){
-  		changeState(attackIssued ? CROUCH_ATTACK : CROUCH);
-  		furia+=0.5;
-  	}else if(inputManager.IsKeyDown('j')){
-  		changeState(BLOCK);
-	}
-  	else if(associated.box.y < 250){
-		changeState(attackIssued ? JUMP_ATTACK : JUMP);
-	}else if(dir != 0){
-		changeState(attackIssued ? ATTACK : WALK);
-	}else if(speed.x == 0 && speed.y==0){
-		changeState(attackIssued ? ATTACK : IDLE);
+	if (!attacking) {
+		if(inputManager.IsKeyDown('s')){
+	  		changeState(attackIssued ? CROUCH_ATTACK : CROUCH);
+	  		furia+=0.5;
+	  	}else if(inputManager.IsKeyDown('j')){
+	  		changeState(BLOCK);
+		}
+	  	else if(associated.box.y < 250){
+			changeState(attackIssued ? JUMP_ATTACK : JUMP);
+		}else if(dir != 0){
+			changeState(attackIssued ? ATTACK : WALK);
+		}else if(speed.x == 0 && speed.y==0){
+			changeState(attackIssued ? ATTACK : IDLE);
+		}
+		if (attackIssued) {
+			attacking = true;
+		}
 	}
 
-	printf("X:%f,Y:%f\n",Camera::pos.x,Camera::pos.y);
+	if (characterState == ATTACK) {
+		if (NORMAL_ATTACK_HIT_FRAME_START >= (currentTime - dt) && NORMAL_ATTACK_HIT_FRAME_START <= currentTime) {
+			colliders->GetCollider("hand")->SetScale({0.45, 0.3});
+			colliders->GetCollider("hand")->SetOffset({210, 40});
+		} else if (NORMAL_ATTACK_HIT_FRAME_END >= (currentTime - dt) && NORMAL_ATTACK_HIT_FRAME_END <= currentTime){
+			colliders->GetCollider("hand")->SetScale({0,0});
+			colliders->GetCollider("hand")->SetOffset({0,0});
+		}
+	}
+
 	if(associated.box.x > 640 + Camera::pos.x/2 && speed.x > 0)
 		Camera::Follow(&associated);
 	if(associated.box.x <640 + Camera::pos.x && speed.x <0)
 		Camera::Follow(&associated);
 
-	if(associated.box.x > Bloqueiotela.y  && Camera::IsFollowing){
-		//associated.box.x = Bloqueiotela.y;
+	if(associated.box.x > Bloqueiotela.y  && Camera::IsFollowing()){
 		Camera::Unfollow();
 		if(associated.box.x > Bloqueiotela.y + 512){
 			associated.box.x = Bloqueiotela.y+ 512;
 		}
 	}
 	else if(associated.box.x < Bloqueiotela.x + 512){
-		//associated.box.x = Bloqueiotela.x;
 		Camera::Unfollow();
 		if(associated.box.x < Bloqueiotela.x){
 			associated.box.x = Bloqueiotela.x;
@@ -138,42 +162,8 @@ void MainCharacter::Update (float dt) {
 		associated.box.x = associated.box.x;
 	}
 
-	//associated.box.x = associated.box.x > Bloqueiotela.y ? Bloqueiotela.y : associated.box.x < Bloqueiotela.x ? Bloqueiotela.x : associated.box.x;
-
-
-	if(characterState == IDLE && stateChanged){
-		spr->Open("assets/img/player_idle.png");
-		spr->SetFrameCount(1);
-		stateChanged = false;
-	}else if(characterState == JUMP && stateChanged){
-		spr->Open("assets/img/GenericJUMP.png");
-		spr->SetFrameCount(7);
-		hp-=10;
-		stateChanged = false;
-	}else if(characterState == WALK && stateChanged){
-		spr->Open("assets/img/testewalk.png");
-		spr->SetFrameCount(8);
-		stateChanged = false;
-	}else if(characterState == BLOCK && stateChanged){
-		spr->Open("assets/img/GenericBLOCK.png");
-		spr->SetFrameCount(7);
-		stateChanged = false;
-	}else if(characterState== CROUCH && stateChanged){
-		spr->Open("assets/img/GenericCROUCH.png");
-		spr->SetFrameCount(7);
-		stateChanged = false;
-	}else if(characterState== ATTACK && stateChanged){
-		spr->Open("assets/img/GenericJUMP.png");
-		spr->SetFrameCount(7);
-		stateChanged = false;
-	}else if(characterState== JUMP_ATTACK && stateChanged){
-		spr->Open("assets/img/GenericJUMP.png");
-		spr->SetFrameCount(7);
-		stateChanged = false;
-	}else if(characterState== CROUCH_ATTACK && stateChanged){
-		spr->Open("assets/img/GenericJUMP.png");
-		spr->SetFrameCount(7);
-		stateChanged = false;
+	if (stateChanged) {
+		StateLogic();
 	}
 }
 void MainCharacter::Render () {
@@ -197,30 +187,60 @@ void MainCharacter::changeState(stateType state){
 		stateChanged = true;
 	}
 }
-float MainCharacter::CantWalk(){
-	//printf("Chamou CantWalk size:%d\n",colideCOM.size());
-	for(int i=0;i<colideCOM.size();i++){
-		//printf("Atual:%.0f,%.0f,Bloco:%.0f,%.0f\n",collisionbox->box.x,collisionbox->box.y,colideCOM[i]->box.x,colideCOM[i]->box.y);
-		if(Collision::IsColliding(collisionbox->box, colideCOM[i]->box,0, 0)){
-			if(characterState!=WALK){//3 é chute
-				//problema pulando
-				printf("Achou o bug no pulo\n");
-				if(collisionbox->box.x+collisionbox->box.w/2>colideCOM[i]->box.x+colideCOM[i]->box.w/2)
-					//passa
-					associated.box.x = colideCOM[i]->box.x+colideCOM[i]->box.w;
+
+void MainCharacter::NotifyCollision (GameObject& other, string idCollider, string idOtherCollider) {
+	Colliders* otherColliders = (Colliders*)(other.GetComponent("Colliders"));
+	Collider* otherCollider = otherColliders->GetCollider(idOtherCollider).get();
+	if (otherColliders != nullptr) {
+		if (idCollider == "body" && idOtherCollider == "body") {
+			if(characterState!=WALK){
+				if(colliders->GetCollider("body")->box.x+colliders->GetCollider("body")->box.w/2>otherCollider->box.x+otherCollider->box.w/2)
+				associated.box.x = otherCollider->box.x + otherCollider->box.w;
 				else{
-					associated.box.x =(colideCOM[i]->box.x - associated.box.w);
+					associated.box.x =(otherCollider->box.x - associated.box.w);
 				}
+				CantWalk = true;
 			}
-			printf("COlidiu\n");
-			return 1;
+			CantWalk = false;
 		}
 	}
-	return 0;
 }
 
 void MainCharacter::NotifyAnimationEnd () {
-	if (attackIssued) {
-		attackIssued = false;
+	animationTimer.Restart();
+	if (attacking) {
+		attacking = false;
 	}
+}
+
+void MainCharacter::StateLogic () {
+	if(characterState == IDLE && stateChanged){
+		spr->Open("assets/img/player_idle.png");
+		spr->SetFrameCount(1);
+	}else if(characterState == JUMP && stateChanged){
+		spr->Open("assets/img/GenericJUMP.png");
+		spr->SetFrameCount(7);
+		hp-=10;
+	}else if(characterState == WALK && stateChanged){
+		spr->Open("assets/img/testewalk.png");
+		spr->SetFrameCount(8);
+	}else if(characterState == BLOCK && stateChanged){
+		spr->Open("assets/img/GenericBLOCK.png");
+		spr->SetFrameCount(7);
+	}else if(characterState== CROUCH && stateChanged){
+		spr->Open("assets/img/GenericCROUCH.png");
+		spr->SetFrameCount(7);
+	}else if(characterState== ATTACK && stateChanged){
+		spr->Open("assets/img/GenericATTACK.png");
+		spr->SetFrameCount(7);
+	}else if(characterState== JUMP_ATTACK && stateChanged){
+		spr->Open("assets/img/GenericCROUCH.png");
+		spr->SetFrameCount(7);
+	}else if(characterState== CROUCH_ATTACK && stateChanged){
+		spr->Open("assets/img/GenericBLOCK.png");
+		spr->SetFrameCount(7);
+	}
+	// associated.box.h = spr->GetHeight();
+	// associated.box.w = spr->GetWidth();
+	stateChanged = false;
 }
