@@ -1,5 +1,6 @@
 #pragma once
 #include "Component.h"
+#include "Colliders.h"
 #include "Damageable.h"
 #include "Vec2.h"
 #include "Sprite.h"
@@ -34,11 +35,12 @@ class Corvus : public Damageable {
 		bool Is (string type) const;
 		void ChangeState(stateType state);
 		void NotifyAnimationEnd();
-
+		void NotifyCollision (GameObject& other, string idCollider, string idOtherCollider);
     //static MainCharacter* mainCharacter;
 
   private:
   	Collider* collisionbox;
+  	Colliders* colliders;
     Sprite* spr;
     bool stateChanged = false;
     stateType ESTADO;

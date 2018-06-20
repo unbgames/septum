@@ -30,6 +30,7 @@ using std::weak_ptr;
 
 int ISBLOCKED = 0;
 bool ENEMY_HIT = false;
+//bool PLAYER_HIT = false;
 Vec2 Bloqueiotela = {0,1286};
 
 MainCharacter* MainCharacter::mainCharacter = nullptr;
@@ -234,6 +235,14 @@ void MainCharacter::NotifyCollision (GameObject& other, string idCollider, strin
 				}
 			}
 		}
+		// if (idCollider == "body" && idOtherCollider == "bico"){
+		// 	Component* damageable = associated.GetComponent("Damageable");
+		// 	if(damageable != nullptr){
+		// 			((Damageable*)damageable)->Damage(NORMAL_ATTACK_DAMAGE);
+		// 			//PLAYER_HIT = true;
+
+		// 	}
+		// }
 	}
 }
 
