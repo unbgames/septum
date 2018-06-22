@@ -43,20 +43,20 @@ void FirstStageState::LoadAssets () {
 	Hud->AddComponent(new HUD(*Hud));
 	AddObject(Hud);
 
-	GameObject *Human = new GameObject();
+	/*GameObject *Human = new GameObject();
 	Human->box.x = 500;
 	Human->box.y = 450;
 	Human->AddComponent(new Humano(*Human));
 	GameObject *Human1 = new GameObject();
 	Human1->box.x = 500;
 	Human1->box.y = 100;
-	Human1->AddComponent(new Humano(*Human1));
+	Human1->AddComponent(new Humano(*Human1));*/
 	GameObject *corvo = new GameObject();
 	corvo->box.x = 800;
 	corvo->box.y = 400;
 	corvo->AddComponent(new Corvus(*corvo));
-	AddObject(Human);
-	AddObject(Human1);
+	//AddObject(Human);
+	//AddObject(Human1);
 	AddObject(corvo);
 }
 void FirstStageState::Update (float dt) {

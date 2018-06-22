@@ -15,9 +15,12 @@ using std::weak_ptr;
 #define CHARACTER_SPEED 500
 #define NORMAL_ATTACK_HIT_FRAME_START 0.600
 #define NORMAL_ATTACK_HIT_FRAME_END 0.650
-#define NORMAL_ATTACK_DAMAGE 35
+#define NORMAL_ATTACK_DAMAGE 15
+#define ATK_CD 0.600
 bool attacking = false;
 bool PLAYER_HIT = false;
+bool cooldown = false;
+int dir;
 
 Corvus::Corvus (GameObject& associated):Damageable(associated, 100) {
 	spr = new Sprite(associated, "assets/img/Enemie_crow.png",1,0.08);
@@ -50,6 +53,14 @@ void Corvus::Update (float dt) {
 			spr->Open("assets/img/Enemie_crow.png");
 			spr->SetFrameCount(1);
 			stateChanged = false;
+			colliders->GetCollider("bico")->SetScale({0,0});
+			colliders->GetCollider("bico")->SetOffset({0,0});
+		}
+		printf("IDLE %f\n",currentTime);
+		if(currentTime >= 0.8){
+			printf("Era pra sair merda\n");
+			ESTADO = WALK;
+			stateChanged = true;
 		}
 		//faz nada;
 	}else if(ESTADO == WALK){
@@ -58,10 +69,11 @@ void Corvus::Update (float dt) {
 			spr->SetFrameCount(1);
 			stateChanged = false;
 		}
+		printf("WALK\n");
 		Vec2 Destination = MainCharacter::mainCharacter->GetCharacterPosition();
-		Vec2 PositionNow = {associated.box.x,associated.box.y};
+		Vec2 PositionNow = associated.box.GetCenter();
 		if(PositionNow.GetDistance(Destination) > AtackRange){
-			int dir;
+			//int dir;
 			if(PositionNow.x > Destination.x){
 				dir = -1;
 			}else if(PositionNow.x < Destination.x){
@@ -83,12 +95,20 @@ void Corvus::Update (float dt) {
 			stateChanged = true;
 			attacking = true;
 		}
+		
 	}else if(ESTADO == ATK){
 		if(stateChanged){
 			spr->Open("assets/img/socao.png");
-			spr->SetFrameCount(1);
+			spr->SetFrameCount(5);
 			stateChanged = false;
+			colliders->GetCollider("bico")->SetScale({0.25, 0.3});
+			if(dir = -1){
+				colliders->GetCollider("bico")->SetOffset({-70, -80});
+			}else{
+				colliders->GetCollider("bico")->SetOffset({70, -80});
+			}
 		}
+		printf("ATK\n");
 		/*int attackIssued = false;
 		if (inputManager.KeyPress('k')) {
 			attackIssued = true;
@@ -100,10 +120,10 @@ void Corvus::Update (float dt) {
 			} else if (NORMAL_ATTACK_HIT_FRAME_END <= currentTime){
 				// colliders->GetCollider("bico")->SetScale({0,0});
 				// colliders->GetCollider("bico")->SetOffset({0,0});
-				PLAYER_HIT = false;
 			}
 		}else{
-
+			ESTADO = IDLE;
+			stateChanged = true;
 		}
 	}
 	if (stateChanged) {
@@ -125,11 +145,13 @@ void Corvus::ChangeState(stateType state){
 void Corvus::NotifyAnimationEnd () {
 	if (attacking) {
 		attacking = false;
+		PLAYER_HIT = false;
+		printf("Animation ENDED -s:%d\n",characterState);
 		// colliders->GetCollider("bico")->SetScale({0,0});
 		// colliders->GetCollider("bico")->SetOffset({0,0});
 		//ENEMY_HIT = false;
 	}
-	animationTimer.Restart();
+	//animationTimer.Restart();
 }
 
 void Corvus::NotifyCollision (GameObject& other, string idCollider, string idOtherCollider) {
@@ -152,6 +174,7 @@ void Corvus::NotifyCollision (GameObject& other, string idCollider, string idOth
 			if (damageable != nullptr) {
 				if(!PLAYER_HIT) {
 					((Damageable*) damageable)->Damage(NORMAL_ATTACK_DAMAGE);
+					printf("HIT\n");
 					PLAYER_HIT = true;
 				}
 			}

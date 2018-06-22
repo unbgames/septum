@@ -49,7 +49,7 @@ MainCharacter::MainCharacter (GameObject& associated) :
 	Collider* weaponCollider = new Collider(associated,{0,0}, {0, 0});
 	colliders->AddCollider("body", collisionbox);
 	colliders->AddCollider("hand", weaponCollider);
-
+	SetHP(100);
 	associated.AddComponent(colliders);
 }
 MainCharacter::~MainCharacter () {
@@ -263,7 +263,7 @@ void MainCharacter::StateLogic () {
 	}else if(characterState == JUMP && stateChanged){
 		spr->Open("assets/img/GenericJUMP.png");
 		spr->SetFrameCount(7);
-		Damage(10);
+		//Damage(10);
 	}else if(characterState == WALK && stateChanged){
 		spr->Open("assets/img/testewalk.png");
 		spr->SetFrameCount(8);
