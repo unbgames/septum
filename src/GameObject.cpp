@@ -83,3 +83,9 @@ void GameObject::NotifyAnimationEnd () {
 		cpt->NotifyAnimationEnd();
 	}
 }
+
+void GameObject::ChangeOffsetHeight (int off) {
+	int diff = off - offsetHeight;
+	offsetHeight = off;
+	box.y += diff;
+}

@@ -1,5 +1,6 @@
 #include "FirstStageState.h"
 #include "Sprite.h"
+#include "Background.h"
 #include "InputManager.h"
 #include "Game.h"
 #include "CameraFollower.h"
@@ -21,11 +22,22 @@ FirstStageState::~FirstStageState () {
 }
 
 void FirstStageState::LoadAssets () {
-	GameObject *splashScreen = new GameObject();
-	splashScreen->AddComponent(
-			new Sprite(*splashScreen, "assets/img/backgroundHellBeta.png"));
-	splashScreen->AddComponent(new CameraFollower(*splashScreen));
-	AddObject(splashScreen);
+	// GameObject *splashScreen = new GameObject();
+	// splashScreen->AddComponent(
+	// 		new Sprite(*splashScreen, "assets/img/backgroundHellBeta.png"));
+	// splashScreen->AddComponent(new CameraFollower(*splashScreen));
+	// AddObject(splashScreen);
+	GameObject *background = new GameObject();
+	Background* bg = new Background(*background, 0.05);
+	bg->AddLayer(new Sprite(*background, "assets/img/sky.png"));
+	bg->AddLayer(new Sprite(*background, "assets/img/clouds_1.png"));
+	bg->AddLayer(new Sprite(*background, "assets/img/rocks.png"));
+	bg->AddLayer(new Sprite(*background, "assets/img/clouds_2.png"));
+	bg->AddLayer(new Sprite(*background, "assets/img/rocks_1.png"));
+	bg->AddLayer(new Sprite(*background, "assets/img/rocks_2.png"));
+	// background->AddComponent(new CameraFollower(*background));
+	background->AddComponent(bg);
+	AddObject(background);
 
 	GameObject *map = new GameObject();
 	map->box.y = 60;
@@ -52,16 +64,16 @@ void FirstStageState::LoadAssets () {
 	Human1->box.x = 500;
 	Human1->box.y = 100;
 	Human1->AddComponent(new Humano(*Human1));*/
-	// GameObject *corvo = new GameObject();
-	// corvo->box.x = 800;
-	// corvo->box.y = 400;
-	// corvo->AddComponent(new Corvus(*corvo));
-	//AddObject(Human);
-	//AddObject(Human1);
-	// AddObject(corvo);
+	GameObject *corvo = new GameObject();
+	corvo->box.x = 800;
+	corvo->box.y = 450;
+	corvo->AddComponent(new Corvus(*corvo));
+	// AddObject(Human);
+	// AddObject(Human1);
+	AddObject(corvo);
 	GameObject *urubu = new GameObject();
 	urubu->box.x = 800;
-	urubu->box.y = 250;
+	urubu->box.y = 450;
 	urubu->AddComponent(new Vulturem(*urubu));
 	AddObject(urubu);
 }

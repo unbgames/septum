@@ -12,24 +12,25 @@
 
 using std::weak_ptr;
 
-#define CHARACTER_SPEED 450
-#define NORMAL_ATTACK_HIT_FRAME_START 0.100
+#define CHARACTER_SPEED 250
+#define NORMAL_ATTACK_HIT_FRAME_START 0.400
 #define NORMAL_ATTACK_HIT_FRAME_END 0.650
 #define NORMAL_ATTACK_DAMAGE 15
 #define ATTACK_CD 0.600
+#define ATTACK_RANGE 170
 
 Corvus::Corvus (GameObject& associated):Damageable(associated, 100) {
-	spr = new Sprite(associated, "assets/img/CorvusHurting.png",7,0.08);
+	spr = new Sprite(associated, "assets/img/CORV_IDLE.png",7,0.08);
 	associated.AddComponent(spr);
 	associated.box.h = spr->GetHeight();
 	associated.box.w = spr->GetWidth();
 	colliders = new Colliders(associated);
-	collisionbox = new Collider(associated,{0.25,0.3},{-20,0});
+	collisionbox = new Collider(associated,{0.4,0.85},{-25,10});
 	colliders->AddCollider("body", collisionbox);
-	Collider *bico = new Collider(associated, {0.25,0.3}, {-70,-80}, false);
+	Collider *bico = new Collider(associated, {0.25, 0.25}, {120, 65}, false);
 	colliders->AddCollider("bico", bico);
 	associated.AddComponent(colliders);
-	characterState = WALK;
+	characterState = IDLE;
 	stateChanged = true;
 }
 Corvus::~Corvus () {
@@ -46,14 +47,14 @@ void Corvus::Update (float dt) {
 
 	float currentTime = stateTimer.Get();
 
-	if(characterState == IDLE){
-		if(currentTime >= ATTACK_CD){
+	if (characterState == IDLE) {
+		if (currentTime >= ATTACK_CD) {
 			ChangeState(WALK);
 		}
-	}else if(characterState == WALK){
+	} else if(characterState == WALK){
 		Vec2 Destination = MainCharacter::mainCharacter->GetCharacterPosition();
 		Vec2 PositionNow = associated.box.GetCenter();
-		if(PositionNow.GetDistance(Destination) > AtackRange){
+		if(PositionNow.GetDistance(Destination) > ATTACK_RANGE){
 			int dir;
 			if(PositionNow.x > Destination.x){
 				dir = -1;
@@ -74,7 +75,6 @@ void Corvus::Update (float dt) {
 			ChangeState(ATTACK);
 			attacking = true;
 		}
-
 	}else if(characterState == ATTACK){
 		float currentAnimTime = animationTimer.Get();
 		if(attacking){
@@ -133,14 +133,23 @@ void Corvus::NotifyCollision (GameObject& other, string idCollider, string idOth
 
 void Corvus::StateLogic () {
 	if(characterState == IDLE && stateChanged){
-		spr->Open("assets/img/Enemie_crow.png");
-		spr->SetFrameCount(1);
-	}else if(characterState == WALK && stateChanged){
-		spr->Open("assets/img/Enemie_crow.png");
-		spr->SetFrameCount(1);
-	}else if(characterState== ATTACK && stateChanged){
-		spr->Open("assets/img/GenericATTACK.png");
+		spr->Open("assets/img/CORV_IDLE.png");
 		spr->SetFrameCount(7);
+		associated.ChangeOffsetHeight(0);
+		colliders->GetCollider("body")->SetScale({0.4,0.85});
+		colliders->GetCollider("body")->SetOffset({-25,10});
+	}else if(characterState == WALK && stateChanged){
+		spr->Open("assets/img/CORV_WALK.png");
+		spr->SetFrameCount(7);
+		associated.ChangeOffsetHeight(0);
+		colliders->GetCollider("body")->SetScale({0.4,0.85});
+		colliders->GetCollider("body")->SetOffset({-25,10});
+	}else if(characterState == ATTACK && stateChanged){
+		spr->Open("assets/img/CORV_ATTACK.png");
+		spr->SetFrameCount(7);
+		associated.ChangeOffsetHeight(-103);
+		colliders->GetCollider("body")->SetScale({0.3, 0.55});
+		colliders->GetCollider("body")->SetOffset({0, 60});
 	}
 	associated.box.h = spr->GetHeight();
 	associated.box.w = spr->GetWidth();

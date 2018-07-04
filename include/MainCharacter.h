@@ -45,7 +45,6 @@ class MainCharacter : public Damageable {
     Vec2 GetCharacterPosition();
   private:
 
-    void changeYOffset(int off);
     void StateLogic ();
 
     bool attacking;

@@ -40,7 +40,7 @@ void Sprite::SetClip (int x, int y, int w, int h) {
 	clipRect.h = h;
 }
 
-void Sprite::Render (float x, float y) {
+void Sprite::Render (float x, float y, bool loop) {
 	SDL_Rect dstRect;
 	dstRect.x = x;
 	dstRect.y = y;
@@ -48,6 +48,21 @@ void Sprite::Render (float x, float y) {
 	dstRect.h = clipRect.h * scale.y;
 	SDL_RenderCopyEx(Game::GetInstance().GetRenderer(), texture.get(), &clipRect,
 			&dstRect, associated.angleDeg, nullptr, associated.flipHorizontal ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
+	if (loop) {
+		if (x != 0) {
+			SDL_Rect dstRect2;
+			if (x < 0) {
+				dstRect2.x = dstRect.w + x;
+			} else if (x > 0) {
+				dstRect2.x = x - dstRect.w;
+			}
+			dstRect2.y = y;
+			dstRect2.w = dstRect.w;
+			dstRect2.h = dstRect.h;
+			SDL_RenderCopyEx(Game::GetInstance().GetRenderer(), texture.get(), &clipRect,
+				&dstRect2, associated.angleDeg, nullptr, associated.flipHorizontal ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
+		}
+	}
 }
 
 void Sprite::Render () {

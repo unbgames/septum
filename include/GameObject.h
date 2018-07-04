@@ -75,6 +75,8 @@ class GameObject {
 
 		double angleDeg = 0;
 		bool flipHorizontal = false;
+		void ChangeOffsetHeight(int off);
+		int offsetHeight = 0;
 
 	private:
 		vector<unique_ptr<Component>> components;

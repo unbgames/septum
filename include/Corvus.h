@@ -44,7 +44,6 @@ class Corvus : public Damageable {
   	Colliders* colliders;
     Sprite* spr;
     bool stateChanged = false;
-    int AtackRange = 170;
     Vec2 speed = {0, 0};
     Timer animationTimer;
     Timer stateTimer;
