@@ -28,14 +28,13 @@ void FirstStageState::LoadAssets () {
 	// splashScreen->AddComponent(new CameraFollower(*splashScreen));
 	// AddObject(splashScreen);
 	GameObject *background = new GameObject();
-	Background* bg = new Background(*background, 0.05);
+	Background* bg = new Background(*background, 0.03);
 	bg->AddLayer(new Sprite(*background, "assets/img/sky.png"));
 	bg->AddLayer(new Sprite(*background, "assets/img/clouds_1.png"));
 	bg->AddLayer(new Sprite(*background, "assets/img/rocks.png"));
 	bg->AddLayer(new Sprite(*background, "assets/img/clouds_2.png"));
 	bg->AddLayer(new Sprite(*background, "assets/img/rocks_1.png"));
 	bg->AddLayer(new Sprite(*background, "assets/img/rocks_2.png"));
-	// background->AddComponent(new CameraFollower(*background));
 	background->AddComponent(bg);
 	AddObject(background);
 
