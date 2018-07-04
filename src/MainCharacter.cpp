@@ -27,8 +27,9 @@ using std::weak_ptr;
 #define JUMP_ATTACK_HIT_FRAME_START 0.300
 #define JUMP_ATTACK_HIT_FRAME_END 0.350
 #define JUMP_ATTACK_DAMAGE 50
+#define FLOOR_HEIGHT 450
 
-int ISBLOCKED = 0;
+int OFFSET_Y = 0;
 bool ENEMY_HIT = false;
 //bool PLAYER_HIT = false;
 Vec2 Bloqueiotela = {0,1286};
@@ -39,14 +40,14 @@ MainCharacter::MainCharacter (GameObject& associated) :
 		Damageable(associated, 100),characterState(IDLE),demon(false) {
 	mainCharacter = this;
 	furia = 100;
-	spr = new Sprite(associated, "assets/img/player_idle.png",1,0.08);
+	spr = new Sprite(associated, "assets/img/HERO_IDLE.png",7,0.08);
 	associated.AddComponent(spr);
 	associated.box.h = spr->GetHeight();
 	associated.box.w = spr->GetWidth();
 
 	colliders = new Colliders(associated);
-	Collider* collisionbox = new Collider(associated,{0.7,0.8});
-	Collider* weaponCollider = new Collider(associated,{0,0}, {0, 0});
+	Collider* collisionbox = new Collider(associated, {0.5,0.8}, {-55, 0});
+	Collider* weaponCollider = new Collider(associated,{0,0}, {0, 0}, false);
 	colliders->AddCollider("body", collisionbox);
 	colliders->AddCollider("hand", weaponCollider);
 	SetHP(100);
@@ -104,7 +105,7 @@ void MainCharacter::Update (float dt) {
 		associated.flipHorizontal = false;
 	}
 
-	if (speed.y == 0 && inputManager.KeyPress('w')) {
+	if (speed.y == 0 && inputManager.IsKeyDown('w')) {
 		speed.y = 1000;
 	} else {
 		speed.y -= GRAVITY * dt;
@@ -114,56 +115,57 @@ void MainCharacter::Update (float dt) {
 	associated.box.x += (speed.x * dt);
 
 	if(inputManager.IsKeyDown('s')){
-		associated.box.y = 420;
+		associated.box.y = 490;
 		furia+=0.5;
-	} else if (associated.box.y > 250 + ISBLOCKED) {
+	} else if (associated.box.y > FLOOR_HEIGHT + OFFSET_Y) {
 		speed.y = 0;
-		associated.box.y = 250 + ISBLOCKED;
-	}
-
-	if (!attacking) {
-		if (associated.box.y > 250 + ISBLOCKED) {
-			ChangeState(attackIssued ? CROUCH_ATTACK : CROUCH);
-	  	} else if(inputManager.IsKeyDown('j')){
-	  		ChangeState(BLOCK);
-		}
-  		else if(associated.box.y < 250){
-			ChangeState(attackIssued ? JUMP_ATTACK : JUMP);
-		}else if(dir != 0){
-			ChangeState(attackIssued ? ATTACK : WALK);
-		}else if(speed.x == 0 && speed.y==0){
-			ChangeState(attackIssued ? ATTACK : IDLE);
-		}
-		if (attackIssued) {
-			attacking = true;
-		}
+		associated.box.y = FLOOR_HEIGHT + OFFSET_Y;
 	}
 
 	if (characterState == ATTACK) {
 		if (NORMAL_ATTACK_HIT_FRAME_START <= currentTime && NORMAL_ATTACK_HIT_FRAME_END > currentTime) {
 			colliders->GetCollider("hand")->SetScale({0.3, 0.4});
-			colliders->GetCollider("hand")->SetOffset({120, 40});
+			colliders->GetCollider("hand")->SetOffset({90, 40});
+			colliders->GetCollider("hand")->Enable();
+			printf("N %g - %g\n", associated.box.h, associated.box.w);
 		} else if (NORMAL_ATTACK_HIT_FRAME_END <= currentTime){
-			colliders->GetCollider("hand")->SetScale({0,0});
-			colliders->GetCollider("hand")->SetOffset({0,0});
+			colliders->GetCollider("hand")->Disable();
 		}
-	}
-	if (characterState == JUMP_ATTACK) {
+	} else if (characterState == JUMP_ATTACK) {
 		if (JUMP_ATTACK_HIT_FRAME_START <= currentTime) {
-			colliders->GetCollider("hand")->SetScale({0.25, 0.4});
-			colliders->GetCollider("hand")->SetOffset({120, -10});
+			colliders->GetCollider("hand")->SetScale({0.3, 0.4});
+			colliders->GetCollider("hand")->SetOffset({60, -25});
+			colliders->GetCollider("hand")->Enable();
+			printf("J %g - %g\n", associated.box.h, associated.box.w);
 		} else if (JUMP_ATTACK_HIT_FRAME_END <= currentTime){
-			colliders->GetCollider("hand")->SetScale({0,0});
-			colliders->GetCollider("hand")->SetOffset({0,0});
+			colliders->GetCollider("hand")->Disable();
 		}
-	}
-	if (characterState == CROUCH_ATTACK) {
+	} else	if (characterState == CROUCH_ATTACK) {
 		if (CROUCH_ATTACK_HIT_FRAME_START <= currentTime) {
 			colliders->GetCollider("hand")->SetScale({0.25, 0.35});
 			colliders->GetCollider("hand")->SetOffset({130, 0});
+			colliders->GetCollider("hand")->Enable();
+			printf("C %g - %g\n", associated.box.h, associated.box.w);
 		} else if (CROUCH_ATTACK_HIT_FRAME_END <= currentTime){
-			colliders->GetCollider("hand")->SetScale({0,0});
-			colliders->GetCollider("hand")->SetOffset({0,0});
+			colliders->GetCollider("hand")->Disable();
+		}
+	}
+
+	if (!attacking) {
+		if (associated.box.y > FLOOR_HEIGHT + OFFSET_Y) {
+			ChangeState(attackIssued ? CROUCH_ATTACK : CROUCH);
+  	} else if(inputManager.IsKeyDown('j')){
+	  	ChangeState(BLOCK);
+		} else if(associated.box.y < FLOOR_HEIGHT + OFFSET_Y){
+			printf("%g < %d - %d\n", associated.box.y, FLOOR_HEIGHT + OFFSET_Y, attackIssued);
+			ChangeState(attackIssued ? JUMP_ATTACK : JUMP);
+		} else if(dir != 0){
+			ChangeState(attackIssued ? ATTACK : WALK);
+		} else if(speed.x == 0 && speed.y==0){
+			ChangeState(attackIssued ? ATTACK : IDLE);
+		}
+		if (attackIssued) {
+			attacking = true;
 		}
 	}
 
@@ -235,22 +237,14 @@ void MainCharacter::NotifyCollision (GameObject& other, string idCollider, strin
 				}
 			}
 		}
-		// if (idCollider == "body" && idOtherCollider == "bico"){
-		// 	Component* damageable = associated.GetComponent("Damageable");
-		// 	if(damageable != nullptr){
-		// 			((Damageable*)damageable)->Damage(NORMAL_ATTACK_DAMAGE);
-		// 			//PLAYER_HIT = true;
-
-		// 	}
-		// }
 	}
 }
 
 void MainCharacter::NotifyAnimationEnd () {
 	if (attacking) {
+		printf("ANIMATION END\n");
 		attacking = false;
-		colliders->GetCollider("hand")->SetScale({0,0});
-		colliders->GetCollider("hand")->SetOffset({0,0});
+		colliders->GetCollider("hand")->Disable();
 		ENEMY_HIT = false;
 	}
 	animationTimer.Restart();
@@ -258,30 +252,39 @@ void MainCharacter::NotifyAnimationEnd () {
 
 void MainCharacter::StateLogic () {
 	if(characterState == IDLE && stateChanged){
-		spr->Open("assets/img/player_idle.png");
-		spr->SetFrameCount(1);
+		spr->Open("assets/img/HERO_IDLE.png");
+		spr->SetFrameCount(7);
+		changeYOffset(0);
+		printf("IDLE - %d\n", attacking);
 	}else if(characterState == JUMP && stateChanged){
-		spr->Open("assets/img/GenericJUMP.png");
+		spr->Open("assets/img/HERO_JUMP.png");
 		spr->SetFrameCount(7);
-		//Damage(10);
+		changeYOffset(0);
 	}else if(characterState == WALK && stateChanged){
-		spr->Open("assets/img/testewalk.png");
-		spr->SetFrameCount(8);
-	}else if(characterState == BLOCK && stateChanged){
-		spr->Open("assets/img/GenericBLOCK.png");
+		spr->Open("assets/img/HERO_WALK.png");
 		spr->SetFrameCount(7);
+		changeYOffset(0);
+	}else if(characterState == BLOCK && stateChanged){
+		spr->Open("assets/img/HERO_HURT.png");
+		spr->SetFrameCount(7);
+		changeYOffset(0);
 	}else if(characterState== CROUCH && stateChanged){
 		spr->Open("assets/img/GenericCROUCH.png");
 		spr->SetFrameCount(7);
+		changeYOffset(0);
 	}else if(characterState== ATTACK && stateChanged){
-		spr->Open("assets/img/GenericATTACK.png");
+		spr->Open("assets/img/HERO_ATTACK.png");
 		spr->SetFrameCount(7);
+		changeYOffset(-43);
+		printf("%d\n", OFFSET_Y);
 	}else if(characterState== JUMP_ATTACK && stateChanged){
-		spr->Open("assets/img/GenericATTACK.png");
+		spr->Open("assets/img/HERO_ATTACK.png");
 		spr->SetFrameCount(7);
+		changeYOffset(-43);
 	}else if(characterState== CROUCH_ATTACK && stateChanged){
-		spr->Open("assets/img/GenericATTACK.png");
+		spr->Open("assets/img/HERO_ATTACK.png");
 		spr->SetFrameCount(7);
+		changeYOffset(-43);
 	}
 	associated.box.h = spr->GetHeight();
 	associated.box.w = spr->GetWidth();
@@ -289,4 +292,10 @@ void MainCharacter::StateLogic () {
 }
 Vec2 MainCharacter::GetCharacterPosition(){
 	return associated.box.GetCenter();
+}
+
+void MainCharacter::changeYOffset (int off) {
+	int diff = off - OFFSET_Y;
+	OFFSET_Y = off;
+	associated.box.y += diff;
 }

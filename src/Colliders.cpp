@@ -51,9 +51,15 @@ bool Colliders::AddCollider (string identifier, Collider* collider) {
 }
 void Colliders::CheckCollision (GameObject& other) {
   for (auto colA : colliders) {
+		if (!colA.second->IsEnabled()) {
+			continue;
+		}
     Colliders* listOther = (Colliders*) (other.GetComponent("Colliders"));
 		if (listOther != nullptr) {
 			for (auto colB : listOther->colliders) {
+				if (!colB.second->IsEnabled()) {
+					continue;
+				}
 				if (Collision::IsColliding(colA.second->box,
 						colB.second->box,
 						associated.angleDeg * M_PI / 180,

@@ -11,7 +11,7 @@ class Corvus : public Damageable {
   public:
     Corvus (GameObject& associated);
     ~Corvus ();
-    enum stateType{IDLE,WALK,ATK};
+    enum stateType{IDLE,WALK,ATTACK};
     stateType characterState;
     /**
 		 * Sets the component up
@@ -36,6 +36,7 @@ class Corvus : public Damageable {
 		void ChangeState(stateType state);
 		void NotifyAnimationEnd();
 		void NotifyCollision (GameObject& other, string idCollider, string idOtherCollider);
+    void StateLogic();
     //static MainCharacter* mainCharacter;
 
   private:
@@ -43,8 +44,10 @@ class Corvus : public Damageable {
   	Colliders* colliders;
     Sprite* spr;
     bool stateChanged = false;
-    stateType ESTADO;
     int AtackRange = 170;
     Vec2 speed = {0, 0};
     Timer animationTimer;
+    Timer stateTimer;
+    bool attacking = false;
+    bool playerHit = false;
 };

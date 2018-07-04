@@ -12,6 +12,7 @@
 #include "TileMap.h"
 #include "Colliders.h"
 #include "Corvus.h"
+#include "Vulturem.h"
 
 FirstStageState::FirstStageState () {
 }
@@ -36,7 +37,7 @@ void FirstStageState::LoadAssets () {
 	GameObject *character = new GameObject();
 	character->AddComponent(
 			new MainCharacter(*character));
-	character->box.y = 250;
+	character->box.y = 450;
 	AddObject(character);
 
 	GameObject *Hud = new GameObject();
@@ -51,13 +52,18 @@ void FirstStageState::LoadAssets () {
 	Human1->box.x = 500;
 	Human1->box.y = 100;
 	Human1->AddComponent(new Humano(*Human1));*/
-	GameObject *corvo = new GameObject();
-	corvo->box.x = 800;
-	corvo->box.y = 400;
-	corvo->AddComponent(new Corvus(*corvo));
+	// GameObject *corvo = new GameObject();
+	// corvo->box.x = 800;
+	// corvo->box.y = 400;
+	// corvo->AddComponent(new Corvus(*corvo));
 	//AddObject(Human);
 	//AddObject(Human1);
-	AddObject(corvo);
+	// AddObject(corvo);
+	GameObject *urubu = new GameObject();
+	urubu->box.x = 800;
+	urubu->box.y = 250;
+	urubu->AddComponent(new Vulturem(*urubu));
+	AddObject(urubu);
 }
 void FirstStageState::Update (float dt) {
 	Camera::Update(dt);

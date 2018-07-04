@@ -1,4 +1,4 @@
-#include "Corvus.h"
+#include "Vulturem.h"
 #include "GameObject.h"
 #include "Game.h"
 #include "InputManager.h"
@@ -18,13 +18,13 @@ using std::weak_ptr;
 #define NORMAL_ATTACK_DAMAGE 15
 #define ATTACK_CD 0.600
 
-Corvus::Corvus (GameObject& associated):Damageable(associated, 100) {
-	spr = new Sprite(associated, "assets/img/CorvusHurting.png",7,0.08);
+Vulturem::Vulturem (GameObject& associated):Damageable(associated, 100) {
+	spr = new Sprite(associated, "assets/img/VulturemHurting.png",7,0.08);
 	associated.AddComponent(spr);
 	associated.box.h = spr->GetHeight();
 	associated.box.w = spr->GetWidth();
 	colliders = new Colliders(associated);
-	collisionbox = new Collider(associated,{0.25,0.3},{-20,0});
+	collisionbox = new Collider(associated,{1,1},{0,0});
 	colliders->AddCollider("body", collisionbox);
 	Collider *bico = new Collider(associated, {0.25,0.3}, {-70,-80}, false);
 	colliders->AddCollider("bico", bico);
@@ -32,12 +32,12 @@ Corvus::Corvus (GameObject& associated):Damageable(associated, 100) {
 	characterState = WALK;
 	stateChanged = true;
 }
-Corvus::~Corvus () {
+Vulturem::~Vulturem () {
 }
 
-void Corvus::Start () {
+void Vulturem::Start () {
 }
-void Corvus::Update (float dt) {
+void Vulturem::Update (float dt) {
 	if (GetHP() <= 0) {
 		associated.RequestDelete();
 	}
@@ -51,29 +51,29 @@ void Corvus::Update (float dt) {
 			ChangeState(WALK);
 		}
 	}else if(characterState == WALK){
-		Vec2 Destination = MainCharacter::mainCharacter->GetCharacterPosition();
-		Vec2 PositionNow = associated.box.GetCenter();
-		if(PositionNow.GetDistance(Destination) > AtackRange){
-			int dir;
-			if(PositionNow.x > Destination.x){
-				dir = -1;
-			}else if(PositionNow.x < Destination.x){
-				dir = 1;
-			}else{
-				dir = 0;
-			}
-			speed.x = dir * CHARACTER_SPEED;
-
-			if (speed.x < 0) {
-				associated.flipHorizontal = true;
-			} else if (speed.x > 0) {
-				associated.flipHorizontal = false;
-			}
-			associated.box.x += (speed.x * dt);
-		} else {
-			ChangeState(ATTACK);
-			attacking = true;
-		}
+		// Vec2 Destination = MainCharacter::mainCharacter->GetCharacterPosition();
+		// Vec2 PositionNow = associated.box.GetCenter();
+		// if(PositionNow.GetDistance(Destination) > AtackRange){
+		// 	int dir;
+		// 	if(PositionNow.x > Destination.x){
+		// 		dir = -1;
+		// 	}else if(PositionNow.x < Destination.x){
+		// 		dir = 1;
+		// 	}else{
+		// 		dir = 0;
+		// 	}
+		// 	speed.x = dir * CHARACTER_SPEED;
+		//
+		// 	if (speed.x < 0) {
+		// 		associated.flipHorizontal = true;
+		// 	} else if (speed.x > 0) {
+		// 		associated.flipHorizontal = false;
+		// 	}
+		// 	associated.box.x += (speed.x * dt);
+		// } else {
+		// 	ChangeState(ATTACK);
+		// 	attacking = true;
+		// }
 
 	}else if(characterState == ATTACK){
 		float currentAnimTime = animationTimer.Get();
@@ -92,19 +92,19 @@ void Corvus::Update (float dt) {
 		animationTimer.Restart();
 	}
 }
-void Corvus::Render () {
+void Vulturem::Render () {
 }
 
-bool Corvus::Is (string type) const {
-	return type == "Corvus" || type == "Damageable";
+bool Vulturem::Is (string type) const {
+	return type == "Vulturem" || type == "Damageable";
 }
-void Corvus::ChangeState(stateType state){
+void Vulturem::ChangeState(stateType state){
 	if(characterState != state){
 		characterState = state;
 		stateChanged = true;
 	}
 }
-void Corvus::NotifyAnimationEnd () {
+void Vulturem::NotifyAnimationEnd () {
 	if (attacking) {
 		attacking = false;
 		playerHit = false;
@@ -114,7 +114,7 @@ void Corvus::NotifyAnimationEnd () {
 	animationTimer.Restart();
 }
 
-void Corvus::NotifyCollision (GameObject& other, string idCollider, string idOtherCollider) {
+void Vulturem::NotifyCollision (GameObject& other, string idCollider, string idOtherCollider) {
 	Colliders* otherColliders = (Colliders*)(other.GetComponent("Colliders"));
 	Collider* collider = colliders->GetCollider(idCollider).get();
 	Collider* otherCollider = otherColliders->GetCollider(idOtherCollider).get();
@@ -131,15 +131,15 @@ void Corvus::NotifyCollision (GameObject& other, string idCollider, string idOth
 	}
 }
 
-void Corvus::StateLogic () {
+void Vulturem::StateLogic () {
 	if(characterState == IDLE && stateChanged){
-		spr->Open("assets/img/Enemie_crow.png");
-		spr->SetFrameCount(1);
+		spr->Open("assets/img/VulturemHurting.png");
+		spr->SetFrameCount(7);
 	}else if(characterState == WALK && stateChanged){
-		spr->Open("assets/img/Enemie_crow.png");
-		spr->SetFrameCount(1);
+		spr->Open("assets/img/VulturemWalking.png");
+		spr->SetFrameCount(7);
 	}else if(characterState== ATTACK && stateChanged){
-		spr->Open("assets/img/GenericATTACK.png");
+		spr->Open("assets/img/VulturemAttack.png");
 		spr->SetFrameCount(7);
 	}
 	associated.box.h = spr->GetHeight();

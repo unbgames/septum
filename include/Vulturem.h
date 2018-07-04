@@ -1,17 +1,17 @@
 #pragma once
 #include "Component.h"
+#include "Colliders.h"
 #include "Damageable.h"
 #include "Vec2.h"
 #include "Sprite.h"
-#include "Colliders.h"
-#include <vector>
-
-class MainCharacter : public Damageable {
+#include "Collider.h"
+#include "Timer.h"
+class Vulturem : public Damageable {
 
   public:
-    MainCharacter (GameObject& associated);
-    ~MainCharacter ();
-    enum stateType{IDLE,WALK,JUMP,BLOCK,CROUCH,ATTACK,JUMP_ATTACK,CROUCH_ATTACK};
+    Vulturem (GameObject& associated);
+    ~Vulturem ();
+    enum stateType{IDLE,WALK,ATTACK};
     stateType characterState;
     /**
 		 * Sets the component up
@@ -34,24 +34,20 @@ class MainCharacter : public Damageable {
 		 */
 		bool Is (string type) const;
 		void ChangeState(stateType state);
+		void NotifyAnimationEnd();
+		void NotifyCollision (GameObject& other, string idCollider, string idOtherCollider);
+    void StateLogic();
+    //static MainCharacter* mainCharacter;
 
-    void NotifyAnimationEnd();
-    void NotifyCollision (GameObject& other, string idCollider, string idOtherCollider);
-
-		bool demon;
-		float furia;
-
-    static MainCharacter* mainCharacter;
-    Vec2 GetCharacterPosition();
   private:
-
-    void changeYOffset(int off);
-    void StateLogic ();
-
-    bool attacking;
+  	Collider* collisionbox;
   	Colliders* colliders;
-    Vec2 speed = {0, 0};
     Sprite* spr;
     bool stateChanged = false;
+    int AtackRange = 170;
+    Vec2 speed = {0, 0};
     Timer animationTimer;
+    Timer stateTimer;
+    bool attacking = false;
+    bool playerHit = false;
 };
