@@ -71,7 +71,7 @@ void FirstStageState::LoadAssets () {
 	// AddObject(Human1);
 	AddObject(corvo);
 	GameObject *urubu = new GameObject();
-	urubu->box.x = 800;
+	urubu->box.x = 1100;
 	urubu->box.y = 450;
 	urubu->AddComponent(new Vulturem(*urubu));
 	AddObject(urubu);

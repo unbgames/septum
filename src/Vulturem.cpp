@@ -18,6 +18,7 @@ using std::weak_ptr;
 #define NORMAL_ATTACK_DAMAGE 15
 #define ATTACK_CD 0.600
 #define ATTACK_RANGE 170
+#define ACQUISITION_RANGE 900
 
 Vulturem::Vulturem (GameObject& associated):Damageable(associated, 100) {
 	spr = new Sprite(associated, "assets/img/VULT_IDLE.png",7,0.08);
@@ -47,14 +48,19 @@ void Vulturem::Update (float dt) {
 
 	float currentTime = stateTimer.Get();
 
-	if (characterState == IDLE) {
+	Vec2 Destination = MainCharacter::mainCharacter->GetCharacterPosition();
+	Vec2 PositionNow = associated.box.GetCenter();
+
+	float distance = PositionNow.GetDistance(Destination);
+	if (distance > ACQUISITION_RANGE) {
+		ChangeState(IDLE);
+	} else if (characterState == IDLE) {
 		if (currentTime >= ATTACK_CD) {
 			ChangeState(WALK);
 		}
 	} else if(characterState == WALK){
-		Vec2 Destination = MainCharacter::mainCharacter->GetCharacterPosition();
-		Vec2 PositionNow = associated.box.GetCenter();
-		if(PositionNow.GetDistance(Destination) > ATTACK_RANGE){
+
+		if(distance > ATTACK_RANGE){
 			int dir;
 			if(PositionNow.x > Destination.x){
 				dir = -1;
