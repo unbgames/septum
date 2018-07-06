@@ -17,7 +17,7 @@ using std::weak_ptr;
 
 #define CHARACTER_SPEED 650
 #define GRAVITY 1900
-#define NORMAL_ATTACK_HIT_FRAME_START 0.600
+#define NORMAL_ATTACK_HIT_FRAME_START 0.550
 #define NORMAL_ATTACK_HIT_FRAME_END 0.650
 #define NORMAL_ATTACK_DAMAGE 35
 
@@ -30,7 +30,7 @@ using std::weak_ptr;
 #define JUMP_ATTACK_DAMAGE 50
 #define FLOOR_HEIGHT 450
 
-#define BLOCK_REDUCTION 1
+#define BLOCK_REDUCTION 0.75
 
 bool ENEMY_HIT = false;
 bool ENEMY_BLOCKED = false;
@@ -109,9 +109,9 @@ void MainCharacter::Update (float dt) {
 		}
 
 		if (speed.x < 0) {
-			associated.flipHorizontal = true;
+			associated.Flip(true);
 		} else if (speed.x > 0) {
-			associated.flipHorizontal = false;
+			associated.Flip(false);
 		}
 
 		if (speed.y == 0 && inputManager.IsKeyDown('w')) {
@@ -125,9 +125,9 @@ void MainCharacter::Update (float dt) {
 
 	if(inputManager.IsKeyDown('s') && !blocking){
 		associated.box.y = 490;
-	} else	if (associated.box.y > FLOOR_HEIGHT + associated.offsetHeight) {
+	} else	if (associated.box.y > FLOOR_HEIGHT + associated.positionOffset.y) {
 		speed.y = 0;
-		associated.box.y = FLOOR_HEIGHT + associated.offsetHeight;
+		associated.box.y = FLOOR_HEIGHT + associated.positionOffset.y;
 	}
 
 	if (characterState == ATTACK) {
@@ -159,11 +159,11 @@ void MainCharacter::Update (float dt) {
 	if (!attacking) {
 		if (GetHP() <= 0) {
 			ChangeState(DEAD);
-		} else if (associated.box.y > FLOOR_HEIGHT + associated.offsetHeight) {
+		} else if (associated.box.y > FLOOR_HEIGHT + associated.positionOffset.y) {
 			ChangeState(attackIssued ? CROUCH_ATTACK : CROUCH);
   	} else if(blocking){
 			ChangeState(BLOCK);
-		} else if(associated.box.y < FLOOR_HEIGHT + associated.offsetHeight){
+		} else if(associated.box.y < FLOOR_HEIGHT + associated.positionOffset.y){
 			ChangeState(attackIssued ? JUMP_ATTACK : JUMP);
 		} else if(dir != 0){
 			ChangeState(attackIssued ? ATTACK : WALK);
@@ -259,35 +259,35 @@ void MainCharacter::StateLogic () {
 	if(characterState == IDLE && stateChanged){
 		spr->Open("assets/img/HERO_IDLE.png");
 		spr->SetFrameCount(7);
-		associated.ChangeOffsetHeight(0);
+		associated.ChangePositionOffset({0, 0});
 	}else if(characterState == JUMP && stateChanged){
 		spr->Open("assets/img/HERO_JUMP.png");
 		spr->SetFrameCount(7);
-		associated.ChangeOffsetHeight(0);
+		associated.ChangePositionOffset({-15, 0});
 	}else if(characterState == WALK && stateChanged){
 		spr->Open("assets/img/HERO_WALK.png");
 		spr->SetFrameCount(7);
-		associated.ChangeOffsetHeight(0);
+		associated.ChangePositionOffset({-7, -3}, 0);
 	}else if(characterState == BLOCK && stateChanged){
 		spr->Open("assets/img/HERO_HURT.png");
 		spr->SetFrameCount(7);
-		associated.ChangeOffsetHeight(-15);
+		associated.ChangePositionOffset({-35, -10}, 35);
 	}else if(characterState == CROUCH && stateChanged){
 		spr->Open("assets/img/GenericCROUCH.png");
 		spr->SetFrameCount(7);
-		associated.ChangeOffsetHeight(0);
+		associated.ChangePositionOffset({0, 0});
 	}else if(characterState == ATTACK && stateChanged){
 		spr->Open("assets/img/HERO_ATTACK.png");
 		spr->SetFrameCount(7);
-		associated.ChangeOffsetHeight(-43);
+		associated.ChangePositionOffset({0, -43});
 	}else if(characterState == JUMP_ATTACK && stateChanged){
 		spr->Open("assets/img/HERO_ATTACK.png");
 		spr->SetFrameCount(7);
-		associated.ChangeOffsetHeight(-43);
+		associated.ChangePositionOffset({0, -43});
 	}else if(characterState == CROUCH_ATTACK && stateChanged){
 		spr->Open("assets/img/HERO_ATTACK.png");
 		spr->SetFrameCount(7);
-		associated.ChangeOffsetHeight(-43);
+		associated.ChangePositionOffset({0, -43});
 	}else if(characterState == DEAD && stateChanged){
 		GameObject* go = new GameObject();
 		go->box.x = associated.box.x - 100;

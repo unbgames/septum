@@ -10,6 +10,7 @@
 #include "FirstStageState.h"
 #include "MainCharacter.h"
 #include "Character.h"
+#include "Randomizer.h"
 
 using std::weak_ptr;
 
@@ -17,10 +18,26 @@ using std::weak_ptr;
 #define NORMAL_ATTACK_HIT_FRAME_START 0.400
 #define NORMAL_ATTACK_HIT_FRAME_END 0.650
 #define NORMAL_ATTACK_DAMAGE 15
-#define ATTACK_CD 0.600
-#define ATTACK_RANGE 170
+#define ATTACK_RANGE 200
 #define ACQUISITION_RANGE 900
-#define BLOCK_REDUCTION 0
+
+#define BLOCK_REDUCTION 0.75
+#define BLOCK_CD 2
+#define BLOCK_THRESHOLD 20
+
+#define MIN_BLOCK_DURATION -1
+#define MAX_BLOCK_DURATION 4
+#define MIN_ATTACK_DURATION -2
+#define MAX_ATTACK_DURATION 3
+#define MIN_RUN_DURATION -3
+#define MAX_RUN_DURATION 4
+
+std::uniform_real_distribution<> blockRandomizer;
+std::uniform_real_distribution<> runRandomizer;
+std::uniform_real_distribution<> attackRandomizer;
+
+bool blockReady = true;
+float stateDuration = 0;
 
 Vulturem::Vulturem (GameObject& associated):Damageable(associated, 100) {
 	Character* crt = new Character(associated, Character::COMPUTER);
@@ -37,6 +54,10 @@ Vulturem::Vulturem (GameObject& associated):Damageable(associated, 100) {
 	associated.AddComponent(colliders);
 	characterState = IDLE;
 	stateChanged = true;
+
+	blockRandomizer = Randomizer::CreateUniformGenerator(MIN_BLOCK_DURATION, MAX_BLOCK_DURATION);
+	runRandomizer = Randomizer::CreateUniformGenerator(MIN_RUN_DURATION, MAX_RUN_DURATION);
+	attackRandomizer = Randomizer::CreateUniformGenerator(MIN_ATTACK_DURATION, MAX_ATTACK_DURATION);
 }
 Vulturem::~Vulturem () {
 }
@@ -47,6 +68,13 @@ void Vulturem::Update (float dt) {
 
 	animationTimer.Update(dt);
 	stateTimer.Update(dt);
+	if (!blockReady) {
+		blockTimer.Update(dt);
+		if (blockTimer.Get() >= BLOCK_CD) {
+			blockTimer.Restart();
+			blockReady = true;
+		}
+	}
 
 	float currentTime = stateTimer.Get();
 
@@ -54,39 +82,66 @@ void Vulturem::Update (float dt) {
 		ChangeState(DEAD);
 	} else if (MainCharacter::mainCharacter) {
 		Vec2 Destination = MainCharacter::mainCharacter->GetCharacterPosition();
-		Vec2 PositionNow = associated.box.GetCenter();
+		Vec2 PositionNow = GetCharacterPosition();
 
 		float distance = PositionNow.GetDistance(Destination);
-		if (distance > ACQUISITION_RANGE) {
+		if (distance >= ACQUISITION_RANGE) {
 			ChangeState(IDLE);
 		} else if (characterState == IDLE) {
-			if (currentTime >= ATTACK_CD) {
-				ChangeState(WALK);
-			}
+			ChangeState(WALK);
 		} else if(characterState == WALK){
 
-			if(distance > ATTACK_RANGE){
-				int dir;
+			if(distance >= ATTACK_RANGE){
+				int dir = 0;
 				if(PositionNow.x > Destination.x){
 					dir = -1;
 				}else if(PositionNow.x < Destination.x){
 					dir = 1;
-				}else{
-					dir = 0;
 				}
 				speed.x = dir * CHARACTER_SPEED;
 
 				if (speed.x < 0) {
-					associated.flipHorizontal = true;
+					associated.Flip(true);
 				} else if (speed.x > 0) {
-					associated.flipHorizontal = false;
+					associated.Flip(false);
 				}
 				associated.box.x += (speed.x * dt);
 			} else {
+				if (blockReady) {
+					ChangeState(BLOCK);
+				} else {
+					ChangeState(RUN);
+				}
+			}
+		}	else if (characterState == RUN) {
+			if (stateTimer.Get() >= stateDuration || distance >= 3 * ATTACK_RANGE) {
+				ChangeState(WALK);
+			} else {
+				int dir = 0;
+				if(PositionNow.x < Destination.x){
+					dir = -1;
+				}else if(PositionNow.x > Destination.x){
+					dir = 1;
+				}
+				speed.x = dir * CHARACTER_SPEED;
+
+				if (speed.x < 0) {
+					associated.Flip(false);
+				} else if (speed.x > 0) {
+					associated.Flip(true);
+				}
+				associated.box.x += (speed.x * dt);
+			}
+		} else if (distance >= ATTACK_RANGE && !attacking) {
+			ChangeState(WALK);
+		} else if (characterState == BLOCK) {
+			if (!blockReady) {
+				ChangeState(RUN);
+			} else if (stateTimer.Get() >= stateDuration) {
 				ChangeState(ATTACK);
 				attacking = true;
 			}
-		}else if(characterState == ATTACK){
+		} else if(characterState == ATTACK){
 			float currentAnimTime = animationTimer.Get();
 			if(attacking){
 				if (NORMAL_ATTACK_HIT_FRAME_START <= currentAnimTime && NORMAL_ATTACK_HIT_FRAME_END > currentAnimTime) {
@@ -94,8 +149,10 @@ void Vulturem::Update (float dt) {
 				} else if (NORMAL_ATTACK_HIT_FRAME_END <= currentAnimTime){
 					colliders->GetCollider("weapon")->Disable();
 				}
-			}else{
-				ChangeState(IDLE);
+			} else {
+				if (stateTimer.Get() >= stateDuration) {
+					ChangeState(RUN);
+				}
 			}
 		}
 	} else {
@@ -103,6 +160,7 @@ void Vulturem::Update (float dt) {
 	}
 	if (stateChanged) {
 		StateLogic();
+		stateTimer.Restart();
 		animationTimer.Restart();
 	}
 }
@@ -123,7 +181,6 @@ void Vulturem::NotifyAnimationEnd () {
 		attacking = false;
 		playerHit = false;
 		colliders->GetCollider("weapon")->Disable();
-		stateTimer.Restart();
 	}
 	animationTimer.Restart();
 }
@@ -156,30 +213,48 @@ void Vulturem::StateLogic () {
 	if(characterState == IDLE && stateChanged){
 		spr->Open("assets/img/VULT_IDLE.png");
 		spr->SetFrameCount(7);
-		associated.ChangeOffsetHeight(0);
+		associated.ChangePositionOffset({0, 0});
 		colliders->GetCollider("body")->SetScale({0.4,0.85});
 		colliders->GetCollider("body")->SetOffset({-25,10});
 	}else if(characterState == WALK && stateChanged){
 		spr->Open("assets/img/VULT_WALK.png");
 		spr->SetFrameCount(7);
-		associated.ChangeOffsetHeight(0);
+		associated.ChangePositionOffset({-15, 0}, 15);
 		colliders->GetCollider("body")->SetScale({0.4,0.85});
 		colliders->GetCollider("body")->SetOffset({-25,10});
 	}else if(characterState == ATTACK && stateChanged){
 		spr->Open("assets/img/VULT_ATTACK.png");
 		spr->SetFrameCount(7);
-		associated.ChangeOffsetHeight(-103);
+		associated.ChangePositionOffset({-50, -107}, 24);
 		colliders->GetCollider("body")->SetScale({0.3, 0.55});
 		colliders->GetCollider("body")->SetOffset({0, 60});
+		stateDuration = Randomizer::GenerateUniform(attackRandomizer);
+	}else if(characterState == BLOCK && stateChanged){
+		spr->Open("assets/img/VULT_HURT.png");
+		spr->SetFrameCount(7);
+		associated.ChangePositionOffset({-19, -13}, 24);
+		colliders->GetCollider("body")->SetScale({0.4,0.85});
+		colliders->GetCollider("body")->SetOffset({-25,10});
+		stateDuration = Randomizer::GenerateUniform(blockRandomizer);
+	}else if(characterState == RUN && stateChanged){
+		spr->Open("assets/img/VULT_RUN.png");
+		spr->SetFrameCount(7);
+		associated.ChangePositionOffset({-20, 0}, 20);
+		colliders->GetCollider("body")->SetScale({0.4,0.85});
+		colliders->GetCollider("body")->SetOffset({-25,10});
+		stateDuration = Randomizer::GenerateUniform(runRandomizer);
 	}else if(characterState == DEAD && stateChanged){
-		associated.ChangeOffsetHeight(0);
+		associated.ChangePositionOffset({0, 0});
 		GameObject* go = new GameObject();
-		go->box.x = associated.box.x - 25;
-		go->box.y = associated.box.y - 5;
+		go->box.x = associated.box.x;
+		go->box.y = associated.box.y;
+		go->flipHorizontal = associated.flipHorizontal;
+
+		go->ChangePositionOffset({-25, -6}, -85);
+
 		Game::GetInstance().GetCurrentState().AddObject(go);
 		go->AddComponent(
 				new Sprite(*go, "assets/img/VULT_DIE.png", 7, 0.2, 1.4));
-		go->flipHorizontal = associated.flipHorizontal;
 
 		associated.RequestDelete();
 	}
@@ -190,6 +265,15 @@ void Vulturem::StateLogic () {
 
 void Vulturem::OnDamage (float damage, GameObject& source) {
 	if (characterState == BLOCK) {
-		SetHP(GetHP() + damage * BLOCK_REDUCTION);
+		if (damage < BLOCK_THRESHOLD) {
+			SetHP(GetHP() + damage * BLOCK_REDUCTION);
+		} else {
+			blockReady = false;
+			SetHP(GetHP() + BLOCK_THRESHOLD * BLOCK_REDUCTION);
+		}
 	}
+}
+
+Vec2 Vulturem::GetCharacterPosition(){
+	return colliders->GetCollider("body")->box.GetCenter();
 }

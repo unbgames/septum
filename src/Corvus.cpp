@@ -52,10 +52,10 @@ void Corvus::Update (float dt) {
 		ChangeState(DEAD);
 	} else if (MainCharacter::mainCharacter) {
 		Vec2 Destination = MainCharacter::mainCharacter->GetCharacterPosition();
-		Vec2 PositionNow = associated.box.GetCenter();
+		Vec2 PositionNow = GetCharacterPosition();
 
 		float distance = PositionNow.GetDistance(Destination);
-		if (distance > ACQUISITION_RANGE) {
+		if (distance >= ACQUISITION_RANGE) {
 			ChangeState(IDLE);
 		} else if (characterState == IDLE) {
 			if (currentTime >= ATTACK_CD) {
@@ -64,20 +64,18 @@ void Corvus::Update (float dt) {
 		} else if(characterState == WALK){
 
 			if(distance > ATTACK_RANGE){
-				int dir;
+				int dir = 0;
 				if(PositionNow.x > Destination.x){
 					dir = -1;
 				}else if(PositionNow.x < Destination.x){
 					dir = 1;
-				}else{
-					dir = 0;
 				}
 				speed.x = dir * CHARACTER_SPEED;
 
 				if (speed.x < 0) {
-					associated.flipHorizontal = true;
+					associated.Flip(true);
 				} else if (speed.x > 0) {
-					associated.flipHorizontal = false;
+					associated.Flip(false);
 				}
 				associated.box.x += (speed.x * dt);
 			} else {
@@ -154,34 +152,38 @@ void Corvus::StateLogic () {
 	if(characterState == IDLE && stateChanged){
 		spr->Open("assets/img/CORV_IDLE.png");
 		spr->SetFrameCount(7);
-		associated.ChangeOffsetHeight(0);
+		associated.ChangePositionOffset({0, 0});
 		colliders->GetCollider("body")->SetScale({0.4,0.85});
 		colliders->GetCollider("body")->SetOffset({-25,10});
 	}else if(characterState == WALK && stateChanged){
 		spr->Open("assets/img/CORV_WALK.png");
 		spr->SetFrameCount(7);
-		associated.ChangeOffsetHeight(0);
+		associated.ChangePositionOffset({-15, 0}, 15);
 		colliders->GetCollider("body")->SetScale({0.4,0.85});
 		colliders->GetCollider("body")->SetOffset({-25,10});
 	}else if(characterState == ATTACK && stateChanged){
 		spr->Open("assets/img/CORV_ATTACK.png");
 		spr->SetFrameCount(7);
-		associated.ChangeOffsetHeight(-103);
+		associated.ChangePositionOffset({-50, -103}, 15);
 		colliders->GetCollider("body")->SetScale({0.3, 0.55});
 		colliders->GetCollider("body")->SetOffset({0, 60});
 	}else if(characterState == DEAD && stateChanged){
-		associated.ChangeOffsetHeight(0);
+		associated.ChangePositionOffset({0, 0});
 		GameObject* go = new GameObject();
-		go->box.x = associated.box.x - 30;
-		go->box.y = associated.box.y - 13;
+		go->box.x = associated.box.x;
+		go->box.y = associated.box.y;
+		go->flipHorizontal = associated.flipHorizontal;
+		go->ChangePositionOffset({-34, -12}, -85);
 		Game::GetInstance().GetCurrentState().AddObject(go);
 		go->AddComponent(
 				new Sprite(*go, "assets/img/CORV_DIE.png", 7, 0.2, 1.4));
-		go->flipHorizontal = associated.flipHorizontal;
-
 		associated.RequestDelete();
 	}
 	associated.box.h = spr->GetHeight();
 	associated.box.w = spr->GetWidth();
 	stateChanged = false;
+}
+
+Vec2 Corvus::GetCharacterPosition(){
+	return colliders->GetCollider("body")->box.GetCenter();
 }

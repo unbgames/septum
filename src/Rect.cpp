@@ -6,7 +6,7 @@ Rect::Rect () :
 
 Rect::Rect (float x, float y, float w, float h) :
 		x(x), y(y), w(w), h(h) {
-	
+
 }
 
 bool Rect::Contains (Vec2 point) const {
@@ -16,6 +16,10 @@ bool Rect::Contains (Vec2 point) const {
 
 Vec2 Rect::GetCenter () const {
 	return Vec2(x + w / 2.0, y + h / 2.0);
+}
+
+Vec2 Rect::GetOrigin () const {
+	return Vec2(x, y);
 }
 
 float Rect::GetDistance (Rect other) const {

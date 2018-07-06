@@ -68,6 +68,7 @@ class GameObject {
 
 		void NotifyAnimationEnd ();
 
+
 		/**
 		 * GameObject position and dimension on window
 		 */
@@ -75,8 +76,10 @@ class GameObject {
 
 		double angleDeg = 0;
 		bool flipHorizontal = false;
-		void ChangeOffsetHeight(int off);
-		int offsetHeight = 0;
+		void Flip (bool value);
+		void ChangePositionOffset(Vec2 offset, float flipOffset = 0);
+		Vec2 positionOffset = {0, 0};
+		float flipOffset = 0;
 
 	private:
 		vector<unique_ptr<Component>> components;

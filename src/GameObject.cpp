@@ -84,8 +84,21 @@ void GameObject::NotifyAnimationEnd () {
 	}
 }
 
-void GameObject::ChangeOffsetHeight (int off) {
-	int diff = off - offsetHeight;
-	offsetHeight = off;
-	box.y += diff;
+void GameObject::Flip (bool value) {
+	if (flipHorizontal != value) {
+		flipHorizontal = value;
+		ChangePositionOffset(positionOffset, flipOffset);
+	}
+}
+
+void GameObject::ChangePositionOffset (Vec2 offset, float flipOffset) {
+	if (flipHorizontal) {
+		offset.x += flipOffset;
+	}
+	this->flipOffset = flipOffset;
+	int diffX = offset.x - positionOffset.x;
+	int diffY = offset.y - positionOffset.y;
+	positionOffset = offset;
+	box.x += diffX;
+	box.y += diffY;
 }

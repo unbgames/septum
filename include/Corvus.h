@@ -37,6 +37,7 @@ class Corvus : public Damageable {
 		void NotifyAnimationEnd();
 		void NotifyCollision (GameObject& other, string idCollider, string idOtherCollider);
     void StateLogic();
+    Vec2 GetCharacterPosition();
     //static MainCharacter* mainCharacter;
 
   private:

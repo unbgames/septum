@@ -11,7 +11,7 @@ class Vulturem : public Damageable {
   public:
     Vulturem (GameObject& associated);
     ~Vulturem ();
-    enum stateType{IDLE,WALK,ATTACK,BLOCK,DEAD};
+    enum stateType{IDLE,WALK,ATTACK,BLOCK,DEAD,RUN};
     stateType characterState;
     /**
 		 * Sets the component up
@@ -39,6 +39,7 @@ class Vulturem : public Damageable {
     void StateLogic();
 
     void OnDamage (float damage, GameObject& source);
+    Vec2 GetCharacterPosition();
     //static MainCharacter* mainCharacter;
 
   private:
@@ -49,6 +50,7 @@ class Vulturem : public Damageable {
     Vec2 speed = {0, 0};
     Timer animationTimer;
     Timer stateTimer;
+    Timer blockTimer;
     bool attacking = false;
     bool playerHit = false;
 };
