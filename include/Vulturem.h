@@ -37,6 +37,8 @@ class Vulturem : public Damageable {
 		void NotifyAnimationEnd();
 		void NotifyCollision (GameObject& other, string idCollider, string idOtherCollider);
     void StateLogic();
+
+    void OnDamage (float damage, GameObject& source);
     //static MainCharacter* mainCharacter;
 
   private:

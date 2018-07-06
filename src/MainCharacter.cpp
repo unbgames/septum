@@ -1,4 +1,5 @@
 #include "MainCharacter.h"
+#include "Character.h"
 #include "GameObject.h"
 #include "Game.h"
 #include "InputManager.h"
@@ -29,8 +30,11 @@ using std::weak_ptr;
 #define JUMP_ATTACK_DAMAGE 50
 #define FLOOR_HEIGHT 450
 
+#define BLOCK_REDUCTION 1
+
 bool ENEMY_HIT = false;
-//bool PLAYER_HIT = false;
+bool ENEMY_BLOCKED = false;
+
 Vec2 Bloqueiotela = {0,1286};
 
 MainCharacter* MainCharacter::mainCharacter = nullptr;
@@ -39,6 +43,8 @@ MainCharacter::MainCharacter (GameObject& associated) :
 		Damageable(associated, 100),characterState(IDLE),demon(false) {
 	mainCharacter = this;
 	furia = 100;
+	Character* crt = new Character(associated, Character::PLAYER);
+	associated.AddComponent(crt);
 	spr = new Sprite(associated, "assets/img/HERO_IDLE.png",7,0.08);
 	associated.AddComponent(spr);
 	associated.box.h = spr->GetHeight();
@@ -46,10 +52,9 @@ MainCharacter::MainCharacter (GameObject& associated) :
 
 	colliders = new Colliders(associated);
 	Collider* collisionbox = new Collider(associated, {0.5,0.8}, {-55, 0});
-	Collider* weaponCollider = new Collider(associated,{0,0}, {0, 0}, false);
+	Collider* weaponCollider = new Collider(associated, {0,0}, {0, 0}, false);
 	colliders->AddCollider("body", collisionbox);
-	colliders->AddCollider("hand", weaponCollider);
-	SetHP(100);
+	colliders->AddCollider("weapon", weaponCollider);
 	associated.AddComponent(colliders);
 }
 MainCharacter::~MainCharacter () {
@@ -63,87 +68,91 @@ void MainCharacter::Update (float dt) {
 	InputManager& inputManager = InputManager::GetInstance();
 	animationTimer.Update(dt);
 	float currentTime = animationTimer.Get();
-	int dir;
+	int dir = 0;
 	int attackIssued = false;
+	int blocking = inputManager.IsKeyDown('j');
 	if (inputManager.KeyPress('k')) {
 		attackIssued = true;
 	}
-	if(inputManager.IsKeyDown('a')){
-		dir = -1;
-	}else if(inputManager.IsKeyDown('d')){
-		dir = 1;
-	}else{
-		dir = 0;
-	}
-	speed.x = dir * CHARACTER_SPEED;
-	if(inputManager.KeyRelease('i')){
-		demon = demon?false:true;
-	}
-	if(demon)
-		furia-=0.1;
-	if(furia<0){
-		furia=0;
-		demon = false;
-	}
-	if (furia>100)
-		furia=100;
 
-	if(inputManager.KeyRelease('u') && !demon){
-		if(GetHP()+furia>=100){
-			furia += GetHP() - 100;
-			SetHP(100);
-		}else{
-			Damage(-furia);
-			furia=0;
-		}
-	}
-
-	if (speed.x < 0) {
-		associated.flipHorizontal = true;
-	} else if (speed.x > 0) {
-		associated.flipHorizontal = false;
-	}
-
-	if (speed.y == 0 && inputManager.IsKeyDown('w')) {
-		speed.y = 1000;
-	} else {
+	if (speed.y != 0) {
 		speed.y -= GRAVITY * dt;
 	}
 
+	if (!blocking) {
+		if(inputManager.IsKeyDown('a')){
+			dir = -1;
+		}else if(inputManager.IsKeyDown('d')){
+			dir = 1;
+		}
+
+		if(inputManager.KeyRelease('i')){
+			demon = demon?false:true;
+		}
+		if(demon)
+		furia-=0.1;
+		if(furia<0){
+			furia=0;
+			demon = false;
+		}
+		if (furia>100)
+		furia=100;
+
+		if(inputManager.KeyRelease('u') && !demon){
+			if(GetHP()+furia>=100){
+				furia += GetHP() - 100;
+				SetHP(100);
+			}else{
+				Damage(-furia, associated);
+				furia=0;
+			}
+		}
+
+		if (speed.x < 0) {
+			associated.flipHorizontal = true;
+		} else if (speed.x > 0) {
+			associated.flipHorizontal = false;
+		}
+
+		if (speed.y == 0 && inputManager.IsKeyDown('w')) {
+			speed.y = 1000;
+		}
+	}
+
+	speed.x = dir * CHARACTER_SPEED;
 	associated.box.y -= (speed.y * dt);
 	associated.box.x += (speed.x * dt);
 
-	if(inputManager.IsKeyDown('s')){
+	if(inputManager.IsKeyDown('s') && !blocking){
 		associated.box.y = 490;
-		furia+=0.5;
-	} else if (associated.box.y > FLOOR_HEIGHT + associated.offsetHeight) {
+	} else	if (associated.box.y > FLOOR_HEIGHT + associated.offsetHeight) {
 		speed.y = 0;
 		associated.box.y = FLOOR_HEIGHT + associated.offsetHeight;
 	}
 
 	if (characterState == ATTACK) {
 		if (NORMAL_ATTACK_HIT_FRAME_START <= currentTime && NORMAL_ATTACK_HIT_FRAME_END > currentTime) {
-			colliders->GetCollider("hand")->SetScale({0.3, 0.4});
-			colliders->GetCollider("hand")->SetOffset({90, 40});
-			colliders->GetCollider("hand")->Enable();
+			colliders->GetCollider("weapon")->SetScale({0.3, 0.4});
+			colliders->GetCollider("weapon")->SetOffset({90, 40});
+			colliders->GetCollider("weapon")->Enable();
 		} else if (NORMAL_ATTACK_HIT_FRAME_END <= currentTime){
-			colliders->GetCollider("hand")->Disable();
+			colliders->GetCollider("weapon")->Disable();
 		}
 	} else if (characterState == JUMP_ATTACK) {
 		if (JUMP_ATTACK_HIT_FRAME_START <= currentTime) {
-			colliders->GetCollider("hand")->SetScale({0.3, 0.4});
-			colliders->GetCollider("hand")->SetOffset({60, -25});
-			colliders->GetCollider("hand")->Enable();
+			colliders->GetCollider("weapon")->SetScale({0.3, 0.4});
+			colliders->GetCollider("weapon")->SetOffset({60, -25});
+			colliders->GetCollider("weapon")->Enable();
 		} else if (JUMP_ATTACK_HIT_FRAME_END <= currentTime){
-			colliders->GetCollider("hand")->Disable();
+			colliders->GetCollider("weapon")->Disable();
 		}
 	} else	if (characterState == CROUCH_ATTACK) {
 		if (CROUCH_ATTACK_HIT_FRAME_START <= currentTime) {
-			colliders->GetCollider("hand")->SetScale({0.25, 0.35});
-			colliders->GetCollider("hand")->SetOffset({130, 0});
-			colliders->GetCollider("hand")->Enable();
+			colliders->GetCollider("weapon")->SetScale({0.25, 0.35});
+			colliders->GetCollider("weapon")->SetOffset({130, 0});
+			colliders->GetCollider("weapon")->Enable();
 		} else if (CROUCH_ATTACK_HIT_FRAME_END <= currentTime){
-			colliders->GetCollider("hand")->Disable();
+			colliders->GetCollider("weapon")->Disable();
 		}
 	}
 
@@ -152,8 +161,8 @@ void MainCharacter::Update (float dt) {
 			ChangeState(DEAD);
 		} else if (associated.box.y > FLOOR_HEIGHT + associated.offsetHeight) {
 			ChangeState(attackIssued ? CROUCH_ATTACK : CROUCH);
-  	} else if(inputManager.IsKeyDown('j')){
-	  	ChangeState(BLOCK);
+  	} else if(blocking){
+			ChangeState(BLOCK);
 		} else if(associated.box.y < FLOOR_HEIGHT + associated.offsetHeight){
 			ChangeState(attackIssued ? JUMP_ATTACK : JUMP);
 		} else if(dir != 0){
@@ -217,19 +226,19 @@ void MainCharacter::NotifyCollision (GameObject& other, string idCollider, strin
 				associated.box.x = otherCollider->box.x - collider->box.w - offsetX - 1;
 			}
 		}
-		if (idCollider == "hand" && idOtherCollider == "body") {
+		if (idCollider == "weapon" && idOtherCollider == "body") {
 			Component* damageable = other.GetComponent("Damageable");
 			if (damageable != nullptr) {
 				if (characterState == ATTACK && !ENEMY_HIT) {
-					((Damageable*) damageable)->Damage(NORMAL_ATTACK_DAMAGE);
+					((Damageable*) damageable)->Damage(NORMAL_ATTACK_DAMAGE, associated);
 					ENEMY_HIT = true;
 				}
 				if (characterState == JUMP_ATTACK && !ENEMY_HIT) {
-					((Damageable*) damageable)->Damage(JUMP_ATTACK_DAMAGE);
+					((Damageable*) damageable)->Damage(JUMP_ATTACK_DAMAGE, associated);
 					ENEMY_HIT = true;
 				}
 				if (characterState == CROUCH_ATTACK && !ENEMY_HIT) {
-					((Damageable*) damageable)->Damage(CROUCH_ATTACK_DAMAGE);
+					((Damageable*) damageable)->Damage(CROUCH_ATTACK_DAMAGE, associated);
 					ENEMY_HIT = true;
 				}
 			}
@@ -240,7 +249,7 @@ void MainCharacter::NotifyCollision (GameObject& other, string idCollider, strin
 void MainCharacter::NotifyAnimationEnd () {
 	if (attacking) {
 		attacking = false;
-		colliders->GetCollider("hand")->Disable();
+		colliders->GetCollider("weapon")->Disable();
 		ENEMY_HIT = false;
 	}
 	animationTimer.Restart();
@@ -297,4 +306,10 @@ void MainCharacter::StateLogic () {
 }
 Vec2 MainCharacter::GetCharacterPosition(){
 	return colliders->GetCollider("body")->box.GetCenter();
+}
+
+void MainCharacter::OnDamage (float damage, GameObject& source) {
+	if (characterState == BLOCK) {
+		SetHP(GetHP() + damage * BLOCK_REDUCTION);
+	}
 }

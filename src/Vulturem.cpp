@@ -9,6 +9,7 @@
 #include "Sound.h"
 #include "FirstStageState.h"
 #include "MainCharacter.h"
+#include "Character.h"
 
 using std::weak_ptr;
 
@@ -19,8 +20,11 @@ using std::weak_ptr;
 #define ATTACK_CD 0.600
 #define ATTACK_RANGE 170
 #define ACQUISITION_RANGE 900
+#define BLOCK_REDUCTION 0
 
 Vulturem::Vulturem (GameObject& associated):Damageable(associated, 100) {
+	Character* crt = new Character(associated, Character::COMPUTER);
+	associated.AddComponent(crt);
 	spr = new Sprite(associated, "assets/img/VULT_IDLE.png",7,0.08);
 	associated.AddComponent(spr);
 	associated.box.h = spr->GetHeight();
@@ -28,8 +32,8 @@ Vulturem::Vulturem (GameObject& associated):Damageable(associated, 100) {
 	colliders = new Colliders(associated);
 	collisionbox = new Collider(associated,{0.4,0.85},{-25,10});
 	colliders->AddCollider("body", collisionbox);
-	Collider *bico = new Collider(associated, {0.25, 0.25}, {120, 65}, false);
-	colliders->AddCollider("bico", bico);
+	Collider *weapon = new Collider(associated, {0.25, 0.25}, {120, 65}, false);
+	colliders->AddCollider("weapon", weapon);
 	associated.AddComponent(colliders);
 	characterState = IDLE;
 	stateChanged = true;
@@ -86,9 +90,9 @@ void Vulturem::Update (float dt) {
 			float currentAnimTime = animationTimer.Get();
 			if(attacking){
 				if (NORMAL_ATTACK_HIT_FRAME_START <= currentAnimTime && NORMAL_ATTACK_HIT_FRAME_END > currentAnimTime) {
-					colliders->GetCollider("bico")->Enable();
+					colliders->GetCollider("weapon")->Enable();
 				} else if (NORMAL_ATTACK_HIT_FRAME_END <= currentAnimTime){
-					colliders->GetCollider("bico")->Disable();
+					colliders->GetCollider("weapon")->Disable();
 				}
 			}else{
 				ChangeState(IDLE);
@@ -118,7 +122,7 @@ void Vulturem::NotifyAnimationEnd () {
 	if (attacking) {
 		attacking = false;
 		playerHit = false;
-		colliders->GetCollider("bico")->Disable();
+		colliders->GetCollider("weapon")->Disable();
 		stateTimer.Restart();
 	}
 	animationTimer.Restart();
@@ -129,12 +133,19 @@ void Vulturem::NotifyCollision (GameObject& other, string idCollider, string idO
 	Collider* collider = colliders->GetCollider(idCollider).get();
 	Collider* otherCollider = otherColliders->GetCollider(idOtherCollider).get();
 	if (otherColliders != nullptr) {
-		if (idCollider == "bico" && idOtherCollider == "body") {
-			Component* damageable = other.GetComponent("Damageable");
-			if (damageable != nullptr) {
-				if(!playerHit) {
-					((Damageable*) damageable)->Damage(NORMAL_ATTACK_DAMAGE);
+		Component* damageable = other.GetComponent("Damageable");
+		if (damageable != nullptr) {
+			if (idCollider == "weapon" && idOtherCollider == "body") {
+				Component* character = other.GetComponent("Character");
+				bool shouldAttack = true;
+				if (character != nullptr) {
+					if (((Character*) character)->faction != Character::PLAYER) {
+						shouldAttack = false;
+					}
+				}
+				if(!playerHit && shouldAttack) {
 					playerHit = true;
+					((Damageable*) damageable)->Damage(NORMAL_ATTACK_DAMAGE, associated);
 				}
 			}
 		}
@@ -165,7 +176,6 @@ void Vulturem::StateLogic () {
 		GameObject* go = new GameObject();
 		go->box.x = associated.box.x - 25;
 		go->box.y = associated.box.y - 5;
-		printf("%g - %g\n", go->box.y, associated.box.y);
 		Game::GetInstance().GetCurrentState().AddObject(go);
 		go->AddComponent(
 				new Sprite(*go, "assets/img/VULT_DIE.png", 7, 0.2, 1.4));
@@ -176,4 +186,10 @@ void Vulturem::StateLogic () {
 	associated.box.h = spr->GetHeight();
 	associated.box.w = spr->GetWidth();
 	stateChanged = false;
+}
+
+void Vulturem::OnDamage (float damage, GameObject& source) {
+	if (characterState == BLOCK) {
+		SetHP(GetHP() + damage * BLOCK_REDUCTION);
+	}
 }

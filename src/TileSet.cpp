@@ -6,7 +6,6 @@ TileSet::TileSet (int tileWidth, int tileHeight, string file,
 		tileSet(associated, file), tileWidth(tileWidth), tileHeight(tileHeight) {
 	columns = tileSet.GetWidth() / tileWidth;
 	rows = tileSet.GetHeight() / tileHeight;
-	printf("Collums:%d, Rows:%d\n",columns,rows);
 }
 
 void TileSet::RenderTile (unsigned int index, float x, float y) {

@@ -28,8 +28,10 @@ class Damageable : public Component {
     float GetHP () const;
     void SetHP (float hp);
 
-    void Damage (float damage);
+    void virtual OnDamage (float damage, GameObject& source);
 
+    void Damage (float damage, GameObject& source);
   private:
     float hp;
+    float damageResistance;
 };

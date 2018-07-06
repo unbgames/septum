@@ -9,6 +9,7 @@
 #include "Sound.h"
 #include "FirstStageState.h"
 #include "MainCharacter.h"
+#include "Character.h"
 
 using std::weak_ptr;
 
@@ -21,6 +22,8 @@ using std::weak_ptr;
 #define ACQUISITION_RANGE 770
 
 Corvus::Corvus (GameObject& associated):Damageable(associated, 100) {
+	Character* crt = new Character(associated, Character::COMPUTER);
+	associated.AddComponent(crt);
 	spr = new Sprite(associated, "assets/img/CORV_IDLE.png",7,0.08);
 	associated.AddComponent(spr);
 	associated.box.h = spr->GetHeight();
@@ -28,8 +31,8 @@ Corvus::Corvus (GameObject& associated):Damageable(associated, 100) {
 	colliders = new Colliders(associated);
 	collisionbox = new Collider(associated,{0.4,0.85},{-25,10});
 	colliders->AddCollider("body", collisionbox);
-	Collider *bico = new Collider(associated, {0.25, 0.25}, {120, 65}, false);
-	colliders->AddCollider("bico", bico);
+	Collider *weapon = new Collider(associated, {0.25, 0.25}, {120, 65}, false);
+	colliders->AddCollider("weapon", weapon);
 	associated.AddComponent(colliders);
 	characterState = IDLE;
 	stateChanged = true;
@@ -85,9 +88,9 @@ void Corvus::Update (float dt) {
 			float currentAnimTime = animationTimer.Get();
 			if(attacking){
 				if (NORMAL_ATTACK_HIT_FRAME_START <= currentAnimTime && NORMAL_ATTACK_HIT_FRAME_END > currentAnimTime) {
-					colliders->GetCollider("bico")->Enable();
+					colliders->GetCollider("weapon")->Enable();
 				} else if (NORMAL_ATTACK_HIT_FRAME_END <= currentAnimTime){
-					colliders->GetCollider("bico")->Disable();
+					colliders->GetCollider("weapon")->Disable();
 				}
 			}else{
 				ChangeState(IDLE);
@@ -117,7 +120,7 @@ void Corvus::NotifyAnimationEnd () {
 	if (attacking) {
 		attacking = false;
 		playerHit = false;
-		colliders->GetCollider("bico")->Disable();
+		colliders->GetCollider("weapon")->Disable();
 		stateTimer.Restart();
 	}
 	animationTimer.Restart();
@@ -128,12 +131,19 @@ void Corvus::NotifyCollision (GameObject& other, string idCollider, string idOth
 	Collider* collider = colliders->GetCollider(idCollider).get();
 	Collider* otherCollider = otherColliders->GetCollider(idOtherCollider).get();
 	if (otherColliders != nullptr) {
-		if (idCollider == "bico" && idOtherCollider == "body") {
-			Component* damageable = other.GetComponent("Damageable");
-			if (damageable != nullptr) {
-				if(!playerHit) {
-					((Damageable*) damageable)->Damage(NORMAL_ATTACK_DAMAGE);
+		Component* damageable = other.GetComponent("Damageable");
+		if (damageable != nullptr) {
+			if (idCollider == "weapon" && idOtherCollider == "body") {
+				Component* character = other.GetComponent("Character");
+				bool shouldAttack = true;
+				if (character != nullptr) {
+					if (((Character*) character)->faction != Character::PLAYER) {
+						shouldAttack = false;
+					}
+				}
+				if(!playerHit && shouldAttack) {
 					playerHit = true;
+					((Damageable*) damageable)->Damage(NORMAL_ATTACK_DAMAGE, associated);
 				}
 			}
 		}

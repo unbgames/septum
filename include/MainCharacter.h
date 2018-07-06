@@ -38,6 +38,8 @@ class MainCharacter : public Damageable {
     void NotifyAnimationEnd();
     void NotifyCollision (GameObject& other, string idCollider, string idOtherCollider);
 
+    void OnDamage (float damage, GameObject& source);
+
 		bool demon;
 		float furia;
 

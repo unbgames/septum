@@ -16,9 +16,11 @@ void Damageable::SetHP (float hp) {
   this->hp = hp;
 }
 
-void Damageable::Damage (float damage) {
+void Damageable::OnDamage (float damage, GameObject& source) {
+
+}
+
+void Damageable::Damage (float damage, GameObject& source) {
   hp -= damage;
-  if (hp < 0) {
-    hp = 0;
-  }
+  OnDamage(damage, source);
 }
