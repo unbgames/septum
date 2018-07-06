@@ -11,7 +11,7 @@ class Corvus : public Damageable {
   public:
     Corvus (GameObject& associated);
     ~Corvus ();
-    enum stateType{IDLE,WALK,ATTACK};
+    enum stateType{IDLE,WALK,ATTACK,DEAD};
     stateType characterState;
     /**
 		 * Sets the component up

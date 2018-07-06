@@ -42,15 +42,17 @@ HUD::HUD (GameObject& associated):Component(associated){
 
 }
 void HUD::Update (float dt) {
-	if(MainCharacter::mainCharacter->demon != demonio){
-		demonio = MainCharacter::mainCharacter->demon;
-		if(demonio)
+	if (MainCharacter::mainCharacter) {
+		if(MainCharacter::mainCharacter->demon != demonio){
+			demonio = MainCharacter::mainCharacter->demon;
+			if(demonio)
 			Sface->Open("assets/img/HUDdemon.png");
-		else
+			else
 			Sface->Open("assets/img/HUDface.png");
+		}
+		Slife->SetScale(0.01*MainCharacter::mainCharacter->GetHP(),1);
+		Sfury->SetScale(0.01*MainCharacter::mainCharacter->furia,1);
 	}
-	Slife->SetScale(0.01*MainCharacter::mainCharacter->GetHP(),1);
-	Sfury->SetScale(0.01*MainCharacter::mainCharacter->furia,1);
 	fundo->box.x = 36 + Camera::pos.x;
 	frente->box.x = 36 + Camera::pos.x;
 	lifepoints->box.x = 124 + Camera::pos.x;

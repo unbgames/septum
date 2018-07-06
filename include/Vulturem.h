@@ -11,7 +11,7 @@ class Vulturem : public Damageable {
   public:
     Vulturem (GameObject& associated);
     ~Vulturem ();
-    enum stateType{IDLE,WALK,ATTACK};
+    enum stateType{IDLE,WALK,ATTACK,BLOCK,DEAD};
     stateType characterState;
     /**
 		 * Sets the component up

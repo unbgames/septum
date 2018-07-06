@@ -40,58 +40,61 @@ Corvus::~Corvus () {
 void Corvus::Start () {
 }
 void Corvus::Update (float dt) {
-	if (GetHP() <= 0) {
-		associated.RequestDelete();
-	}
 	animationTimer.Update(dt);
 	stateTimer.Update(dt);
 
 	float currentTime = stateTimer.Get();
 
-	Vec2 Destination = MainCharacter::mainCharacter->GetCharacterPosition();
-	Vec2 PositionNow = associated.box.GetCenter();
+	if (GetHP() <= 0) {
+		ChangeState(DEAD);
+	} else if (MainCharacter::mainCharacter) {
+		Vec2 Destination = MainCharacter::mainCharacter->GetCharacterPosition();
+		Vec2 PositionNow = associated.box.GetCenter();
 
-	float distance = PositionNow.GetDistance(Destination);
-	if (distance > ACQUISITION_RANGE) {
-		ChangeState(IDLE);
-	} else if (characterState == IDLE) {
-		if (currentTime >= ATTACK_CD) {
-			ChangeState(WALK);
-		}
-	} else if(characterState == WALK){
-
-		if(distance > ATTACK_RANGE){
-			int dir;
-			if(PositionNow.x > Destination.x){
-				dir = -1;
-			}else if(PositionNow.x < Destination.x){
-				dir = 1;
-			}else{
-				dir = 0;
-			}
-			speed.x = dir * CHARACTER_SPEED;
-
-			if (speed.x < 0) {
-				associated.flipHorizontal = true;
-			} else if (speed.x > 0) {
-				associated.flipHorizontal = false;
-			}
-			associated.box.x += (speed.x * dt);
-		} else {
-			ChangeState(ATTACK);
-			attacking = true;
-		}
-	}else if(characterState == ATTACK){
-		float currentAnimTime = animationTimer.Get();
-		if(attacking){
-			if (NORMAL_ATTACK_HIT_FRAME_START <= currentAnimTime && NORMAL_ATTACK_HIT_FRAME_END > currentAnimTime) {
-				colliders->GetCollider("bico")->Enable();
-			} else if (NORMAL_ATTACK_HIT_FRAME_END <= currentAnimTime){
-				colliders->GetCollider("bico")->Disable();
-			}
-		}else{
+		float distance = PositionNow.GetDistance(Destination);
+		if (distance > ACQUISITION_RANGE) {
 			ChangeState(IDLE);
+		} else if (characterState == IDLE) {
+			if (currentTime >= ATTACK_CD) {
+				ChangeState(WALK);
+			}
+		} else if(characterState == WALK){
+
+			if(distance > ATTACK_RANGE){
+				int dir;
+				if(PositionNow.x > Destination.x){
+					dir = -1;
+				}else if(PositionNow.x < Destination.x){
+					dir = 1;
+				}else{
+					dir = 0;
+				}
+				speed.x = dir * CHARACTER_SPEED;
+
+				if (speed.x < 0) {
+					associated.flipHorizontal = true;
+				} else if (speed.x > 0) {
+					associated.flipHorizontal = false;
+				}
+				associated.box.x += (speed.x * dt);
+			} else {
+				ChangeState(ATTACK);
+				attacking = true;
+			}
+		}else if(characterState == ATTACK){
+			float currentAnimTime = animationTimer.Get();
+			if(attacking){
+				if (NORMAL_ATTACK_HIT_FRAME_START <= currentAnimTime && NORMAL_ATTACK_HIT_FRAME_END > currentAnimTime) {
+					colliders->GetCollider("bico")->Enable();
+				} else if (NORMAL_ATTACK_HIT_FRAME_END <= currentAnimTime){
+					colliders->GetCollider("bico")->Disable();
+				}
+			}else{
+				ChangeState(IDLE);
+			}
 		}
+	} else {
+		ChangeState(IDLE);
 	}
 	if (stateChanged) {
 		StateLogic();
@@ -156,6 +159,17 @@ void Corvus::StateLogic () {
 		associated.ChangeOffsetHeight(-103);
 		colliders->GetCollider("body")->SetScale({0.3, 0.55});
 		colliders->GetCollider("body")->SetOffset({0, 60});
+	}else if(characterState == DEAD && stateChanged){
+		associated.ChangeOffsetHeight(0);
+		GameObject* go = new GameObject();
+		go->box.x = associated.box.x - 30;
+		go->box.y = associated.box.y - 13;
+		Game::GetInstance().GetCurrentState().AddObject(go);
+		go->AddComponent(
+				new Sprite(*go, "assets/img/CORV_DIE.png", 7, 0.2, 1.4));
+		go->flipHorizontal = associated.flipHorizontal;
+
+		associated.RequestDelete();
 	}
 	associated.box.h = spr->GetHeight();
 	associated.box.w = spr->GetWidth();

@@ -148,7 +148,9 @@ void MainCharacter::Update (float dt) {
 	}
 
 	if (!attacking) {
-		if (associated.box.y > FLOOR_HEIGHT + associated.offsetHeight) {
+		if (GetHP() <= 0) {
+			ChangeState(DEAD);
+		} else if (associated.box.y > FLOOR_HEIGHT + associated.offsetHeight) {
 			ChangeState(attackIssued ? CROUCH_ATTACK : CROUCH);
   	} else if(inputManager.IsKeyDown('j')){
 	  	ChangeState(BLOCK);
@@ -261,22 +263,33 @@ void MainCharacter::StateLogic () {
 		spr->Open("assets/img/HERO_HURT.png");
 		spr->SetFrameCount(7);
 		associated.ChangeOffsetHeight(-15);
-	}else if(characterState== CROUCH && stateChanged){
+	}else if(characterState == CROUCH && stateChanged){
 		spr->Open("assets/img/GenericCROUCH.png");
 		spr->SetFrameCount(7);
 		associated.ChangeOffsetHeight(0);
-	}else if(characterState== ATTACK && stateChanged){
+	}else if(characterState == ATTACK && stateChanged){
 		spr->Open("assets/img/HERO_ATTACK.png");
 		spr->SetFrameCount(7);
 		associated.ChangeOffsetHeight(-43);
-	}else if(characterState== JUMP_ATTACK && stateChanged){
+	}else if(characterState == JUMP_ATTACK && stateChanged){
 		spr->Open("assets/img/HERO_ATTACK.png");
 		spr->SetFrameCount(7);
 		associated.ChangeOffsetHeight(-43);
-	}else if(characterState== CROUCH_ATTACK && stateChanged){
+	}else if(characterState == CROUCH_ATTACK && stateChanged){
 		spr->Open("assets/img/HERO_ATTACK.png");
 		spr->SetFrameCount(7);
 		associated.ChangeOffsetHeight(-43);
+	}else if(characterState == DEAD && stateChanged){
+		GameObject* go = new GameObject();
+		go->box.x = associated.box.x - 100;
+		go->box.y = associated.box.y - 10;
+		Game::GetInstance().GetCurrentState().AddObject(go);
+		go->AddComponent(
+				new Sprite(*go, "assets/img/HERO_DIE.png", 7, 0.2, 1.4));
+		go->flipHorizontal = associated.flipHorizontal;
+
+		Camera::Unfollow();
+		associated.RequestDelete();
 	}
 	associated.box.h = spr->GetHeight();
 	associated.box.w = spr->GetWidth();
