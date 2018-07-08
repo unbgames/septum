@@ -35,6 +35,9 @@ Corvus::Corvus (GameObject& associated):Damageable(associated, 100) {
 	stateChanged = true;
 }
 Corvus::~Corvus () {
+	FirstStageState::enemycount--;
+	FirstStageState::tempoRestante+=6;
+	MainCharacter::mainCharacter->furia+=20;
 }
 
 void Corvus::Start () {

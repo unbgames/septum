@@ -35,6 +35,9 @@ Vulturem::Vulturem (GameObject& associated):Damageable(associated, 100) {
 	stateChanged = true;
 }
 Vulturem::~Vulturem () {
+	FirstStageState::enemycount--;
+	FirstStageState::tempoRestante+=10;
+	MainCharacter::mainCharacter->furia += 30;
 }
 
 void Vulturem::Start () {

@@ -14,6 +14,16 @@
 #include "Colliders.h"
 #include "Corvus.h"
 #include "Vulturem.h"
+#include "EndState.h"
+#include "stdio.h"
+#include "stdlib.h"
+
+
+
+float A,B;
+float FirstStageState::tempoRestante(20);
+float FirstStageState::tempojogado(0);
+int FirstStageState::enemycount(2);
 
 FirstStageState::FirstStageState () {
 }
@@ -27,6 +37,8 @@ void FirstStageState::LoadAssets () {
 	// 		new Sprite(*splashScreen, "assets/img/backgroundHellBeta.png"));
 	// splashScreen->AddComponent(new CameraFollower(*splashScreen));
 	// AddObject(splashScreen);
+	music.Open("assets/audio/theme.wav");
+
 	GameObject *background = new GameObject();
 	Background* bg = new Background(*background, 0.03);
 	bg->AddLayer(new Sprite(*background, "assets/img/sky.png"));
@@ -75,9 +87,61 @@ void FirstStageState::LoadAssets () {
 	urubu->box.y = 450;
 	urubu->AddComponent(new Vulturem(*urubu));
 	AddObject(urubu);
+
+	cronometro = new GameObject();
+	AddObject(cronometro);
+	//cronometro->AddComponent(new CameraFollower(*cronometro));
+
 }
 void FirstStageState::Update (float dt) {
+	tempoJOGO.Update(dt);
+	char aux[60];
+	sprintf(aux,"%.1f , %.f",tempoJOGO.Get(),tempoRestante);
+	//remover o texto anterior
+	Component* textanterior = cronometro->GetComponent("Text");
+	if(textanterior != nullptr)
+		((Text*)textanterior)->SetText(aux);
+	else{
+		Text *visortempo = new Text(*cronometro,"assets/font/Call me maybe.ttf",30,Text::SOLID,aux,{0,0,0});
+		cronometro->AddComponent(visortempo);
+	}
+	tempojogado = tempoJOGO.Get();
+	if(tempojogado >= tempoRestante || MainCharacter::mainCharacter->hp <= 0){
+		//condicao de termino
+		Game& game = Game::GetInstance();
+		game.Push(new EndState());
+	}
 	Camera::Update(dt);
+
+	A = rand()%10000;//esse valor eh meio que a taxa de spawn dos inimigos
+	if(A < tempojogado || enemycount == 0 && enemycount <6){
+		B = rand()%100;
+		if(B<tempojogado){
+			GameObject *forte = new GameObject();
+			forte->box.x = 300 + rand()%1000;
+			forte->box.y = 450;
+			forte->AddComponent(new Vulturem(*forte));
+			AddObject(forte);
+			//spawna forte
+		}else{
+			//spawna fraco
+			GameObject *fraco = new GameObject();
+			fraco->box.x = 200 + rand()%1000;
+			fraco->box.y = 450;
+			fraco->AddComponent(new Corvus(*fraco));
+			AddObject(fraco);
+		}
+		enemycount++;
+	}
+
+
+
+
+
+
+
+
+
 	InputManager& inputManager = InputManager::GetInstance();
 
 	quitRequested = inputManager.QuitRequested();
@@ -106,7 +170,8 @@ void FirstStageState::Update (float dt) {
 		}
 	}
 
-
+	cronometro->box.y = Camera::pos.y + 20;
+	cronometro->box.x = Camera::pos.x + 300;
 }
 void FirstStageState::Render () {
 	RenderArray();
@@ -117,6 +182,7 @@ void FirstStageState::Start () {
 	Camera::pos = {0, 0};
 	LoadAssets();
 	StartArray();
+	music.Play(1);
 	started = true;
 }
 void FirstStageState::Pause () {
