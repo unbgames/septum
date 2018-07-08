@@ -11,7 +11,7 @@ class MainCharacter : public Damageable {
   public:
     MainCharacter (GameObject& associated);
     ~MainCharacter ();
-    enum stateType{IDLE,WALK,JUMP,BLOCK,CROUCH,ATTACK,JUMP_ATTACK,CROUCH_ATTACK,DEAD};
+    enum stateType{IDLE,WALK,JUMP,BLOCK,CROUCH,ATTACK,JUMP_ATTACK,CROUCH_ATTACK,DEAD,CROUCH_BLOCK, CROUCH_WALK};
     stateType characterState;
     /**
 		 * Sets the component up

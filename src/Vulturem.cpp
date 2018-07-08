@@ -18,7 +18,7 @@ using std::weak_ptr;
 #define NORMAL_ATTACK_HIT_FRAME_START 0.400
 #define NORMAL_ATTACK_HIT_FRAME_END 0.650
 #define NORMAL_ATTACK_DAMAGE 15
-#define ATTACK_RANGE 170
+#define ATTACK_RANGE 200
 #define ACQUISITION_RANGE 900
 
 #define BLOCK_REDUCTION 0.75
@@ -274,5 +274,5 @@ void Vulturem::OnDamage (float damage, GameObject& source) {
 }
 
 Vec2 Vulturem::GetCharacterPosition(){
-	return associated.box.GetCenter();
+	return colliders->GetCollider("body")->box.GetCenter();
 }
