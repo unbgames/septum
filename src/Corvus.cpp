@@ -35,7 +35,6 @@ Corvus::Corvus (GameObject& associated):Damageable(associated, 100) {
 	colliders->AddCollider("weapon", weapon);
 	associated.AddComponent(colliders);
 	characterState = IDLE;
-	stateChanged = true;
 }
 Corvus::~Corvus () {
 }
@@ -155,19 +154,19 @@ void Corvus::StateLogic () {
 		associated.ChangePositionOffset({0, 0});
 		colliders->GetCollider("body")->SetScale({0.4,0.85});
 		colliders->GetCollider("body")->SetOffset({-25,10});
-	}else if(characterState == WALK && stateChanged){
+	}	else if(characterState == WALK && stateChanged){
 		spr->Open("assets/img/CORV_WALK.png");
 		spr->SetFrameCount(7);
 		associated.ChangePositionOffset({-15, 0}, 15);
-		colliders->GetCollider("body")->SetScale({0.4,0.85});
-		colliders->GetCollider("body")->SetOffset({-25,10});
-	}else if(characterState == ATTACK && stateChanged){
+		colliders->GetCollider("body")->SetScale({0.38, 0.81});
+		colliders->GetCollider("body")->SetOffset({-19.5, 5});
+	} else if(characterState == ATTACK && stateChanged){
 		spr->Open("assets/img/CORV_ATTACK.png");
 		spr->SetFrameCount(7);
 		associated.ChangePositionOffset({-50, -103}, 15);
-		colliders->GetCollider("body")->SetScale({0.3, 0.55});
-		colliders->GetCollider("body")->SetOffset({0, 60});
-	}else if(characterState == DEAD && stateChanged){
+		colliders->GetCollider("body")->SetScale({0.31, 0.59});
+		colliders->GetCollider("body")->SetOffset({-18, 64});
+	} else if(characterState == DEAD && stateChanged){
 		associated.ChangePositionOffset({0, 0});
 		GameObject* go = new GameObject();
 		go->box.x = associated.box.x;

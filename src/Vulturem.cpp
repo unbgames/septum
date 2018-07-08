@@ -18,7 +18,7 @@ using std::weak_ptr;
 #define NORMAL_ATTACK_HIT_FRAME_START 0.400
 #define NORMAL_ATTACK_HIT_FRAME_END 0.650
 #define NORMAL_ATTACK_DAMAGE 15
-#define ATTACK_RANGE 200
+#define ATTACK_RANGE 170
 #define ACQUISITION_RANGE 900
 
 #define BLOCK_REDUCTION 0.75
@@ -53,7 +53,6 @@ Vulturem::Vulturem (GameObject& associated):Damageable(associated, 100) {
 	colliders->AddCollider("weapon", weapon);
 	associated.AddComponent(colliders);
 	characterState = IDLE;
-	stateChanged = true;
 
 	blockRandomizer = Randomizer::CreateUniformGenerator(MIN_BLOCK_DURATION, MAX_BLOCK_DURATION);
 	runRandomizer = Randomizer::CreateUniformGenerator(MIN_RUN_DURATION, MAX_RUN_DURATION);
@@ -216,32 +215,32 @@ void Vulturem::StateLogic () {
 		associated.ChangePositionOffset({0, 0});
 		colliders->GetCollider("body")->SetScale({0.4,0.85});
 		colliders->GetCollider("body")->SetOffset({-25,10});
-	}else if(characterState == WALK && stateChanged){
+	} else if(characterState == WALK && stateChanged){
 		spr->Open("assets/img/VULT_WALK.png");
 		spr->SetFrameCount(7);
-		associated.ChangePositionOffset({-15, 0}, 15);
-		colliders->GetCollider("body")->SetScale({0.4,0.85});
-		colliders->GetCollider("body")->SetOffset({-25,10});
+		associated.ChangePositionOffset({-18, 0}, 18);
+		colliders->GetCollider("body")->SetScale({0.37,0.82});
+		colliders->GetCollider("body")->SetOffset({-18,5.5});
 	}else if(characterState == ATTACK && stateChanged){
 		spr->Open("assets/img/VULT_ATTACK.png");
 		spr->SetFrameCount(7);
 		associated.ChangePositionOffset({-50, -107}, 24);
-		colliders->GetCollider("body")->SetScale({0.3, 0.55});
-		colliders->GetCollider("body")->SetOffset({0, 60});
+		colliders->GetCollider("body")->SetScale({0.33, 0.57});
+		colliders->GetCollider("body")->SetOffset({-10, 64});
 		stateDuration = Randomizer::GenerateUniform(attackRandomizer);
 	}else if(characterState == BLOCK && stateChanged){
 		spr->Open("assets/img/VULT_HURT.png");
 		spr->SetFrameCount(7);
 		associated.ChangePositionOffset({-19, -13}, 24);
-		colliders->GetCollider("body")->SetScale({0.4,0.85});
-		colliders->GetCollider("body")->SetOffset({-25,10});
+		colliders->GetCollider("body")->SetScale({0.38,0.71});
+		colliders->GetCollider("body")->SetOffset({-13,1});
 		stateDuration = Randomizer::GenerateUniform(blockRandomizer);
 	}else if(characterState == RUN && stateChanged){
 		spr->Open("assets/img/VULT_RUN.png");
 		spr->SetFrameCount(7);
 		associated.ChangePositionOffset({-20, 0}, 20);
-		colliders->GetCollider("body")->SetScale({0.4,0.85});
-		colliders->GetCollider("body")->SetOffset({-25,10});
+		colliders->GetCollider("body")->SetScale({0.35,0.74});
+		colliders->GetCollider("body")->SetOffset({-29,-6});
 		stateDuration = Randomizer::GenerateUniform(runRandomizer);
 	}else if(characterState == DEAD && stateChanged){
 		associated.ChangePositionOffset({0, 0});
@@ -275,5 +274,5 @@ void Vulturem::OnDamage (float damage, GameObject& source) {
 }
 
 Vec2 Vulturem::GetCharacterPosition(){
-	return colliders->GetCollider("body")->box.GetCenter();
+	return associated.box.GetCenter();
 }

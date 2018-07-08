@@ -1,13 +1,13 @@
 #pragma once
 #include "Vec2.h"
-#include "GameObject.h"
+#include "Rect.h"
 class Camera {
 	public:
 		/**
 		 * Set the camera to follow an object
 		 * @param newFocus Object to follow
 		 */
-		static void Follow (GameObject* newFocus);
+		static void Follow (Rect* newFocus);
 
 		/**
 		 * Unfollow object
@@ -24,5 +24,5 @@ class Camera {
 		static Vec2 speed;
 
 	private:
-		static GameObject* focus;
+		static Rect* focus;
 };

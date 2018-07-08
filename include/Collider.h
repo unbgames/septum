@@ -25,6 +25,8 @@ class Collider {
 		void Enable();
 		void Disable();
 		bool IsEnabled();
+		Vec2 GetScale() const;
+		Vec2 GetOffset() const;
 
 	private:
 		GameObject& associated;

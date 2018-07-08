@@ -35,7 +35,7 @@ using std::weak_ptr;
 bool ENEMY_HIT = false;
 bool ENEMY_BLOCKED = false;
 
-Vec2 Bloqueiotela = {0,1286};
+Vec2 Bloqueiotela = {0,1920};
 
 MainCharacter* MainCharacter::mainCharacter = nullptr;
 
@@ -175,22 +175,28 @@ void MainCharacter::Update (float dt) {
 		}
 	}
 
-	if(associated.box.x >= 512 + Camera::pos.x/2 && speed.x > 0)
-		Camera::Follow(&associated);
-	if(associated.box.x < 512 + Camera::pos.x && speed.x <0)
-		Camera::Follow(&associated);
+	Rect* bodyBox = &(colliders->GetCollider("body")->box);
+	float screenReference = Game::GetInstance().GetWidth() / 2;
 
-	if(associated.box.x >= Bloqueiotela.y  && Camera::IsFollowing()){
-		Camera::Unfollow();
-		if(associated.box.x >= Bloqueiotela.y + 512){
-			associated.box.x = Bloqueiotela.y+ 512;
+	if (bodyBox->GetCenter().x > Bloqueiotela.y - screenReference
+	|| bodyBox->GetCenter().x < Bloqueiotela.x + screenReference) {
+		// Unfollows the character if it is before the half of the screen and after the left limit
+		// Or if is after the half of the screend and before the right limit
+		if (Camera::IsFollowing()) {
+			Camera::Unfollow();
 		}
+	} else if ((bodyBox->GetCenter().x >= screenReference + Camera::pos.x && speed.x > 0)
+	|| (bodyBox->GetCenter().x < screenReference + Camera::pos.x && speed.x < 0)) {
+		// Follows the character if it is after the half of the screen and walking forward
+		// Or if is before the half of the screend and walking back
+		Camera::Follow(bodyBox);
 	}
-	else if(associated.box.x < Bloqueiotela.x + 512){
-		Camera::Unfollow();
-		if(associated.box.x < Bloqueiotela.x){
-			associated.box.x = Bloqueiotela.x;
-		}
+
+	// Blocks movement to either limit of screen
+	if(bodyBox->x + bodyBox->w > Bloqueiotela.y){
+		associated.box.x = Bloqueiotela.y - (bodyBox->x + bodyBox->w) + associated.box.x;
+	} else if(bodyBox->x < Bloqueiotela.x){
+		associated.box.x = Bloqueiotela.x - bodyBox->x + associated.box.x;
 	}
 
 	if (stateChanged) {
@@ -260,18 +266,26 @@ void MainCharacter::StateLogic () {
 		spr->Open("assets/img/HERO_IDLE.png");
 		spr->SetFrameCount(7);
 		associated.ChangePositionOffset({0, 0});
+		colliders->GetCollider("body")->SetScale({0.5,0.8});
+		colliders->GetCollider("body")->SetOffset({-55,0});
 	}else if(characterState == JUMP && stateChanged){
 		spr->Open("assets/img/HERO_JUMP.png");
 		spr->SetFrameCount(7);
-		associated.ChangePositionOffset({-15, 0});
+		associated.ChangePositionOffset({-30, -40}, 30);
+		colliders->GetCollider("body")->SetScale({0.45, 0.69});
+		colliders->GetCollider("body")->SetOffset({-37.325, 0});
 	}else if(characterState == WALK && stateChanged){
 		spr->Open("assets/img/HERO_WALK.png");
 		spr->SetFrameCount(7);
 		associated.ChangePositionOffset({-7, -3}, 0);
+		colliders->GetCollider("body")->SetScale({0.48, 0.78});
+		colliders->GetCollider("body")->SetOffset({-54, 0});
 	}else if(characterState == BLOCK && stateChanged){
 		spr->Open("assets/img/HERO_HURT.png");
 		spr->SetFrameCount(7);
 		associated.ChangePositionOffset({-35, -10}, 35);
+		colliders->GetCollider("body")->SetScale({0.45, 0.73});
+		colliders->GetCollider("body")->SetOffset({-35.20, -2});
 	}else if(characterState == CROUCH && stateChanged){
 		spr->Open("assets/img/GenericCROUCH.png");
 		spr->SetFrameCount(7);
@@ -280,14 +294,20 @@ void MainCharacter::StateLogic () {
 		spr->Open("assets/img/HERO_ATTACK.png");
 		spr->SetFrameCount(7);
 		associated.ChangePositionOffset({0, -43});
+		colliders->GetCollider("body")->SetScale({0.48, 0.72});
+		colliders->GetCollider("body")->SetOffset({-59.7, 29});
 	}else if(characterState == JUMP_ATTACK && stateChanged){
 		spr->Open("assets/img/HERO_ATTACK.png");
 		spr->SetFrameCount(7);
 		associated.ChangePositionOffset({0, -43});
+		colliders->GetCollider("body")->SetScale({0.48, 0.72});
+		colliders->GetCollider("body")->SetOffset({-59.7, 29});
 	}else if(characterState == CROUCH_ATTACK && stateChanged){
 		spr->Open("assets/img/HERO_ATTACK.png");
 		spr->SetFrameCount(7);
 		associated.ChangePositionOffset({0, -43});
+		colliders->GetCollider("body")->SetScale({0.48, 0.72});
+		colliders->GetCollider("body")->SetOffset({-59.7, 29});
 	}else if(characterState == DEAD && stateChanged){
 		GameObject* go = new GameObject();
 		go->box.x = associated.box.x - 100;

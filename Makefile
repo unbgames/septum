@@ -26,14 +26,14 @@ ifeq ($(OS),Windows_NT)
 RMDIR = rd /s /q
 RM = del
 
-RUN = 
+RUN =
 
 SDL_PATH = C:\SDL2-2.0.5\x86_64-w64-mingw32
 
 DIRECTIVES += -I $(SDL_PATH)\include
 
 LIBS = -L $(SDL_PATH)\lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lm
-		
+
 EXEC := $(EXEC).exe
 
 else
@@ -48,9 +48,9 @@ all: $(EXEC)
 
 $(EXEC): $(OBJ_FILES)
 	$(CC) -o $@ $^ $(LIBS)
-	
+
 $(BIN_PATH)/%.o: $(SRC_PATH)/%.cpp
-			
+
 ifeq ($(OS), Windows_NT)
 	@if not exist $(DEP_PATH) @mkdir $(DEP_PATH)
 	@if not exist $(BIN_PATH) @mkdir $(BIN_PATH)
@@ -63,13 +63,17 @@ endif
 print-% : ; @echo $* = $($*)
 
 debug: DIRECTIVES += -ggdb -O0 -DDEBUG
-debug: RUN := gdb $(RUN)
-debug: all run
+debug: all
+
+dev: debug run
+
+gdb: RUN := gdb $(RUN)
+gdb: dev
 
 release: DIRECTIVES += -Ofast -mtune=native
 release: all
 
-run: 
+run:
 	$(RUN)$(EXEC)
 
 clean:

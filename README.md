@@ -8,3 +8,15 @@ Para compilar utilize:
 Para executar utilize:
 
 `make run`
+
+Para compilar com flag de debug utilize:
+
+`make debug`
+
+Para compilar com flag de debug e executar normalmente utilize:
+
+`make dev`
+
+Para compilar com flag de debug e executar com gdb:
+
+`make gdb`

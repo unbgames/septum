@@ -5,9 +5,9 @@
 
 Vec2 Camera::pos(0, 0);
 Vec2 Camera::speed(100, 100);
-GameObject* Camera::focus = nullptr;
+Rect* Camera::focus = nullptr;
 
-void Camera::Follow (GameObject* newFocus) {
+void Camera::Follow (Rect* newFocus) {
 	focus = newFocus;
 }
 
@@ -18,7 +18,7 @@ void Camera::Unfollow () {
 void Camera::Update (float dt) {
 	if (focus != nullptr) {
 		pos.x = float(
-				focus->box.GetCenter().x - Game::GetInstance().GetWidth() / 2);
+				focus->GetCenter().x - Game::GetInstance().GetWidth() / 2);
 		//pos.y = float(
 		//		focus->box.GetCenter().y - Game::GetInstance().GetHeight() / 2);
 	}
@@ -38,6 +38,6 @@ void Camera::Update (float dt) {
 	}
 }
 bool Camera::IsFollowing(){
-	return focus!=nullptr;	
+	return focus!=nullptr;
 
 }
