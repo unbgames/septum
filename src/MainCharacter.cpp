@@ -32,16 +32,20 @@ using std::weak_ptr;
 
 #define BLOCK_REDUCTION 0.75
 
+#define DEMON_DURATION 7
+
 bool ENEMY_HIT = false;
-//bool PLAYER_HIT = false;
+
+bool shapeChanged = false;
+
 Vec2 Bloqueiotela = {0,12086};
 
 MainCharacter* MainCharacter::mainCharacter = nullptr;
 
 MainCharacter::MainCharacter (GameObject& associated) :
-		Damageable(associated, 100),characterState(IDLE),demon(false) {
+		Damageable(associated, 100),characterState(IDLE) {
 	mainCharacter = this;
-	furia = 0;
+	power = 0;
 	Character* crt = new Character(associated, Character::PLAYER);
 	associated.AddComponent(crt);
 	spr = new Sprite(associated, "assets/img/HERO_IDLE.png",7,0.08);
@@ -89,24 +93,34 @@ void MainCharacter::Update (float dt) {
 		}
 
 		if(inputManager.KeyRelease('i')){
-			demon = demon?false:true;
+			if (shape == DEMON) {
+				shape = HUMAN;
+				shapeChanged = true;
+			} else {
+				shape = DEMON;
+				shapeChanged = true;
+			}
 		}
-		if(demon)
-		furia-=0.1;
-		if(furia<0){
-			furia=0;
-			demon = false;
+		if (shape == DEMON) {
+			power -= dt * 100 / DEMON_DURATION;
 		}
-		if (furia>100)
-		furia=100;
+		if(power < 0) {
+			power = 0;
+			shape = HUMAN;
+		}
+		if (power > 100) {
+			power = 100;
+		}
 
-		if(inputManager.KeyRelease('u') && !demon){
-			if(GetHP()+furia>=100){
-				furia += GetHP() - 100;
+		if(inputManager.KeyRelease('u') && shape == HUMAN){
+			// Sets HP to maximum if it can
+			if(GetHP() + power >= 100){
+				power += GetHP() - 100;
 				SetHP(100);
 			} else{
-				Damage(-furia, associated);
-				furia=0;
+				// otherwise healks based on the amount of power
+				Damage(-power, associated);
+				power = 0;
 			}
 		}
 
@@ -212,7 +226,7 @@ void MainCharacter::Update (float dt) {
 		associated.box.x = Bloqueiotela.x - bodyBox->x + associated.box.x;
 	}
 
-	if (stateChanged) {
+	if (stateChanged || shapeChanged) {
 		StateLogic();
 		animationTimer.Restart();
 	}
@@ -275,75 +289,83 @@ void MainCharacter::NotifyAnimationEnd () {
 }
 
 void MainCharacter::StateLogic () {
-	if(characterState == IDLE && stateChanged){
-		spr->Open("assets/img/HERO_IDLE.png");
-		spr->SetFrameCount(7);
-		associated.SetPositionOffset({0, 0});
-		colliders->GetCollider("body")->SetScale({0.5,0.8});
-		colliders->GetCollider("body")->SetOffset({-55,0});
-	} else if(characterState == JUMP && stateChanged){
-		spr->Open("assets/img/HERO_JUMP.png");
-		spr->SetFrameCount(7);
-		associated.SetPositionOffset({-30, -40}, 34.68);
-		colliders->GetCollider("body")->SetScale({0.45, 0.69});
-		colliders->GetCollider("body")->SetOffset({-37.325, 0});
-	} else if(characterState == WALK && stateChanged){
-		spr->Open("assets/img/HERO_WALK.png");
-		spr->SetFrameCount(7);
-		associated.SetPositionOffset({-7, -3}, 2);
-		colliders->GetCollider("body")->SetScale({0.48, 0.78});
-		colliders->GetCollider("body")->SetOffset({-54, 0});
-	} else if(characterState == CROUCH_WALK && stateChanged){
-		spr->Open("assets/img/HERO_WALK_CROUCH.png");
-		spr->SetFrameCount(7);
-		associated.SetPositionOffset({-15, 15}, 47);
-		colliders->GetCollider("body")->SetScale({0.54, 0.78});
-		colliders->GetCollider("body")->SetOffset({-31.5, 22.5});
-	} else if(characterState == BLOCK && stateChanged){
-		spr->Open("assets/img/HERO_BLOCK.png");
-		spr->SetFrameCount(7);
-		associated.SetPositionOffset({4, 2}, 39);
-		colliders->GetCollider("body")->SetScale({0.61, 0.93});
-		colliders->GetCollider("body")->SetOffset({-35.5, 15});
-	} else if(characterState == CROUCH_BLOCK && stateChanged){
-		spr->Open("assets/img/HERO_BLOCK_CROUCH.png");
-		spr->SetFrameCount(7);
-		associated.SetPositionOffset({0, 12}, 47);
-		colliders->GetCollider("body")->SetScale({0.62, 0.77});
-		colliders->GetCollider("body")->SetOffset({-31.5, 25});
-	} else if(characterState == CROUCH && stateChanged){
-		spr->Open("assets/img/HERO_IDLE_CROUCH.png");
-		spr->SetFrameCount(7);
-		associated.SetPositionOffset({0, 15}, 3);
-		colliders->GetCollider("body")->SetScale({0.51, 0.65});
-		colliders->GetCollider("body")->SetOffset({-53.5, 2.5});
-	} else if(characterState == ATTACK || characterState == JUMP_ATTACK && stateChanged){
-		spr->Open("assets/img/HERO_ATTACK.png");
-		spr->SetFrameCount(7);
-		associated.SetPositionOffset({0, -43}, -9.7);
-		colliders->GetCollider("body")->SetScale({0.48, 0.72});
-		colliders->GetCollider("body")->SetOffset({-59.7, 29});
-	} else if(characterState == CROUCH_ATTACK && stateChanged){
-		spr->Open("assets/img/HERO_ATTACK_CROUCH.png");
-		spr->SetFrameCount(7);
-		associated.SetPositionOffset({-15, -20});
-		colliders->GetCollider("body")->SetScale({0.45, 0.65});
-		colliders->GetCollider("body")->SetOffset({-55, 38});
-	} else if(characterState == DEAD && stateChanged){
-		GameObject* go = new GameObject();
-		go->box.x = associated.box.x - 100;
-		go->box.y = associated.box.y - 10;
-		Game::GetInstance().GetCurrentState().AddObject(go);
-		go->AddComponent(
-				new Sprite(*go, "assets/img/HERO_DIE.png", 7, 0.2, 1.4));
-		go->flipHorizontal = associated.flipHorizontal;
+	if (stateChanged || shapeChanged) {
+		if (shape == HUMAN) {
+			if(characterState == IDLE){
+				SetSprite("assets/img/HERO_IDLE.png", 7, {0, 0}, 0, {0.5,0.8}, {-55,0});
+			} else if(characterState == JUMP){
+				SetSprite("assets/img/HERO_JUMP.png", 7, {-30, -40}, 34.68, {0.45, 0.69}, {-37.325, 0});
+			} else if(characterState == WALK){
+				SetSprite("assets/img/HERO_WALK.png", 7, {-7, -3}, 2, {0.48, 0.78}, {-54, 0});
+			} else if(characterState == CROUCH_WALK){
+				SetSprite("assets/img/HERO_WALK_CROUCH.png", 7, {-15, 15}, 47, {0.54, 0.78}, {-31.5, 22.5});
+			} else if(characterState == BLOCK){
+				SetSprite("assets/img/HERO_BLOCK.png", 7, {4, 2}, 39, {0.61, 0.93}, {-35.5, 15});
+			} else if(characterState == CROUCH_BLOCK){
+				SetSprite("assets/img/HERO_BLOCK_CROUCH.png", 7, {0, 12}, 47, {0.62, 0.77}, {-31.5, 25});
+			} else if(characterState == CROUCH){
+				SetSprite("assets/img/HERO_IDLE_CROUCH.png", 7, {0, 15}, 3, {0.51, 0.65}, {-53.5, 2.5});
+			} else if(characterState == ATTACK || characterState == JUMP_ATTACK){
+				SetSprite("assets/img/HERO_ATTACK.png", 7, {0, -43}, -9.7, {0.48, 0.72}, {-59.7, 29});
+			} else if(characterState == CROUCH_ATTACK){
+				SetSprite("assets/img/HERO_ATTACK_CROUCH.png", 7, {-15, -20}, 0, {0.45, 0.65}, {-55, 38});
+			} else if(characterState == DEAD){
+				GameObject* go = new GameObject();
+				go->box.x = associated.box.x - 100;
+				go->box.y = associated.box.y - 10;
+				Game::GetInstance().GetCurrentState().AddObject(go);
+				go->AddComponent(
+					new Sprite(*go, "assets/img/HERO_DIE.png", 7, 0.2, 1.4));
+				go->flipHorizontal = associated.flipHorizontal;
 
-		Camera::Unfollow();
-		associated.RequestDelete();
+				Camera::Unfollow();
+				associated.RequestDelete();
+			}
+		} else {
+			if(characterState == IDLE){
+				SetSprite("assets/img/DEMON_IDLE.png", 7, {0, -75}, 0, {0.45,0.8}, {-70,0});
+			} else if(characterState == JUMP){
+				SetSprite("assets/img/DEMON_JUMP.png", 7, {-53, -127}, 53, {0.39, 0.69}, {-43.5, 26});
+			} else if(characterState == WALK){
+				SetSprite("assets/img/DEMON_WALK.png", 7, {-10, -80}, 1, {0.43, 0.78}, {-69.5, 1});
+			} else if(characterState == CROUCH_WALK){
+				SetSprite("assets/img/DEMON_WALK_CROUCH.png", 7, {-10, -65}, 1, {0.43, 0.68}, {-69.5, 1});
+			} else if(characterState == BLOCK){
+				SetSprite("assets/img/DEMON_BLOCK.png", 7, {0, -75}, 58, {0.54, 0.88}, {-41, 15});
+			} else if(characterState == CROUCH_BLOCK){
+				SetSprite("assets/img/DEMON_BLOCK_CROUCH.png", 7, {0, -60}, 58, {0.54, 0.81}, {-41, 22.5});
+			} else if(characterState == CROUCH){
+				SetSprite("assets/img/DEMON_IDLE_CROUCH.png", 7, {0, -60}, 0, {0.45, 0.7}, {-70, 0});
+			} else if(characterState == ATTACK || characterState == JUMP_ATTACK){
+				SetSprite("assets/img/DEMON_ATTACK.png", 7, {-37, -120}, 26, {0.4, 0.74}, {-57, 32.5});
+			} else if(characterState == CROUCH_ATTACK){
+				SetSprite("assets/img/DEMON_ATTACK_CROUCH.png", 7, {-63, -132}, 29, {0.35, 0.61}, {-55.5, 49});
+			} else if(characterState == DEAD){
+				GameObject* go = new GameObject();
+				go->box.x = associated.box.x - 100;
+				go->box.y = associated.box.y - 10;
+				Game::GetInstance().GetCurrentState().AddObject(go);
+				go->AddComponent(
+					new Sprite(*go, "assets/img/DEMON_DIE.png", 7, 0.2, 1.4));
+				go->flipHorizontal = associated.flipHorizontal;
+
+				Camera::Unfollow();
+				associated.RequestDelete();
+			}
+		}
 	}
 	associated.box.h = spr->GetHeight();
 	associated.box.w = spr->GetWidth();
 	stateChanged = false;
+	shapeChanged = false;
+}
+
+void MainCharacter::SetSprite (string file, int frameCount, Vec2 sprOffset, float sprFlipOffset, Vec2 colliderScale, Vec2 colliderOffset) {
+	spr->Open(file);
+	spr->SetFrameCount(frameCount);
+	associated.SetPositionOffset(sprOffset, sprFlipOffset);
+	colliders->GetCollider("body")->SetScale(colliderScale);
+	colliders->GetCollider("body")->SetOffset(colliderOffset);
 }
 Vec2 MainCharacter::GetCharacterPosition(){
 	return colliders->GetCollider("body")->box.GetCenter();

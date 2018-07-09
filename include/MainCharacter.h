@@ -13,6 +13,7 @@ class MainCharacter : public Damageable {
     MainCharacter (GameObject& associated);
     ~MainCharacter ();
     enum stateType{IDLE,WALK,JUMP,BLOCK,CROUCH,ATTACK,JUMP_ATTACK,CROUCH_ATTACK,DEAD,CROUCH_BLOCK, CROUCH_WALK};
+    enum shapeType{DEMON, HUMAN};
     stateType characterState;
     /**
 		 * Sets the component up
@@ -39,10 +40,12 @@ class MainCharacter : public Damageable {
     void NotifyAnimationEnd();
     void NotifyCollision (GameObject& other, string idCollider, string idOtherCollider);
 
+    void SetSprite (string file, int frameCount, Vec2 sprOffset, float sprFlipOffset, Vec2 colliderScale, Vec2 colliderOffset);
+
     void OnDamage (float damage, GameObject& source);
 
-		bool demon;
-		float furia;
+    shapeType shape = HUMAN;
+		float power;
     static MainCharacter* mainCharacter;
     Vec2 GetCharacterPosition();
   private:

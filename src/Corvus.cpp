@@ -52,7 +52,7 @@ void Corvus::Update (float dt) {
 		ChangeState(DEAD);
 		FirstStageState::enemycount--;
 		FirstStageState::tempoRestante+=6;
-		MainCharacter::mainCharacter->furia+=20;
+		MainCharacter::mainCharacter->power+=20;
 	} else if (MainCharacter::mainCharacter) {
 		Vec2 Destination = MainCharacter::mainCharacter->GetCharacterPosition();
 		Vec2 PositionNow = GetCharacterPosition();

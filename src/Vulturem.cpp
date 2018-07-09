@@ -82,7 +82,7 @@ void Vulturem::Update (float dt) {
 		ChangeState(DEAD);
 		FirstStageState::enemycount--;
 		FirstStageState::tempoRestante+=10;
-		MainCharacter::mainCharacter->furia += 30;
+		MainCharacter::mainCharacter->power += 30;
 	} else if (MainCharacter::mainCharacter) {
 		Vec2 Destination = MainCharacter::mainCharacter->GetCharacterPosition();
 		Vec2 PositionNow = GetCharacterPosition();
