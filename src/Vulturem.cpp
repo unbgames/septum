@@ -157,10 +157,9 @@ void Vulturem::Update (float dt) {
 				} else if (NORMAL_ATTACK_HIT_FRAME_END <= currentAnimTime){
 					colliders->GetCollider("weapon")->Disable();
 				}
-			} else {
-				if (stateTimer.Get() >= stateDuration) {
-					ChangeState(RUN);
-				}
+			}
+			else {
+				ChangeState(RUN);
 			}
 		}
 	} else {
@@ -186,7 +185,7 @@ void Vulturem::ChangeState(stateType state){
 }
 void Vulturem::NotifyAnimationEnd () {
 	if (attacking) {
-		attacking = false;
+		attacking = stateTimer.Get() < stateDuration;
 		playerHit = false;
 		effects->GetSound("attack")->Play(1);
 		colliders->GetCollider("weapon")->Disable();
