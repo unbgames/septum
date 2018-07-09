@@ -61,8 +61,14 @@ MainCharacter::MainCharacter (GameObject& associated) :
 	colliders->AddCollider("body", collisionbox);
 	colliders->AddCollider("weapon", weaponCollider);
 	associated.AddComponent(colliders);
-	som = new GameObject();
-	som->AddComponent(new Sound(*som,"assets/audio/hit2.wav"));
+
+	effects = new SoundCollection(associated);
+	effects->AddSound("attack", new Sound(associated,"assets/audio/hit2.wav"));
+	effects->AddSound("transform", new Sound(associated,"assets/audio/shapeshift.wav"));
+	effects->AddSound("block", new Sound(associated,"assets/audio/block2.wav"));
+	effects->AddSound("heal", new Sound(associated,"assets/audio/heal.wav"));
+	effects->AddSound("distransform", new Sound(associated,"assets/audio/shapeloss.wav"));
+	associated.AddComponent(effects);
 }
 MainCharacter::~MainCharacter () {
 	mainCharacter = nullptr;
@@ -109,21 +115,23 @@ void MainCharacter::Update (float dt) {
 		if(power < 0) {
 			power = 0;
 			shape = HUMAN;
+			shapeChanged = true;
 		}
 		if (power > 100) {
 			power = 100;
 		}
 
-		if(inputManager.KeyRelease('u') && shape == HUMAN){
+		if(inputManager.KeyRelease('u') && shape == HUMAN && power > 0){
 			// Sets HP to maximum if it can
 			if(GetHP() + power >= 100){
 				power += GetHP() - 100;
 				SetHP(100);
-			} else{
+			} else {
 				// otherwise healks based on the amount of power
 				Damage(-power, associated);
 				power = 0;
 			}
+			effects->GetSound("heal")->Play(1);
 		}
 
 		if (speed.x < 0) {
@@ -150,7 +158,6 @@ void MainCharacter::Update (float dt) {
 
 	if (characterState == ATTACK) {
 		if (NORMAL_ATTACK_HIT_FRAME_START <= currentTime && NORMAL_ATTACK_HIT_FRAME_END > currentTime) {
-			((Sound*)som->GetComponent("Sound"))->Play(1);
 			if (shape == HUMAN) {
 				colliders->GetCollider("weapon")->SetScale({0.3, 0.4});
 				colliders->GetCollider("weapon")->SetOffset({90, 40});
@@ -247,6 +254,13 @@ void MainCharacter::Update (float dt) {
 	}
 
 	if (stateChanged || shapeChanged) {
+		if (shapeChanged) {
+			if (shape == HUMAN) {
+				effects->GetSound("distransform")->Play(1);
+			} else {
+				effects->GetSound("transform")->Play(1);
+			}
+		}
 		StateLogic();
 		animationTimer.Restart();
 	}
@@ -306,6 +320,7 @@ void MainCharacter::NotifyCollision (GameObject& other, string idCollider, strin
 void MainCharacter::NotifyAnimationEnd () {
 	if (attacking) {
 		attacking = false;
+		effects->GetSound("attack")->Play(1);
 		colliders->GetCollider("weapon")->Disable();
 		ENEMY_HIT = false;
 	}
@@ -398,7 +413,10 @@ Vec2 MainCharacter::GetCharacterPosition(){
 void MainCharacter::OnDamage (float damage, GameObject& source) {
 	float damageReduction = 1;
 	if (characterState == BLOCK || characterState == CROUCH_BLOCK) {
-		damageReduction *= (1 - BLOCK_REDUCTION);
+		if (associated.flipHorizontal != source.flipHorizontal) {
+			effects->GetSound("block")->Play(1);
+			damageReduction *= (1 - BLOCK_REDUCTION);
+		}
 	}
 	if (shape == DEMON) {
 		damageReduction *= (1 - DEMON_DAMAGE_REDUCTION);

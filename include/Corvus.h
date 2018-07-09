@@ -6,6 +6,7 @@
 #include "Sprite.h"
 #include "Collider.h"
 #include "Timer.h"
+#include "SoundCollection.h"
 class Corvus : public Damageable {
 
   public:
@@ -41,8 +42,8 @@ class Corvus : public Damageable {
     //static MainCharacter* mainCharacter;
 
   private:
-  	Collider* collisionbox;
   	Colliders* colliders;
+    SoundCollection* effects;
     Sprite* spr;
     bool stateChanged = false;
     Vec2 speed = {0, 0};

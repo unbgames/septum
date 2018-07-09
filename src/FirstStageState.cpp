@@ -91,7 +91,7 @@ void FirstStageState::Update (float dt) {
 		cronometro->AddComponent(visortempo);
 	}
 	tempojogado = tempoJOGO.Get();
-	if(tempojogado >= tempoRestante || MainCharacter::mainCharacter->GetHP() <= 0){
+	if(tempojogado >= tempoRestante || MainCharacter::mainCharacter == nullptr || MainCharacter::mainCharacter->GetHP() <= 0){
 		//condicao de termino
 		Game& game = Game::GetInstance();
 		game.Push(new EndState());
@@ -160,7 +160,7 @@ void FirstStageState::Start () {
 	Camera::pos = {0, 0};
 	LoadAssets();
 	StartArray();
-	music.Play(1);
+	music.Play();
 	started = true;
 }
 void FirstStageState::Pause () {

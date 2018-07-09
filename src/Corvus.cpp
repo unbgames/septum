@@ -29,11 +29,16 @@ Corvus::Corvus (GameObject& associated):Damageable(associated, 30) {
 	associated.box.h = spr->GetHeight();
 	associated.box.w = spr->GetWidth();
 	colliders = new Colliders(associated);
-	collisionbox = new Collider(associated,{0.4,0.85},{-25,10});
+	Collider* collisionbox = new Collider(associated,{0.4,0.85},{-25,10});
 	colliders->AddCollider("body", collisionbox);
 	Collider *weapon = new Collider(associated, {0.25, 0.25}, {120, 65}, false);
 	colliders->AddCollider("weapon", weapon);
 	associated.AddComponent(colliders);
+
+	effects = new SoundCollection(associated);
+	effects->AddSound("attack", new Sound(associated,"assets/audio/hit1.wav"));
+	associated.AddComponent(effects);
+
 	characterState = IDLE;
 }
 Corvus::~Corvus () {
@@ -121,6 +126,7 @@ void Corvus::NotifyAnimationEnd () {
 	if (attacking) {
 		attacking = false;
 		playerHit = false;
+		effects->GetSound("attack")->Play(1);
 		colliders->GetCollider("weapon")->Disable();
 		stateTimer.Restart();
 	}

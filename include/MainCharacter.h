@@ -4,6 +4,7 @@
 #include "Vec2.h"
 #include "Sprite.h"
 #include "Colliders.h"
+#include "SoundCollection.h"
 #include <vector>
 #include "Sound.h"
 
@@ -49,11 +50,11 @@ class MainCharacter : public Damageable {
     static MainCharacter* mainCharacter;
     Vec2 GetCharacterPosition();
   private:
-  	GameObject *som;
     void StateLogic ();
 
     bool attacking;
   	Colliders* colliders;
+  	SoundCollection* effects;
     Vec2 speed = {0, 0};
     Sprite* spr;
     bool stateChanged = false;

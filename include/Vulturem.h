@@ -6,6 +6,7 @@
 #include "Sprite.h"
 #include "Collider.h"
 #include "Timer.h"
+#include "SoundCollection.h"
 class Vulturem : public Damageable {
 
   public:
@@ -43,8 +44,8 @@ class Vulturem : public Damageable {
     //static MainCharacter* mainCharacter;
 
   private:
-  	Collider* collisionbox;
   	Colliders* colliders;
+    SoundCollection* effects;
     Sprite* spr;
     bool stateChanged = false;
     Vec2 speed = {0, 0};

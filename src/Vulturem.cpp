@@ -47,12 +47,17 @@ Vulturem::Vulturem (GameObject& associated):Damageable(associated, 60) {
 	associated.box.h = spr->GetHeight();
 	associated.box.w = spr->GetWidth();
 	colliders = new Colliders(associated);
-	collisionbox = new Collider(associated,{0.4,0.85},{-25,10});
+	Collider* collisionbox = new Collider(associated,{0.4,0.85},{-25,10});
 	colliders->AddCollider("body", collisionbox);
 	Collider *weapon = new Collider(associated, {0.25, 0.25}, {120, 65}, false);
 	colliders->AddCollider("weapon", weapon);
 	associated.AddComponent(colliders);
 	characterState = IDLE;
+
+	effects = new SoundCollection(associated);
+	effects->AddSound("attack", new Sound(associated,"assets/audio/hit1.wav"));
+	effects->AddSound("block", new Sound(associated,"assets/audio/block1.wav"));
+	associated.AddComponent(effects);
 
 	blockRandomizer = Randomizer::CreateUniformGenerator(MIN_BLOCK_DURATION, MAX_BLOCK_DURATION);
 	runRandomizer = Randomizer::CreateUniformGenerator(MIN_RUN_DURATION, MAX_RUN_DURATION);
@@ -183,6 +188,7 @@ void Vulturem::NotifyAnimationEnd () {
 	if (attacking) {
 		attacking = false;
 		playerHit = false;
+		effects->GetSound("attack")->Play(1);
 		colliders->GetCollider("weapon")->Disable();
 	}
 	animationTimer.Restart();
@@ -268,11 +274,14 @@ void Vulturem::StateLogic () {
 
 void Vulturem::OnDamage (float damage, GameObject& source) {
 	if (characterState == BLOCK) {
-		if (damage < BLOCK_THRESHOLD) {
-			SetHP(GetHP() + damage * BLOCK_REDUCTION);
-		} else {
-			blockReady = false;
-			SetHP(GetHP() + BLOCK_THRESHOLD * BLOCK_REDUCTION);
+		if (associated.flipHorizontal != source.flipHorizontal) {
+			if (damage < BLOCK_THRESHOLD) {
+				SetHP(GetHP() + damage * BLOCK_REDUCTION);
+			} else {
+				blockReady = false;
+				SetHP(GetHP() + BLOCK_THRESHOLD * BLOCK_REDUCTION);
+			}
+			effects->GetSound("block")->Play(1);
 		}
 	}
 }
