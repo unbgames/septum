@@ -1,9 +1,10 @@
 #pragma once
 #include "Component.h"
 #include "GameObject.h"
+#include "Vec2.h"
 class CameraFollower: public Component {
 	public:
-		CameraFollower (GameObject& go);
+		CameraFollower (GameObject& go, Vec2 offset = {0, 0});
 
 		/**
 		 * Updates component state
@@ -20,4 +21,6 @@ class CameraFollower: public Component {
 		 * @return whether the type matches or not
 		 */
 		bool Is (string type) const;
+
+		Vec2 offset;
 };

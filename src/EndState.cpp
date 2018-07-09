@@ -23,8 +23,7 @@ void EndState::LoadAssets () {
 	splashScreen->AddComponent(new CameraFollower(*splashScreen));
 	AddObject(splashScreen);
 	GameObject* textao = new GameObject();
-	textao->box.x = 470;
-	textao->box.y = 300;
+	textao->AddComponent(new CameraFollower(*textao, {470, 300}));
 	char aux[60];
 	sprintf(aux,"Voce durou %.1f segundos",FirstStageState::tempojogado);
 	//remover o texto anterior
@@ -33,7 +32,7 @@ void EndState::LoadAssets () {
 	AddObject(textao);
 }
 void EndState::Update (float dt) {
-	
+
 
 	InputManager& inputManager = InputManager::GetInstance();
 
@@ -43,6 +42,7 @@ void EndState::Update (float dt) {
 		quitRequested = true;
 	}
 	if(inputManager.KeyPress(' ')){
+		popRequested = true;
 		Game& game = Game::GetInstance();
 		game.Push(new FirstStageState());
 	}

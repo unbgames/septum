@@ -93,6 +93,7 @@ void FirstStageState::Update (float dt) {
 	tempojogado = tempoJOGO.Get();
 	if(tempojogado >= tempoRestante || MainCharacter::mainCharacter == nullptr || MainCharacter::mainCharacter->GetHP() <= 0){
 		//condicao de termino
+		popRequested = true;
 		Game& game = Game::GetInstance();
 		game.Push(new EndState());
 	}
