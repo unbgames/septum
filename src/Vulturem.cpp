@@ -233,11 +233,11 @@ void Vulturem::StateLogic () {
 		colliders->GetCollider("body")->SetOffset({-10, 64});
 		stateDuration = Randomizer::GenerateUniform(attackRandomizer);
 	}else if(characterState == BLOCK && stateChanged){
-		spr->Open("assets/img/VULT_HURT.png");
+		spr->Open("assets/img/VULT_BLOCK.png");
 		spr->SetFrameCount(7);
-		associated.ChangePositionOffset({-19, -13}, 24);
-		colliders->GetCollider("body")->SetScale({0.38,0.71});
-		colliders->GetCollider("body")->SetOffset({-13,1});
+		associated.ChangePositionOffset({39, -19}, -15);
+		colliders->GetCollider("body")->SetScale({0.5,0.79});
+		colliders->GetCollider("body")->SetOffset({-33,21});
 		stateDuration = Randomizer::GenerateUniform(blockRandomizer);
 	}else if(characterState == RUN && stateChanged){
 		spr->Open("assets/img/VULT_RUN.png");
