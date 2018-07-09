@@ -81,7 +81,7 @@ void FirstStageState::LoadAssets () {
 void FirstStageState::Update (float dt) {
 	tempoJOGO.Update(dt);
 	char aux[60];
-	sprintf(aux,"%.1f | %.f",tempoJOGO.Get(),tempoRestante);
+	sprintf(aux,"%.1f I %.1f",tempoJOGO.Get(),tempoRestante);
 	//remover o texto anterior
 	Component* textanterior = cronometro->GetComponent("Text");
 	if(textanterior != nullptr)
