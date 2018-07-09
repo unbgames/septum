@@ -2,10 +2,8 @@
 #include <algorithm>
 #include <string>
 #include "GameObject.h"
-
 using std::vector;
 using std::string;
-
 GameObject::GameObject () {
 	isDead = false;
 	started = false;
@@ -82,4 +80,24 @@ void GameObject::NotifyAnimationEnd () {
 	for (auto& cpt : components) {
 		cpt->NotifyAnimationEnd();
 	}
+}
+
+void GameObject::Flip (bool value, float axis) {
+	if (flipHorizontal != value) {
+		box.x = box.x - 2 * axis;
+		flipHorizontal = value;
+		SetPositionOffset(positionOffset, flipOffset);
+	}
+}
+
+void GameObject::SetPositionOffset (Vec2 offset, float flipOffset) {
+	if (flipHorizontal) {
+		offset.x += flipOffset;
+	}
+	this->flipOffset = flipOffset;
+	int diffX = offset.x - positionOffset.x;
+	int diffY = offset.y - positionOffset.y;
+	positionOffset = offset;
+	box.x += diffX;
+	box.y += diffY;
 }

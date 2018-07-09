@@ -51,7 +51,7 @@ class Sprite : public Component{
 		 * @param x x-axis coordinate
 		 * @param y y-axis coordinate
 		 */
-		void Render (float x, float y);
+		void Render (float x, float y, bool loop = false);
 
 		int GetWidth () const;
 		int GetHeight () const;

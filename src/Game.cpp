@@ -6,6 +6,7 @@
 #include "Game.h"
 #include "Resources.h"
 #include "InputManager.h"
+#include "Randomizer.h"
 
 using std::string;
 

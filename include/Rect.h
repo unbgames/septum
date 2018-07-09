@@ -20,6 +20,11 @@ class Rect {
 		 */
 		Vec2 GetCenter () const;
 		/**
+		 * Returns rectangle origin
+		 * @return origin of rectangle
+		 */
+		Vec2 GetOrigin () const;
+		/**
 		 * Returns distance between the center of two rectangles
 		 * @param other other rectangle
 		 * @return distance between two rectangles
@@ -36,6 +41,6 @@ class Rect {
 
 		Rect operator+ (const Vec2 vec) const;
 		Rect& operator+= (const Vec2 vec);
-		
+
 		float x, y, w, h;
 };

@@ -1,5 +1,6 @@
 #include "TileMap.h"
 #include "Camera.h"
+#include "Game.h"
 #include <fstream>
 #include <stdexcept>
 #include <string>
@@ -52,17 +53,30 @@ int& TileMap::At (int x, int y, int z) {
 }
 
 void TileMap::RenderLayer (int layer, int cameraX, int cameraY) {
-	int posx = cameraX + offset.x;
+	int posx = offset.x + cameraX % Game::GetInstance().GetWidth();
 	int posy = cameraY + offset.y;
 	for (int y = 0; y < mapHeight; ++y) {
 		for (int x = 0; x < mapWidth; ++x) {
 			int index = At(x, y, layer);
 			if (index >= 0) {
 				tileSet->RenderTile(index,
-						(tileSet->GetTileWidth() * x) - posx
-								- posx * layer * PARALLAX_FACTOR,
-						(tileSet->GetTileHeight() * y) - posy
-								- posy * layer * PARALLAX_FACTOR);
+						(tileSet->GetTileWidth() * x) - posx - posx * layer * PARALLAX_FACTOR,
+						(tileSet->GetTileHeight() * y) - posy - posy * layer * PARALLAX_FACTOR);
+			}
+		}
+	}
+	int diff = Game::GetInstance().GetWidth() - ((tileSet->GetTileWidth() * mapWidth) - posx);
+	if (diff > 0) {
+		int layerAmount = 1 + tileSet->GetTileWidth() / diff;
+		posx = -(Game::GetInstance().GetWidth() - diff);
+		for (int y = 0; y < mapHeight; ++y) {
+			for (int x = 0; x < layerAmount; ++x) {
+				int index = At(x, y, layer);
+				if (index >= 0) {
+					tileSet->RenderTile(index,
+							(tileSet->GetTileWidth() * x) - posx - posx * layer * PARALLAX_FACTOR,
+							(tileSet->GetTileHeight() * y) - posy - posy * layer * PARALLAX_FACTOR);
+				}
 			}
 		}
 	}

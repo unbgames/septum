@@ -4,14 +4,17 @@
 #include "Vec2.h"
 #include "Sprite.h"
 #include "Colliders.h"
+#include "SoundCollection.h"
 #include <vector>
+#include "Sound.h"
 
 class MainCharacter : public Damageable {
 
   public:
     MainCharacter (GameObject& associated);
     ~MainCharacter ();
-    enum stateType{IDLE,WALK,JUMP,BLOCK,CROUCH,ATTACK,JUMP_ATTACK,CROUCH_ATTACK};
+    enum stateType{IDLE,WALK,JUMP,BLOCK,CROUCH,ATTACK,JUMP_ATTACK,CROUCH_ATTACK,DEAD,CROUCH_BLOCK, CROUCH_WALK};
+    enum shapeType{DEMON, HUMAN};
     stateType characterState;
     /**
 		 * Sets the component up
@@ -38,16 +41,20 @@ class MainCharacter : public Damageable {
     void NotifyAnimationEnd();
     void NotifyCollision (GameObject& other, string idCollider, string idOtherCollider);
 
-		bool demon;
-		float furia;
+    void SetSprite (string file, int frameCount, Vec2 sprOffset, float sprFlipOffset, Vec2 colliderScale, Vec2 colliderOffset);
 
+    void OnDamage (float damage, GameObject& source);
+
+    shapeType shape = HUMAN;
+		float power;
     static MainCharacter* mainCharacter;
+    Vec2 GetCharacterPosition();
   private:
-
     void StateLogic ();
 
     bool attacking;
   	Colliders* colliders;
+  	SoundCollection* effects;
     Vec2 speed = {0, 0};
     Sprite* spr;
     bool stateChanged = false;

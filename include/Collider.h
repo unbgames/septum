@@ -5,7 +5,7 @@
 class Collider {
 	public:
 		Collider (GameObject& associated, Vec2 scale = { 1, 1 }, Vec2 offset = {
-				0, 0 });
+				0, 0 }, bool enabled = true);
 		Rect box;
 
 		/**
@@ -22,8 +22,15 @@ class Collider {
 
 		void SetOffset (Vec2 offset);
 
+		void Enable();
+		void Disable();
+		bool IsEnabled();
+		Vec2 GetScale() const;
+		Vec2 GetOffset() const;
+
 	private:
 		GameObject& associated;
 		Vec2 scale;
 		Vec2 offset;
+		bool enabled;
 };

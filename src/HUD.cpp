@@ -4,7 +4,7 @@
 #include "MainCharacter.h"
 #include "Camera.h"
 
-bool demonio = false;
+int demonio;
 
 HUD::HUD (GameObject& associated):Component(associated){
 	fundo = new GameObject();
@@ -28,10 +28,11 @@ HUD::HUD (GameObject& associated):Component(associated){
 
 	face = new GameObject();
 	face->box.x = 0;
-	face->box.y = 30;
-	Sface = new Sprite(*face,"assets/img/HUDface.png");
-	Sface->SetScale(0.65, 0.65);
+	face->box.y = 12;
+	Sface = new Sprite(*face,"assets/img/heroface.png");
+	Sface->SetScale(0.55, 0.55);
 	face->AddComponent(Sface);
+	demonio = MainCharacter::HUMAN;
 
 	furypoints = new GameObject();
 	furypoints->box.x = 124;
@@ -42,22 +43,22 @@ HUD::HUD (GameObject& associated):Component(associated){
 
 }
 void HUD::Update (float dt) {
-	if(MainCharacter::mainCharacter->demon != demonio){
-		demonio = MainCharacter::mainCharacter->demon;
-		if(demonio)
-			Sface->Open("assets/img/HUDdemon.png");
-		else
-			Sface->Open("assets/img/HUDface.png");
+	if (MainCharacter::mainCharacter != nullptr) {
+		if(MainCharacter::mainCharacter->shape != demonio){
+			demonio = MainCharacter::mainCharacter->shape;
+			if(demonio == MainCharacter::DEMON)
+			Sface->Open("assets/img/demonface.png");
+			else
+			Sface->Open("assets/img/heroface.png");
+		}
+		Slife->SetScale(0.01*MainCharacter::mainCharacter->GetHP(),1);
+		Sfury->SetScale(0.01*MainCharacter::mainCharacter->power,1);
 	}
-	Slife->SetScale(0.01*MainCharacter::mainCharacter->GetHP(),1);
-	Sfury->SetScale(0.01*MainCharacter::mainCharacter->furia,1);
 	fundo->box.x = 36 + Camera::pos.x;
 	frente->box.x = 36 + Camera::pos.x;
 	lifepoints->box.x = 124 + Camera::pos.x;
 	face->box.x = 0 + Camera::pos.x;
 	furypoints->box.x = 124 + Camera::pos.x;
-
-
 }
 void HUD::Render () {
 	Sfundo->Render();
