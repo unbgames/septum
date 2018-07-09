@@ -33,16 +33,15 @@ using std::weak_ptr;
 #define BLOCK_REDUCTION 0.75
 
 bool ENEMY_HIT = false;
-bool ENEMY_BLOCKED = false;
-
-Vec2 Bloqueiotela = {0,1920};
+//bool PLAYER_HIT = false;
+Vec2 Bloqueiotela = {0,12086};
 
 MainCharacter* MainCharacter::mainCharacter = nullptr;
 
 MainCharacter::MainCharacter (GameObject& associated) :
 		Damageable(associated, 100),characterState(IDLE),demon(false) {
 	mainCharacter = this;
-	furia = 100;
+	furia = 0;
 	Character* crt = new Character(associated, Character::PLAYER);
 	associated.AddComponent(crt);
 	spr = new Sprite(associated, "assets/img/HERO_IDLE.png",7,0.08);
@@ -56,6 +55,8 @@ MainCharacter::MainCharacter (GameObject& associated) :
 	colliders->AddCollider("body", collisionbox);
 	colliders->AddCollider("weapon", weaponCollider);
 	associated.AddComponent(colliders);
+	som = new GameObject();
+	som->AddComponent(new Sound(*som,"assets/audio/hit2.wav"));
 }
 MainCharacter::~MainCharacter () {
 	mainCharacter = nullptr;
@@ -133,6 +134,7 @@ void MainCharacter::Update (float dt) {
 
 	if (characterState == ATTACK) {
 		if (NORMAL_ATTACK_HIT_FRAME_START <= currentTime && NORMAL_ATTACK_HIT_FRAME_END > currentTime) {
+			((Sound*)som->GetComponent("Sound"))->Play(1);
 			colliders->GetCollider("weapon")->SetScale({0.3, 0.4});
 			colliders->GetCollider("weapon")->SetOffset({90, 40});
 			colliders->GetCollider("weapon")->Enable();

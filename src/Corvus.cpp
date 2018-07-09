@@ -37,6 +37,7 @@ Corvus::Corvus (GameObject& associated):Damageable(associated, 100) {
 	characterState = IDLE;
 }
 Corvus::~Corvus () {
+
 }
 
 void Corvus::Start () {
@@ -49,6 +50,9 @@ void Corvus::Update (float dt) {
 
 	if (GetHP() <= 0) {
 		ChangeState(DEAD);
+		FirstStageState::enemycount--;
+		FirstStageState::tempoRestante+=6;
+		MainCharacter::mainCharacter->furia+=20;
 	} else if (MainCharacter::mainCharacter) {
 		Vec2 Destination = MainCharacter::mainCharacter->GetCharacterPosition();
 		Vec2 PositionNow = GetCharacterPosition();

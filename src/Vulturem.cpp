@@ -59,6 +59,7 @@ Vulturem::Vulturem (GameObject& associated):Damageable(associated, 100) {
 	attackRandomizer = Randomizer::CreateUniformGenerator(MIN_ATTACK_DURATION, MAX_ATTACK_DURATION);
 }
 Vulturem::~Vulturem () {
+
 }
 
 void Vulturem::Start () {
@@ -79,6 +80,9 @@ void Vulturem::Update (float dt) {
 
 	if (GetHP() <= 0) {
 		ChangeState(DEAD);
+		FirstStageState::enemycount--;
+		FirstStageState::tempoRestante+=10;
+		MainCharacter::mainCharacter->furia += 30;
 	} else if (MainCharacter::mainCharacter) {
 		Vec2 Destination = MainCharacter::mainCharacter->GetCharacterPosition();
 		Vec2 PositionNow = GetCharacterPosition();

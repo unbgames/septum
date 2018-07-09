@@ -10,7 +10,7 @@ Music::Music () {
 
 Music::Music (string file) {
 	music = nullptr;
-	
+
 	Open(file);
 }
 
@@ -27,5 +27,5 @@ void Music::Open (string file) {
 }
 
 Music::~Music () {
-	Stop();
+	Stop(0);
 }

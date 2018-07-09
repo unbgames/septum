@@ -18,7 +18,7 @@ MenuState::~MenuState () {
 void MenuState::LoadAssets () {
 	GameObject *splashScreen = new GameObject();
 	splashScreen->AddComponent(
-			new Sprite(*splashScreen, "assets/img/septem.png"));
+			new Sprite(*splashScreen, "assets/img/TitleScreen1.png"));
 	splashScreen->AddComponent(new CameraFollower(*splashScreen));
 	AddObject(splashScreen);
 

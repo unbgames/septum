@@ -1,6 +1,8 @@
 #pragma once
 #include "State.h"
 #include "TileMap.h"
+#include "Timer.h"
+#include "Music.h"
 class FirstStageState: public State {
 	public:
 	  FirstStageState ();
@@ -23,7 +25,12 @@ class FirstStageState: public State {
 		void Start ();
 		void Pause ();
 		void Resume ();
-
+		static float tempoRestante;
+		static int enemycount;
+		static float tempojogado;
 	private:
+		Music music;
+		Timer tempoJOGO;
+		GameObject *cronometro;
 		//TileMap map;
 };
