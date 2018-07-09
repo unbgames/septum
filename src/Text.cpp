@@ -97,7 +97,7 @@ void Text::RemakeTexture () {
 					.r = 0, .g = 0, .b = 0, .a = 255 });
 			break;
 		case BLENDED:
-			surface = TTF_RenderText_Blended(font.get(), text.c_str(), color);
+			surface = TTF_RenderText_Blended_Wrapped(font.get(), text.c_str(), color, 1280);
 			break;
 		default:
 			break;

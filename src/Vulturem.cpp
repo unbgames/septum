@@ -190,7 +190,7 @@ void Vulturem::ChangeState(stateType state){
 }
 void Vulturem::NotifyAnimationEnd () {
 	if (attacking) {
-		attacking = stateTimer.Get() < stateDuration || !haltAttack;
+		attacking = stateTimer.Get() < stateDuration && !haltAttack;
 		playerHit = false;
 		haltAttack = false;
 		effects->GetSound("attack")->Play(1);

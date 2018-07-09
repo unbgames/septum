@@ -161,6 +161,9 @@ void FirstStageState::Render () {
 void FirstStageState::Start () {
 	Camera::Unfollow();
 	Camera::pos = {0, 0};
+	tempoRestante = 20;
+	tempojogado = 0;
+	enemycount = 2;
 	LoadAssets();
 	StartArray();
 	music.Play();

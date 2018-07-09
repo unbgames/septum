@@ -22,6 +22,22 @@ void MenuState::LoadAssets () {
 	splashScreen->AddComponent(new CameraFollower(*splashScreen));
 	AddObject(splashScreen);
 
+	GameObject* help = new GameObject();
+	help->AddComponent(new CameraFollower(*help, {20, 450}));
+	Text *list = new Text(*help,"assets/font/Call me maybe.ttf",30,Text::BLENDED,
+	"Q\t\t\t\t\t\t\tBlock\nW\t\t\t\t\t\tAttack\nE\t\t\t\t\t\t\tHeal\nR\t\t\t\t\t\t\tDemon Form\nArrows\tMove"
+	,{255,255,255});
+	help->AddComponent(list);
+	AddObject(help);
+
+	GameObject* pressStart = new GameObject();
+	pressStart->AddComponent(new CameraFollower(*pressStart, {470, 670}));
+	Text *startText = new Text(*pressStart,"assets/font/Call me maybe.ttf",30,Text::BLENDED,
+	"PRESS SPACEBAR TO START"
+	,{255,255,255});
+	pressStart->AddComponent(startText);
+	AddObject(pressStart);
+
 }
 void MenuState::Update (float dt) {
 	InputManager& inputManager = InputManager::GetInstance();
