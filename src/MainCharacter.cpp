@@ -19,19 +19,21 @@ using std::weak_ptr;
 #define GRAVITY 1900
 #define NORMAL_ATTACK_HIT_FRAME_START 0.550
 #define NORMAL_ATTACK_HIT_FRAME_END 0.650
-#define NORMAL_ATTACK_DAMAGE 35
+#define NORMAL_ATTACK_DAMAGE 15
 
 #define CROUCH_ATTACK_HIT_FRAME_START 0.600
 #define CROUCH_ATTACK_HIT_FRAME_END 0.650
-#define CROUCH_ATTACK_DAMAGE 100
+#define CROUCH_ATTACK_DAMAGE 25
 
 #define JUMP_ATTACK_HIT_FRAME_START 0.300
 #define JUMP_ATTACK_HIT_FRAME_END 0.350
-#define JUMP_ATTACK_DAMAGE 50
+#define JUMP_ATTACK_DAMAGE 10
 #define FLOOR_HEIGHT 450
 
 #define BLOCK_REDUCTION 0.75
 
+#define DEMON_DAMAGE_REDUCTION 0.5
+#define DEMON_DAMAGE_AMP 1.5
 #define DEMON_DURATION 7
 
 bool ENEMY_HIT = false;
@@ -149,25 +151,43 @@ void MainCharacter::Update (float dt) {
 	if (characterState == ATTACK) {
 		if (NORMAL_ATTACK_HIT_FRAME_START <= currentTime && NORMAL_ATTACK_HIT_FRAME_END > currentTime) {
 			((Sound*)som->GetComponent("Sound"))->Play(1);
-			colliders->GetCollider("weapon")->SetScale({0.3, 0.4});
-			colliders->GetCollider("weapon")->SetOffset({90, 40});
-			colliders->GetCollider("weapon")->Enable();
+			if (shape == HUMAN) {
+				colliders->GetCollider("weapon")->SetScale({0.3, 0.4});
+				colliders->GetCollider("weapon")->SetOffset({90, 40});
+				colliders->GetCollider("weapon")->Enable();
+			} else {
+				colliders->GetCollider("weapon")->SetScale({0.5, 0.4});
+				colliders->GetCollider("weapon")->SetOffset({90, 40});
+				colliders->GetCollider("weapon")->Enable();
+			}
 		} else if (NORMAL_ATTACK_HIT_FRAME_END <= currentTime){
 			colliders->GetCollider("weapon")->Disable();
 		}
 	} else if (characterState == JUMP_ATTACK) {
 		if (JUMP_ATTACK_HIT_FRAME_START <= currentTime) {
-			colliders->GetCollider("weapon")->SetScale({0.3, 0.4});
-			colliders->GetCollider("weapon")->SetOffset({60, -25});
-			colliders->GetCollider("weapon")->Enable();
+			if (shape == HUMAN) {
+				colliders->GetCollider("weapon")->SetScale({0.3, 0.4});
+				colliders->GetCollider("weapon")->SetOffset({60, -25});
+				colliders->GetCollider("weapon")->Enable();
+			} else {
+				colliders->GetCollider("weapon")->SetScale({0.45, 0.3});
+				colliders->GetCollider("weapon")->SetOffset({90, 50});
+				colliders->GetCollider("weapon")->Enable();
+			}
 		} else if (JUMP_ATTACK_HIT_FRAME_END <= currentTime){
 			colliders->GetCollider("weapon")->Disable();
 		}
 	} else	if (characterState == CROUCH_ATTACK) {
 		if (CROUCH_ATTACK_HIT_FRAME_START <= currentTime) {
-			colliders->GetCollider("weapon")->SetScale({0.4, 0.35});
-			colliders->GetCollider("weapon")->SetOffset({75, 40});
-			colliders->GetCollider("weapon")->Enable();
+			if (shape == HUMAN) {
+				colliders->GetCollider("weapon")->SetScale({0.4, 0.35});
+				colliders->GetCollider("weapon")->SetOffset({75, 40});
+				colliders->GetCollider("weapon")->Enable();
+			} else {
+				colliders->GetCollider("weapon")->SetScale({0.5, 0.25});
+				colliders->GetCollider("weapon")->SetOffset({90, 60});
+				colliders->GetCollider("weapon")->Enable();
+			}
 		} else if (CROUCH_ATTACK_HIT_FRAME_END <= currentTime){
 			colliders->GetCollider("weapon")->Disable();
 		}
@@ -262,16 +282,20 @@ void MainCharacter::NotifyCollision (GameObject& other, string idCollider, strin
 		if (idCollider == "weapon" && idOtherCollider == "body") {
 			Component* damageable = other.GetComponent("Damageable");
 			if (damageable != nullptr) {
+				float damageAmp = 1;
+				if (shape == DEMON) {
+					damageAmp *= DEMON_DAMAGE_AMP;
+				}
 				if (characterState == ATTACK && !ENEMY_HIT) {
-					((Damageable*) damageable)->Damage(NORMAL_ATTACK_DAMAGE, associated);
+					((Damageable*) damageable)->Damage(NORMAL_ATTACK_DAMAGE * damageAmp, associated);
 					ENEMY_HIT = true;
 				}
 				if (characterState == JUMP_ATTACK && !ENEMY_HIT) {
-					((Damageable*) damageable)->Damage(JUMP_ATTACK_DAMAGE, associated);
+					((Damageable*) damageable)->Damage(JUMP_ATTACK_DAMAGE * damageAmp, associated);
 					ENEMY_HIT = true;
 				}
 				if (characterState == CROUCH_ATTACK && !ENEMY_HIT) {
-					((Damageable*) damageable)->Damage(CROUCH_ATTACK_DAMAGE, associated);
+					((Damageable*) damageable)->Damage(CROUCH_ATTACK_DAMAGE * damageAmp, associated);
 					ENEMY_HIT = true;
 				}
 			}
@@ -372,7 +396,12 @@ Vec2 MainCharacter::GetCharacterPosition(){
 }
 
 void MainCharacter::OnDamage (float damage, GameObject& source) {
+	float damageReduction = 1;
 	if (characterState == BLOCK || characterState == CROUCH_BLOCK) {
-		SetHP(GetHP() + damage * BLOCK_REDUCTION);
+		damageReduction *= (1 - BLOCK_REDUCTION);
 	}
+	if (shape == DEMON) {
+		damageReduction *= (1 - DEMON_DAMAGE_REDUCTION);
+	}
+	SetHP(GetHP() + damage * (1 - damageReduction));
 }

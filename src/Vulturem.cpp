@@ -19,11 +19,11 @@ using std::weak_ptr;
 #define NORMAL_ATTACK_HIT_FRAME_END 0.650
 #define NORMAL_ATTACK_DAMAGE 15
 #define ATTACK_RANGE 200
-#define ACQUISITION_RANGE 900
+#define ACQUISITION_RANGE 2000
 
-#define BLOCK_REDUCTION 0.75
+#define BLOCK_REDUCTION 0.5
 #define BLOCK_CD 2
-#define BLOCK_THRESHOLD 20
+#define BLOCK_THRESHOLD 15
 
 #define MIN_BLOCK_DURATION -1
 #define MAX_BLOCK_DURATION 4
@@ -39,7 +39,7 @@ std::uniform_real_distribution<> attackRandomizer;
 bool blockReady = true;
 float stateDuration = 0;
 
-Vulturem::Vulturem (GameObject& associated):Damageable(associated, 100) {
+Vulturem::Vulturem (GameObject& associated):Damageable(associated, 60) {
 	Character* crt = new Character(associated, Character::COMPUTER);
 	associated.AddComponent(crt);
 	spr = new Sprite(associated, "assets/img/VULT_IDLE.png",7,0.08);
@@ -82,7 +82,7 @@ void Vulturem::Update (float dt) {
 		ChangeState(DEAD);
 		FirstStageState::enemycount--;
 		FirstStageState::tempoRestante+=10;
-		MainCharacter::mainCharacter->power += 30;
+		MainCharacter::mainCharacter->power += 15;
 	} else if (MainCharacter::mainCharacter) {
 		Vec2 Destination = MainCharacter::mainCharacter->GetCharacterPosition();
 		Vec2 PositionNow = GetCharacterPosition();

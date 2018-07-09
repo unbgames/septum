@@ -16,12 +16,12 @@ using std::weak_ptr;
 #define CHARACTER_SPEED 250
 #define NORMAL_ATTACK_HIT_FRAME_START 0.400
 #define NORMAL_ATTACK_HIT_FRAME_END 0.650
-#define NORMAL_ATTACK_DAMAGE 15
-#define ATTACK_CD 0.600
+#define NORMAL_ATTACK_DAMAGE 10
+#define ATTACK_CD 0.300
 #define ATTACK_RANGE 170
-#define ACQUISITION_RANGE 770
+#define ACQUISITION_RANGE 1500
 
-Corvus::Corvus (GameObject& associated):Damageable(associated, 100) {
+Corvus::Corvus (GameObject& associated):Damageable(associated, 30) {
 	Character* crt = new Character(associated, Character::COMPUTER);
 	associated.AddComponent(crt);
 	spr = new Sprite(associated, "assets/img/CORV_IDLE.png",7,0.08);
@@ -52,7 +52,7 @@ void Corvus::Update (float dt) {
 		ChangeState(DEAD);
 		FirstStageState::enemycount--;
 		FirstStageState::tempoRestante+=6;
-		MainCharacter::mainCharacter->power+=20;
+		MainCharacter::mainCharacter->power+=7;
 	} else if (MainCharacter::mainCharacter) {
 		Vec2 Destination = MainCharacter::mainCharacter->GetCharacterPosition();
 		Vec2 PositionNow = GetCharacterPosition();
