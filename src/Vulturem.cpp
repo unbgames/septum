@@ -37,6 +37,7 @@ std::uniform_real_distribution<> runRandomizer;
 std::uniform_real_distribution<> attackRandomizer;
 
 bool blockReady = true;
+bool haltAttack = false;
 float stateDuration = 0;
 
 Vulturem::Vulturem (GameObject& associated):Damageable(associated, 60) {
@@ -140,8 +141,12 @@ void Vulturem::Update (float dt) {
 				}
 				associated.box.x += (speed.x * dt);
 			}
-		} else if (distance >= ATTACK_RANGE && !attacking) {
-			ChangeState(WALK);
+		} else if (distance >= ATTACK_RANGE) {
+			if (attacking) {
+				haltAttack = true;
+			} else {
+				ChangeState(WALK);
+			}
 		} else if (characterState == BLOCK) {
 			if (!blockReady) {
 				ChangeState(RUN);
@@ -185,8 +190,9 @@ void Vulturem::ChangeState(stateType state){
 }
 void Vulturem::NotifyAnimationEnd () {
 	if (attacking) {
-		attacking = stateTimer.Get() < stateDuration;
+		attacking = stateTimer.Get() < stateDuration || !haltAttack;
 		playerHit = false;
+		haltAttack = false;
 		effects->GetSound("attack")->Play(1);
 		colliders->GetCollider("weapon")->Disable();
 	}

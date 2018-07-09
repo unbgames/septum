@@ -99,25 +99,27 @@ void FirstStageState::Update (float dt) {
 	}
 	Camera::Update(dt);
 
-	A = rand()%10000;//esse valor eh meio que a taxa de spawn dos inimigos
-	if(A < tempojogado || enemycount == 0 && enemycount < 6){
-		B = rand()%100;
-		if(B<tempojogado){
-			GameObject *forte = new GameObject();
-			forte->box.x = 300 + rand()%1000;
-			forte->box.y = 450;
-			forte->AddComponent(new Vulturem(*forte));
-			AddObject(forte);
-			//spawna forte
-		}else{
-			//spawna fraco
-			GameObject *fraco = new GameObject();
-			fraco->box.x = 200 + rand()%1000;
-			fraco->box.y = 450;
-			fraco->AddComponent(new Corvus(*fraco));
-			AddObject(fraco);
+	if (!popRequested) {
+		A = rand()%10000;//esse valor eh meio que a taxa de spawn dos inimigos
+		if(A < tempojogado || enemycount == 0 && enemycount < 6){
+			B = rand()%100;
+			if(B<tempojogado){
+				GameObject *forte = new GameObject();
+				forte->box.x = MainCharacter::mainCharacter->GetCharacterPosition().x + rand()%1000;
+				forte->box.y = 450;
+				forte->AddComponent(new Vulturem(*forte));
+				AddObject(forte);
+				//spawna forte
+			}else{
+				//spawna fraco
+				GameObject *fraco = new GameObject();
+				fraco->box.x = MainCharacter::mainCharacter->GetCharacterPosition().x + rand()%1000;
+				fraco->box.y = 450;
+				fraco->AddComponent(new Corvus(*fraco));
+				AddObject(fraco);
+			}
+			enemycount++;
 		}
-		enemycount++;
 	}
 
 	InputManager& inputManager = InputManager::GetInstance();

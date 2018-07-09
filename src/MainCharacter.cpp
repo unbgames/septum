@@ -82,25 +82,22 @@ void MainCharacter::Update (float dt) {
 	animationTimer.Update(dt);
 	float currentTime = animationTimer.Get();
 	int dir = 0;
-	int attackIssued = false;
-	bool blocking = inputManager.IsKeyDown('j');
-	bool crouching = inputManager.IsKeyDown('s');
-	if (inputManager.KeyPress('k')) {
-		attackIssued = true;
-	}
+	bool attackIssued = inputManager.KeyPress('w');
+	bool blocking = inputManager.IsKeyDown('q');
+	bool crouching = inputManager.IsKeyDown(DOWN_ARROW_KEY);
 
 	if (speed.y != 0) {
 		speed.y -= GRAVITY * dt;
 	}
 
 	if (!blocking) {
-		if(inputManager.IsKeyDown('a')){
+		if(inputManager.IsKeyDown(LEFT_ARROW_KEY)){
 			dir = -1;
-		} else if(inputManager.IsKeyDown('d')){
+		} else if(inputManager.IsKeyDown(RIGHT_ARROW_KEY)){
 			dir = 1;
 		}
 
-		if(inputManager.KeyRelease('i')){
+		if(inputManager.KeyRelease('r')){
 			if (shape == DEMON) {
 				shape = HUMAN;
 				shapeChanged = true;
@@ -121,7 +118,7 @@ void MainCharacter::Update (float dt) {
 			power = 100;
 		}
 
-		if(inputManager.KeyRelease('u') && shape == HUMAN && power > 0){
+		if(inputManager.KeyRelease('e') && shape == HUMAN && power > 0){
 			// Sets HP to maximum if it can
 			if(GetHP() + power >= 100){
 				power += GetHP() - 100;
@@ -140,7 +137,7 @@ void MainCharacter::Update (float dt) {
 			associated.Flip(false, associated.box.GetCenter().x - GetCharacterPosition().x);
 		}
 
-		if (speed.y == 0 && inputManager.IsKeyDown('w')) {
+		if (speed.y == 0 && inputManager.IsKeyDown(UP_ARROW_KEY)) {
 			speed.y = 1000;
 		}
 	}
