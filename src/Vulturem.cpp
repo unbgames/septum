@@ -216,44 +216,44 @@ void Vulturem::StateLogic () {
 	if(characterState == IDLE && stateChanged){
 		spr->Open("assets/img/VULT_IDLE.png");
 		spr->SetFrameCount(7);
-		associated.ChangePositionOffset({0, 0});
+		associated.SetPositionOffset({0, 0});
 		colliders->GetCollider("body")->SetScale({0.4,0.85});
 		colliders->GetCollider("body")->SetOffset({-25,10});
 	} else if(characterState == WALK && stateChanged){
 		spr->Open("assets/img/VULT_WALK.png");
 		spr->SetFrameCount(7);
-		associated.ChangePositionOffset({-18, 0}, 18);
+		associated.SetPositionOffset({-18, 0}, 18);
 		colliders->GetCollider("body")->SetScale({0.37,0.82});
 		colliders->GetCollider("body")->SetOffset({-18,5.5});
 	}else if(characterState == ATTACK && stateChanged){
 		spr->Open("assets/img/VULT_ATTACK.png");
 		spr->SetFrameCount(7);
-		associated.ChangePositionOffset({-50, -107}, 24);
+		associated.SetPositionOffset({-50, -107}, 24);
 		colliders->GetCollider("body")->SetScale({0.33, 0.57});
 		colliders->GetCollider("body")->SetOffset({-10, 64});
 		stateDuration = Randomizer::GenerateUniform(attackRandomizer);
 	}else if(characterState == BLOCK && stateChanged){
 		spr->Open("assets/img/VULT_BLOCK.png");
 		spr->SetFrameCount(7);
-		associated.ChangePositionOffset({39, -19}, -15);
+		associated.SetPositionOffset({39, -19}, -15);
 		colliders->GetCollider("body")->SetScale({0.5,0.79});
 		colliders->GetCollider("body")->SetOffset({-33,21});
 		stateDuration = Randomizer::GenerateUniform(blockRandomizer);
 	}else if(characterState == RUN && stateChanged){
 		spr->Open("assets/img/VULT_RUN.png");
 		spr->SetFrameCount(7);
-		associated.ChangePositionOffset({-20, 0}, 20);
+		associated.SetPositionOffset({-20, 0}, 20);
 		colliders->GetCollider("body")->SetScale({0.35,0.74});
 		colliders->GetCollider("body")->SetOffset({-29,-6});
 		stateDuration = Randomizer::GenerateUniform(runRandomizer);
 	}else if(characterState == DEAD && stateChanged){
-		associated.ChangePositionOffset({0, 0});
+		associated.SetPositionOffset({0, 0});
 		GameObject* go = new GameObject();
 		go->box.x = associated.box.x;
 		go->box.y = associated.box.y;
 		go->flipHorizontal = associated.flipHorizontal;
 
-		go->ChangePositionOffset({-25, -6}, -85);
+		go->SetPositionOffset({-25, -6}, -85);
 
 		Game::GetInstance().GetCurrentState().AddObject(go);
 		go->AddComponent(

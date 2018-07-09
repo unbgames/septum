@@ -76,10 +76,10 @@ class GameObject {
 
 		double angleDeg = 0;
 		bool flipHorizontal = false;
-		void Flip (bool value);
-		void ChangePositionOffset(Vec2 offset, float flipOffset = 0);
+		void Flip (bool value, float axis = 0);
+		void SetPositionOffset(Vec2 offset, float flipOffset = 0);
 		Vec2 positionOffset = {0, 0};
-		float flipOffset = 0;
+		float flipOffset = 0; //X offset when flipped
 
 	private:
 		vector<unique_ptr<Component>> components;

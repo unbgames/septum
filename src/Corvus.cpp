@@ -155,28 +155,28 @@ void Corvus::StateLogic () {
 	if(characterState == IDLE && stateChanged){
 		spr->Open("assets/img/CORV_IDLE.png");
 		spr->SetFrameCount(7);
-		associated.ChangePositionOffset({0, 0});
+		associated.SetPositionOffset({0, 0});
 		colliders->GetCollider("body")->SetScale({0.4,0.85});
 		colliders->GetCollider("body")->SetOffset({-25,10});
 	}	else if(characterState == WALK && stateChanged){
 		spr->Open("assets/img/CORV_WALK.png");
 		spr->SetFrameCount(7);
-		associated.ChangePositionOffset({-15, 0}, 15);
+		associated.SetPositionOffset({-15, 0}, 15);
 		colliders->GetCollider("body")->SetScale({0.38, 0.81});
 		colliders->GetCollider("body")->SetOffset({-19.5, 5});
 	} else if(characterState == ATTACK && stateChanged){
 		spr->Open("assets/img/CORV_ATTACK.png");
 		spr->SetFrameCount(7);
-		associated.ChangePositionOffset({-50, -103}, 15);
+		associated.SetPositionOffset({-50, -103}, 15);
 		colliders->GetCollider("body")->SetScale({0.31, 0.59});
 		colliders->GetCollider("body")->SetOffset({-18, 64});
 	} else if(characterState == DEAD && stateChanged){
-		associated.ChangePositionOffset({0, 0});
+		associated.SetPositionOffset({0, 0});
 		GameObject* go = new GameObject();
 		go->box.x = associated.box.x;
 		go->box.y = associated.box.y;
 		go->flipHorizontal = associated.flipHorizontal;
-		go->ChangePositionOffset({-34, -12}, -85);
+		go->SetPositionOffset({-34, -12}, -85);
 		Game::GetInstance().GetCurrentState().AddObject(go);
 		go->AddComponent(
 				new Sprite(*go, "assets/img/CORV_DIE.png", 7, 0.2, 1.4));

@@ -111,9 +111,9 @@ void MainCharacter::Update (float dt) {
 		}
 
 		if (speed.x < 0) {
-			associated.Flip(true);
+			associated.Flip(true, associated.box.GetCenter().x - GetCharacterPosition().x);
 		} else if (speed.x > 0) {
-			associated.Flip(false);
+			associated.Flip(false, associated.box.GetCenter().x - GetCharacterPosition().x);
 		}
 
 		if (speed.y == 0 && inputManager.IsKeyDown('w')) {
@@ -278,55 +278,55 @@ void MainCharacter::StateLogic () {
 	if(characterState == IDLE && stateChanged){
 		spr->Open("assets/img/HERO_IDLE.png");
 		spr->SetFrameCount(7);
-		associated.ChangePositionOffset({0, 0});
+		associated.SetPositionOffset({0, 0});
 		colliders->GetCollider("body")->SetScale({0.5,0.8});
 		colliders->GetCollider("body")->SetOffset({-55,0});
 	} else if(characterState == JUMP && stateChanged){
 		spr->Open("assets/img/HERO_JUMP.png");
 		spr->SetFrameCount(7);
-		associated.ChangePositionOffset({-30, -40}, 30);
+		associated.SetPositionOffset({-30, -40}, 34.68);
 		colliders->GetCollider("body")->SetScale({0.45, 0.69});
 		colliders->GetCollider("body")->SetOffset({-37.325, 0});
 	} else if(characterState == WALK && stateChanged){
 		spr->Open("assets/img/HERO_WALK.png");
 		spr->SetFrameCount(7);
-		associated.ChangePositionOffset({-7, -3}, 0);
+		associated.SetPositionOffset({-7, -3}, 2);
 		colliders->GetCollider("body")->SetScale({0.48, 0.78});
 		colliders->GetCollider("body")->SetOffset({-54, 0});
 	} else if(characterState == CROUCH_WALK && stateChanged){
 		spr->Open("assets/img/HERO_WALK_CROUCH.png");
 		spr->SetFrameCount(7);
-		associated.ChangePositionOffset({-15, 15}, 50);
+		associated.SetPositionOffset({-15, 15}, 47);
 		colliders->GetCollider("body")->SetScale({0.54, 0.78});
 		colliders->GetCollider("body")->SetOffset({-31.5, 22.5});
 	} else if(characterState == BLOCK && stateChanged){
 		spr->Open("assets/img/HERO_BLOCK.png");
 		spr->SetFrameCount(7);
-		associated.ChangePositionOffset({4, 2});
+		associated.SetPositionOffset({4, 2}, 39);
 		colliders->GetCollider("body")->SetScale({0.61, 0.93});
 		colliders->GetCollider("body")->SetOffset({-35.5, 15});
 	} else if(characterState == CROUCH_BLOCK && stateChanged){
 		spr->Open("assets/img/HERO_BLOCK_CROUCH.png");
 		spr->SetFrameCount(7);
-		associated.ChangePositionOffset({0, 12});
+		associated.SetPositionOffset({0, 12}, 47);
 		colliders->GetCollider("body")->SetScale({0.62, 0.77});
 		colliders->GetCollider("body")->SetOffset({-31.5, 25});
 	} else if(characterState == CROUCH && stateChanged){
 		spr->Open("assets/img/HERO_IDLE_CROUCH.png");
 		spr->SetFrameCount(7);
-		associated.ChangePositionOffset({0, 15});
+		associated.SetPositionOffset({0, 15}, 3);
 		colliders->GetCollider("body")->SetScale({0.51, 0.65});
 		colliders->GetCollider("body")->SetOffset({-53.5, 2.5});
 	} else if(characterState == ATTACK || characterState == JUMP_ATTACK && stateChanged){
 		spr->Open("assets/img/HERO_ATTACK.png");
 		spr->SetFrameCount(7);
-		associated.ChangePositionOffset({0, -43});
+		associated.SetPositionOffset({0, -43}, -9.7);
 		colliders->GetCollider("body")->SetScale({0.48, 0.72});
 		colliders->GetCollider("body")->SetOffset({-59.7, 29});
 	} else if(characterState == CROUCH_ATTACK && stateChanged){
 		spr->Open("assets/img/HERO_ATTACK_CROUCH.png");
 		spr->SetFrameCount(7);
-		associated.ChangePositionOffset({-15, -20});
+		associated.SetPositionOffset({-15, -20});
 		colliders->GetCollider("body")->SetScale({0.45, 0.65});
 		colliders->GetCollider("body")->SetOffset({-55, 38});
 	} else if(characterState == DEAD && stateChanged){
