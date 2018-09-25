@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0.2)
 
-project(standyourground LANGUAGES CXX)
-set(GAME_NAME standyourground)
+project(septem LANGUAGES CXX)
+set(GAME_NAME septem)
 
 option(RELEASE_BUILD "Release build" OFF)
 

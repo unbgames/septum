@@ -3,6 +3,7 @@
 #include "Collider.h"
 #include "MainCharacter.h"
 #include "Camera.h"
+#include "config.h"
 
 int demonio;
 

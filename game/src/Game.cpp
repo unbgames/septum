@@ -7,6 +7,7 @@
 #include "Resources.h"
 #include "InputManager.h"
 #include "Randomizer.h"
+#include <time.h>
 
 using std::string;
 

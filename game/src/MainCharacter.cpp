@@ -12,6 +12,7 @@
 #include "Sound.h"
 #include "FirstStageState.h"
 #include "Collision.h"
+#include "config.h"
 
 using std::weak_ptr;
 

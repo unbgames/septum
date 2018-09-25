@@ -1,5 +1,6 @@
 #include "Background.h"
 #include "Camera.h"
+#include <math.h>
 
 using std::string;
 
