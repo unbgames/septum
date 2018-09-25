@@ -8,9 +8,11 @@ option(RELEASE_BUILD "Release build" OFF)
 if (RELEASE_BUILD)
     message("== Release BUILD ==")
     set(GAME_RESOURCES_FOLDER "/usr/games/${GAME_NAME}-resources")
+    set(COMPILE_FLAGS "")
 else()
     message("== Debug BUILD ==")
     set(GAME_RESOURCES_FOLDER "game")
+    set(COMPILE_FLAGS "-DDEBUG")
 endif()
 
 set(GAME_ASSETS_FOLDER "${GAME_RESOURCES_FOLDER}/assets")
@@ -36,7 +38,6 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Compilation Flags
-set(COMPILE_FLAGS "")
 
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL Clang)
     set(COMPILE_FLAGS "${COMPILE_FLAGS} -std=c++11 -W -Wall -pedantic -std=c++11 -Wshadow -O2 -g")

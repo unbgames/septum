@@ -32,7 +32,7 @@ FirstStageState::~FirstStageState () {
 }
 
 void FirstStageState::LoadAssets () {
-	music.Open("assets/audio/theme.wav");
+	music.Open( ASSETS_PATH("/audio/theme.wav") ;
 
 	GameObject *background = new GameObject();
 	Background* bg = new Background(*background, 0.03);
