@@ -50,7 +50,7 @@ MainCharacter::MainCharacter (GameObject& associated) :
 	power = 0;
 	Character* crt = new Character(associated, Character::PLAYER);
 	associated.AddComponent(crt);
-	spr = new Sprite(associated, "assets/img/HERO_IDLE.png",7,0.08);
+	spr = new Sprite(associated, ASSETS_PATH("/img/HERO_IDLE.png"),7,0.08);
 	associated.AddComponent(spr);
 	associated.box.h = spr->GetHeight();
 	associated.box.w = spr->GetWidth();
@@ -63,11 +63,11 @@ MainCharacter::MainCharacter (GameObject& associated) :
 	associated.AddComponent(colliders);
 
 	effects = new SoundCollection(associated);
-	effects->AddSound("attack", new Sound(associated,"assets/audio/hit2.wav"));
-	effects->AddSound("transform", new Sound(associated,"assets/audio/shapeshift.wav"));
-	effects->AddSound("block", new Sound(associated,"assets/audio/block2.wav"));
-	effects->AddSound("heal", new Sound(associated,"assets/audio/heal.wav"));
-	effects->AddSound("distransform", new Sound(associated,"assets/audio/shapeloss.wav"));
+	effects->AddSound("attack", new Sound(associated, ASSETS_PATH("/audio/hit2.wav") ));
+	effects->AddSound("transform", new Sound(associated, ASSETS_PATH("/audio/shapeshift.wav") ));
+	effects->AddSound("block", new Sound(associated, ASSETS_PATH("/audio/block2.wav") ));
+	effects->AddSound("heal", new Sound(associated, ASSETS_PATH("/audio/heal.wav") ));
+	effects->AddSound("distransform", new Sound(associated, ASSETS_PATH("/audio/shapeloss.wav") ));
 	associated.AddComponent(effects);
 }
 MainCharacter::~MainCharacter () {
@@ -328,30 +328,30 @@ void MainCharacter::StateLogic () {
 	if (stateChanged || shapeChanged) {
 		if (shape == HUMAN) {
 			if(characterState == IDLE){
-				SetSprite("assets/img/HERO_IDLE.png", 7, {0, 0}, 0, {0.5,0.8}, {-55,0});
+				SetSprite( ASSETS_PATH("/img/HERO_IDLE.png"), 7, {0, 0}, 0, {0.5,0.8}, {-55,0});
 			} else if(characterState == JUMP){
-				SetSprite("assets/img/HERO_JUMP.png", 7, {-30, -40}, 34.68, {0.45, 0.69}, {-37.325, 0});
+				SetSprite( ASSETS_PATH("/img/HERO_JUMP.png"), 7, {-30, -40}, 34.68, {0.45, 0.69}, {-37.325, 0});
 			} else if(characterState == WALK){
-				SetSprite("assets/img/HERO_WALK.png", 7, {-7, -3}, 2, {0.48, 0.78}, {-54, 0});
+				SetSprite( ASSETS_PATH("/img/HERO_WALK.png"), 7, {-7, -3}, 2, {0.48, 0.78}, {-54, 0});
 			} else if(characterState == CROUCH_WALK){
-				SetSprite("assets/img/HERO_WALK_CROUCH.png", 7, {-15, 15}, 47, {0.54, 0.78}, {-31.5, 22.5});
+				SetSprite( ASSETS_PATH("/img/HERO_WALK_CROUCH.png"), 7, {-15, 15}, 47, {0.54, 0.78}, {-31.5, 22.5});
 			} else if(characterState == BLOCK){
-				SetSprite("assets/img/HERO_BLOCK.png", 7, {4, 2}, 39, {0.61, 0.93}, {-35.5, 15});
+				SetSprite( ASSETS_PATH("/img/HERO_BLOCK.png"), 7, {4, 2}, 39, {0.61, 0.93}, {-35.5, 15});
 			} else if(characterState == CROUCH_BLOCK){
-				SetSprite("assets/img/HERO_BLOCK_CROUCH.png", 7, {0, 12}, 47, {0.62, 0.77}, {-31.5, 25});
+				SetSprite( ASSETS_PATH("/img/HERO_BLOCK_CROUCH.png"), 7, {0, 12}, 47, {0.62, 0.77}, {-31.5, 25});
 			} else if(characterState == CROUCH){
-				SetSprite("assets/img/HERO_IDLE_CROUCH.png", 7, {0, 15}, 3, {0.51, 0.65}, {-53.5, 2.5});
+				SetSprite( ASSETS_PATH("/img/HERO_IDLE_CROUCH.png"), 7, {0, 15}, 3, {0.51, 0.65}, {-53.5, 2.5});
 			} else if(characterState == ATTACK || characterState == JUMP_ATTACK){
-				SetSprite("assets/img/HERO_ATTACK.png", 7, {0, -43}, -9.7, {0.48, 0.72}, {-59.7, 29});
+				SetSprite( ASSETS_PATH("/img/HERO_ATTACK.png"), 7, {0, -43}, -9.7, {0.48, 0.72}, {-59.7, 29});
 			} else if(characterState == CROUCH_ATTACK){
-				SetSprite("assets/img/HERO_ATTACK_CROUCH.png", 7, {-15, -20}, 0, {0.45, 0.65}, {-55, 38});
+				SetSprite( ASSETS_PATH("/img/HERO_ATTACK_CROUCH.png"), 7, {-15, -20}, 0, {0.45, 0.65}, {-55, 38});
 			} else if(characterState == DEAD){
 				GameObject* go = new GameObject();
 				go->box.x = associated.box.x - 100;
 				go->box.y = associated.box.y - 10;
 				Game::GetInstance().GetCurrentState().AddObject(go);
 				go->AddComponent(
-					new Sprite(*go, "assets/img/HERO_DIE.png", 7, 0.2, 1.4));
+					new Sprite(*go, ASSETS_PATH("/img/HERO_DIE.png"), 7, 0.2, 1.4));
 				go->flipHorizontal = associated.flipHorizontal;
 
 				Camera::Unfollow();
@@ -359,30 +359,30 @@ void MainCharacter::StateLogic () {
 			}
 		} else {
 			if(characterState == IDLE){
-				SetSprite("assets/img/DEMON_IDLE.png", 7, {0, -75}, 0, {0.45,0.8}, {-70,0});
+				SetSprite( ASSETS_PATH("/img/DEMON_IDLE.png"), 7, {0, -75}, 0, {0.45,0.8}, {-70,0});
 			} else if(characterState == JUMP){
-				SetSprite("assets/img/DEMON_JUMP.png", 7, {-53, -127}, 53, {0.39, 0.69}, {-43.5, 26});
+				SetSprite( ASSETS_PATH("/img/DEMON_JUMP.png"), 7, {-53, -127}, 53, {0.39, 0.69}, {-43.5, 26});
 			} else if(characterState == WALK){
-				SetSprite("assets/img/DEMON_WALK.png", 7, {-10, -80}, 1, {0.43, 0.78}, {-69.5, 1});
+				SetSprite( ASSETS_PATH("/img/DEMON_WALK.png"), 7, {-10, -80}, 1, {0.43, 0.78}, {-69.5, 1});
 			} else if(characterState == CROUCH_WALK){
-				SetSprite("assets/img/DEMON_WALK_CROUCH.png", 7, {-10, -65}, 1, {0.43, 0.68}, {-69.5, 1});
+				SetSprite( ASSETS_PATH("/img/DEMON_WALK_CROUCH.png"), 7, {-10, -65}, 1, {0.43, 0.68}, {-69.5, 1});
 			} else if(characterState == BLOCK){
-				SetSprite("assets/img/DEMON_BLOCK.png", 7, {0, -75}, 58, {0.54, 0.88}, {-41, 15});
+				SetSprite( ASSETS_PATH("/img/DEMON_BLOCK.png"), 7, {0, -75}, 58, {0.54, 0.88}, {-41, 15});
 			} else if(characterState == CROUCH_BLOCK){
-				SetSprite("assets/img/DEMON_BLOCK_CROUCH.png", 7, {0, -60}, 58, {0.54, 0.81}, {-41, 22.5});
+				SetSprite( ASSETS_PATH("/img/DEMON_BLOCK_CROUCH.png"), 7, {0, -60}, 58, {0.54, 0.81}, {-41, 22.5});
 			} else if(characterState == CROUCH){
-				SetSprite("assets/img/DEMON_IDLE_CROUCH.png", 7, {0, -60}, 0, {0.45, 0.7}, {-70, 0});
+				SetSprite( ASSETS_PATH("/img/DEMON_IDLE_CROUCH.png"), 7, {0, -60}, 0, {0.45, 0.7}, {-70, 0});
 			} else if(characterState == ATTACK || characterState == JUMP_ATTACK){
-				SetSprite("assets/img/DEMON_ATTACK.png", 7, {-37, -120}, 26, {0.4, 0.74}, {-57, 32.5});
+				SetSprite( ASSETS_PATH("/img/DEMON_ATTACK.png"), 7, {-37, -120}, 26, {0.4, 0.74}, {-57, 32.5});
 			} else if(characterState == CROUCH_ATTACK){
-				SetSprite("assets/img/DEMON_ATTACK_CROUCH.png", 7, {-63, -132}, 29, {0.35, 0.61}, {-55.5, 49});
+				SetSprite( ASSETS_PATH("/img/DEMON_ATTACK_CROUCH.png"), 7, {-63, -132}, 29, {0.35, 0.61}, {-55.5, 49});
 			} else if(characterState == DEAD){
 				GameObject* go = new GameObject();
 				go->box.x = associated.box.x - 100;
 				go->box.y = associated.box.y - 10;
 				Game::GetInstance().GetCurrentState().AddObject(go);
 				go->AddComponent(
-					new Sprite(*go, "assets/img/DEMON_DIE.png", 7, 0.2, 1.4));
+					new Sprite(*go, ASSETS_PATH("/img/DEMON_DIE.png"), 7, 0.2, 1.4));
 				go->flipHorizontal = associated.flipHorizontal;
 
 				Camera::Unfollow();

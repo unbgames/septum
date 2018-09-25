@@ -14,7 +14,7 @@
 using std::weak_ptr;
 
 Humano::Humano (GameObject& associated):Damageable(associated, 100) {
-	spr = new Sprite(associated, "assets/img/Colectable_human.png",1,0.08);
+	spr = new Sprite(associated, ASSETS_PATH("/img/Colectable_human.png"),1,0.08);
 	associated.AddComponent(spr);
 	associated.box.h = spr->GetHeight();
 	associated.box.w = spr->GetWidth();

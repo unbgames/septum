@@ -11,6 +11,7 @@
 #include "MainCharacter.h"
 #include "Character.h"
 #include "Randomizer.h"
+#include "config.h"
 
 using std::weak_ptr;
 
@@ -43,7 +44,7 @@ float stateDuration = 0;
 Vulturem::Vulturem (GameObject& associated):Damageable(associated, 60) {
 	Character* crt = new Character(associated, Character::COMPUTER);
 	associated.AddComponent(crt);
-	spr = new Sprite(associated, "assets/img/VULT_IDLE.png",7,0.08);
+	spr = new Sprite(associated, ASSETS_PATH("/img/VULT_IDLE.png"),7,0.08);
 	associated.AddComponent(spr);
 	associated.box.h = spr->GetHeight();
 	associated.box.w = spr->GetWidth();
@@ -56,8 +57,8 @@ Vulturem::Vulturem (GameObject& associated):Damageable(associated, 60) {
 	characterState = IDLE;
 
 	effects = new SoundCollection(associated);
-	effects->AddSound("attack", new Sound(associated,"assets/audio/hit1.wav"));
-	effects->AddSound("block", new Sound(associated,"assets/audio/block1.wav"));
+	effects->AddSound("attack", new Sound(associated, ASSETS_PATH("/audio/hit1.wav") ));
+	effects->AddSound("block", new Sound(associated, ASSETS_PATH("/audio/block1.wav") ));
 	associated.AddComponent(effects);
 
 	blockRandomizer = Randomizer::CreateUniformGenerator(MIN_BLOCK_DURATION, MAX_BLOCK_DURATION);
@@ -225,33 +226,33 @@ void Vulturem::NotifyCollision (GameObject& other, string idCollider, string idO
 
 void Vulturem::StateLogic () {
 	if(characterState == IDLE && stateChanged){
-		spr->Open("assets/img/VULT_IDLE.png");
+		spr->Open( ASSETS_PATH("/img/VULT_IDLE.png") );
 		spr->SetFrameCount(7);
 		associated.SetPositionOffset({0, 0});
 		colliders->GetCollider("body")->SetScale({0.4,0.85});
 		colliders->GetCollider("body")->SetOffset({-25,10});
 	} else if(characterState == WALK && stateChanged){
-		spr->Open("assets/img/VULT_WALK.png");
+		spr->Open( ASSETS_PATH("/img/VULT_WALK.png") );
 		spr->SetFrameCount(7);
 		associated.SetPositionOffset({-18, 0}, 18);
 		colliders->GetCollider("body")->SetScale({0.37,0.82});
 		colliders->GetCollider("body")->SetOffset({-18,5.5});
 	}else if(characterState == ATTACK && stateChanged){
-		spr->Open("assets/img/VULT_ATTACK.png");
+		spr->Open( ASSETS_PATH("/img/VULT_ATTACK.png") );
 		spr->SetFrameCount(7);
 		associated.SetPositionOffset({-50, -107}, 24);
 		colliders->GetCollider("body")->SetScale({0.33, 0.57});
 		colliders->GetCollider("body")->SetOffset({-10, 64});
 		stateDuration = Randomizer::GenerateUniform(attackRandomizer);
 	}else if(characterState == BLOCK && stateChanged){
-		spr->Open("assets/img/VULT_BLOCK.png");
+		spr->Open( ASSETS_PATH("/img/VULT_BLOCK.png") );
 		spr->SetFrameCount(7);
 		associated.SetPositionOffset({39, -19}, -15);
 		colliders->GetCollider("body")->SetScale({0.5,0.79});
 		colliders->GetCollider("body")->SetOffset({-33,21});
 		stateDuration = Randomizer::GenerateUniform(blockRandomizer);
 	}else if(characterState == RUN && stateChanged){
-		spr->Open("assets/img/VULT_RUN.png");
+		spr->Open( ASSETS_PATH("/img/VULT_RUN.png") );
 		spr->SetFrameCount(7);
 		associated.SetPositionOffset({-20, 0}, 20);
 		colliders->GetCollider("body")->SetScale({0.35,0.74});
@@ -268,7 +269,7 @@ void Vulturem::StateLogic () {
 
 		Game::GetInstance().GetCurrentState().AddObject(go);
 		go->AddComponent(
-				new Sprite(*go, "assets/img/VULT_DIE.png", 7, 0.2, 1.4));
+				new Sprite(*go, ASSETS_PATH("/img/VULT_DIE.png"), 7, 0.2, 1.4));
 
 		associated.RequestDelete();
 	}

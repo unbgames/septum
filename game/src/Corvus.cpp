@@ -10,6 +10,7 @@
 #include "FirstStageState.h"
 #include "MainCharacter.h"
 #include "Character.h"
+#include "config.h"
 
 using std::weak_ptr;
 
@@ -24,7 +25,8 @@ using std::weak_ptr;
 Corvus::Corvus (GameObject& associated):Damageable(associated, 30) {
 	Character* crt = new Character(associated, Character::COMPUTER);
 	associated.AddComponent(crt);
-	spr = new Sprite(associated, "assets/img/CORV_IDLE.png",7,0.08);
+	spr = new Sprite(associated, ASSETS_PATH("/img/CORV_IDLE.png"),7,0.08);
+	spr = new Sprite(associated, ASSETS_PATH("/img/CORV_IDLE.png"),7,0.08);
 	associated.AddComponent(spr);
 	associated.box.h = spr->GetHeight();
 	associated.box.w = spr->GetWidth();
@@ -36,7 +38,7 @@ Corvus::Corvus (GameObject& associated):Damageable(associated, 30) {
 	associated.AddComponent(colliders);
 
 	effects = new SoundCollection(associated);
-	effects->AddSound("attack", new Sound(associated,"assets/audio/hit1.wav"));
+	effects->AddSound("attack", new Sound(associated, ASSETS_PATH("/audio/hit1.wav") ));
 	associated.AddComponent(effects);
 
 	characterState = IDLE;
@@ -159,19 +161,19 @@ void Corvus::NotifyCollision (GameObject& other, string idCollider, string idOth
 
 void Corvus::StateLogic () {
 	if(characterState == IDLE && stateChanged){
-		spr->Open("assets/img/CORV_IDLE.png");
+		spr->Open( ASSETS_PATH("/img/CORV_IDLE.png") );
 		spr->SetFrameCount(7);
 		associated.SetPositionOffset({0, 0});
 		colliders->GetCollider("body")->SetScale({0.4,0.85});
 		colliders->GetCollider("body")->SetOffset({-25,10});
 	}	else if(characterState == WALK && stateChanged){
-		spr->Open("assets/img/CORV_WALK.png");
+		spr->Open( ASSETS_PATH("/img/CORV_WALK.png") );
 		spr->SetFrameCount(7);
 		associated.SetPositionOffset({-15, 0}, 15);
 		colliders->GetCollider("body")->SetScale({0.38, 0.81});
 		colliders->GetCollider("body")->SetOffset({-19.5, 5});
 	} else if(characterState == ATTACK && stateChanged){
-		spr->Open("assets/img/CORV_ATTACK.png");
+		spr->Open( ASSETS_PATH("/img/CORV_ATTACK.png") );
 		spr->SetFrameCount(7);
 		associated.SetPositionOffset({-50, -103}, 15);
 		colliders->GetCollider("body")->SetScale({0.31, 0.59});
@@ -185,7 +187,7 @@ void Corvus::StateLogic () {
 		go->SetPositionOffset({-34, -12}, -85);
 		Game::GetInstance().GetCurrentState().AddObject(go);
 		go->AddComponent(
-				new Sprite(*go, "assets/img/CORV_DIE.png", 7, 0.2, 1.4));
+				new Sprite(*go, ASSETS_PATH("/img/CORV_DIE.png"), 7, 0.2, 1.4));
 		associated.RequestDelete();
 	}
 	associated.box.h = spr->GetHeight();
