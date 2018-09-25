@@ -17,7 +17,7 @@
 #include "EndState.h"
 #include "stdio.h"
 #include "stdlib.h"
-
+#include "config.h"
 
 
 float A,B;
@@ -32,24 +32,24 @@ FirstStageState::~FirstStageState () {
 }
 
 void FirstStageState::LoadAssets () {
-	music.Open("assets/audio/theme.wav");
+	music.Open( ASSETS_PATH("/audio/theme.wav") );
 
 	GameObject *background = new GameObject();
 	Background* bg = new Background(*background, 0.03);
-	bg->AddLayer(new Sprite(*background, "assets/img/sky.png"));
-	bg->AddLayer(new Sprite(*background, "assets/img/clouds_1.png"));
-	bg->AddLayer(new Sprite(*background, "assets/img/rocks.png"));
-	bg->AddLayer(new Sprite(*background, "assets/img/clouds_2.png"));
-	bg->AddLayer(new Sprite(*background, "assets/img/rocks_1.png"));
-	bg->AddLayer(new Sprite(*background, "assets/img/rocks_2.png"));
+	bg->AddLayer(new Sprite(*background, ASSETS_PATH("/img/sky.png") ));
+	bg->AddLayer(new Sprite(*background, ASSETS_PATH("/img/clouds_1.png") ));
+	bg->AddLayer(new Sprite(*background, ASSETS_PATH("/img/rocks.png") ));
+	bg->AddLayer(new Sprite(*background, ASSETS_PATH("/img/clouds_2.png") ));
+	bg->AddLayer(new Sprite(*background, ASSETS_PATH("/img/rocks_1.png") ));
+	bg->AddLayer(new Sprite(*background, ASSETS_PATH("/img/rocks_2.png") ));
 	background->AddComponent(bg);
 	AddObject(background);
 
 	GameObject *map = new GameObject();
 	map->box.y = 60;
 	map->AddComponent(
-			new TileMap(*map, "assets/map/tileMap.txt",
-				new TileSet(256, 128, "assets/img/teste tile1.png", *map),{0,-75}));
+			new TileMap(*map, ASSETS_PATH("/map/tileMap.txt"),
+				new TileSet(256, 128, ASSETS_PATH("/img/teste tile1.png"), *map),{0,-75}));
 	AddObject(map);
 
 	GameObject *character = new GameObject();
@@ -87,7 +87,7 @@ void FirstStageState::Update (float dt) {
 	if(textanterior != nullptr)
 		((Text*)textanterior)->SetText(aux);
 	else{
-		Text *visortempo = new Text(*cronometro,"assets/font/Call me maybe.ttf",30,Text::SOLID,aux,{0,0,0});
+		Text *visortempo = new Text(*cronometro, ASSETS_PATH("/font/Call me maybe.ttf"),30,Text::SOLID,aux,{0,0,0});
 		cronometro->AddComponent(visortempo);
 	}
 	tempojogado = tempoJOGO.Get();

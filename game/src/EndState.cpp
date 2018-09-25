@@ -8,7 +8,7 @@
 #include "MainCharacter.h"
 #include "FirstStageState.h"
 #include "EndState.h"
-
+#include "config.h"
 
 EndState::EndState () {
 }
@@ -19,7 +19,7 @@ EndState::~EndState () {
 void EndState::LoadAssets () {
 	GameObject *splashScreen = new GameObject();
 	splashScreen->AddComponent(
-			new Sprite(*splashScreen, "assets/img/EndScreen1.png"));
+			new Sprite(*splashScreen, ASSETS_PATH("/img/EndScreen1.png") ));
 	splashScreen->AddComponent(new CameraFollower(*splashScreen));
 	AddObject(splashScreen);
 	GameObject* textao = new GameObject();
@@ -27,7 +27,7 @@ void EndState::LoadAssets () {
 	char aux[60];
 	sprintf(aux,"Voce durou %.1f segundos",FirstStageState::tempojogado);
 	//remover o texto anterior
-	Text *visortempo = new Text(*textao,"assets/font/Call me maybe.ttf",30,Text::SOLID,aux,{255,255,255});
+	Text *visortempo = new Text(*textao, ASSETS_PATH("/font/Call me maybe.ttf"),30,Text::SOLID,aux,{255,255,255});
 	textao->AddComponent(visortempo);
 	AddObject(textao);
 }
